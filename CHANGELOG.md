@@ -2,6 +2,18 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
+## v0.2.0 - 2026-06-06
+
+- Added saved palette renaming.
+- Added confirmed saved palette deletion.
+- Added export tools for CSS variables, Tailwind config snippets, JSON, and SVG swatches.
+- Added copy-to-clipboard actions for each export format.
+- Added contrast hints with best readable black/white text color, contrast ratio, and strength label.
+- Added undo for generated palettes and loaded saved palettes.
+- Added keyboard shortcuts and an in-app shortcut help panel.
+- Updated README, ROADMAP, AGENTS, package metadata, and release documentation for v0.2.0.
+- Prepared repository maintenance standards for protected `main` branch workflows.
+
 ## v0.1.1 - 2026-06-06
 
 - Polished README structure for GitHub publishing readiness.

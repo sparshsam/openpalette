@@ -35,20 +35,27 @@ OpenPalette starts as a local-first color palette generator and should stay focu
 
 ### v0.2.0
 
-- [ ] Rename saved palettes.
-- [ ] Export palettes as CSS variables, Tailwind tokens, JSON, and SVG swatches.
-- [ ] Add undo for generated palettes.
-- [ ] Add contrast hints for adjacent colors.
-- [ ] Improve keyboard shortcuts and visible shortcut help.
-- [ ] Add screenshot assets for README.
+- [x] Rename saved palettes.
+- [x] Export palettes as CSS variables, Tailwind config snippets, JSON, and SVG swatches.
+- [x] Copy each export format to clipboard.
+- [x] Add undo for generated palettes and loaded saved palettes.
+- [x] Add contrast hints with best black/white text color and ratio.
+- [x] Improve keyboard shortcuts and visible shortcut help.
+- [x] Confirm delete flow for saved palettes.
 
 ## Mid-Term
 
+### v0.3.0
+
+- [ ] Add screenshot assets for README.
+- [ ] Export downloadable `.json` and `.svg` files.
+- [ ] Add import from pasted HEX lists.
+- [ ] Add shareable URL state without a backend.
+- [ ] Add collection-level saved palette management.
+- [ ] Add visual regression checks for the core interface.
+
 - [ ] Palette harmony modes.
 - [ ] Accessible contrast scoring.
-- [ ] Import palettes from pasted HEX lists.
-- [ ] Shareable URL state without a backend.
-- [ ] Collection-level saved palette management.
 
 ## Long-Term
 

@@ -11,6 +11,15 @@ export type SavedPalette = {
   createdAt: string;
 };
 
+export type ContrastHint = {
+  hex: string;
+  bestTextColor: "#000000" | "#FFFFFF";
+  ratio: number;
+  rating: "Strong" | "Okay" | "Weak";
+ };
+
+export type ExportFormat = "CSS" | "Tailwind" | "JSON" | "SVG";
+
 export const PALETTE_SIZE = 5;
 
 const seedPalettes = [
@@ -39,13 +48,22 @@ export function normalizeHex(input: string) {
 }
 
 export function getReadableTextColor(hex: string) {
-  const normalized = normalizeHex(hex) ?? "#000000";
-  const red = Number.parseInt(normalized.slice(1, 3), 16);
-  const green = Number.parseInt(normalized.slice(3, 5), 16);
-  const blue = Number.parseInt(normalized.slice(5, 7), 16);
-  const luminance = (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255;
+  return getContrastHint(hex).bestTextColor === "#000000" ? "#111827" : "#F9FAFB";
+}
 
-  return luminance > 0.58 ? "#111827" : "#F9FAFB";
+export function getContrastHint(hex: string): ContrastHint {
+  const normalized = normalizeHex(hex) ?? "#000000";
+  const blackRatio = getContrastRatio(normalized, "#000000");
+  const whiteRatio = getContrastRatio(normalized, "#FFFFFF");
+  const ratio = Math.max(blackRatio, whiteRatio);
+  const bestTextColor = blackRatio >= whiteRatio ? "#000000" : "#FFFFFF";
+
+  return {
+    hex: normalized,
+    bestTextColor,
+    ratio,
+    rating: ratio >= 7 ? "Strong" : ratio >= 4.5 ? "Okay" : "Weak",
+  };
 }
 
 export function createPalette(colors?: string[]): PaletteColor[] {
@@ -71,6 +89,67 @@ export function generatePalette(previous: PaletteColor[]) {
     ...color,
     hex: color.locked ? color.hex : generateHex(),
   }));
+}
+
+export function createExportSnippets(colors: string[]) {
+  const normalizedColors = colors.map((color) => normalizeHex(color) ?? "#000000");
+  const colorEntries = normalizedColors.map((hex, index) => ({
+    name: `color-${index + 1}`,
+    hex,
+  }));
+
+  const css = `:root {\n${colorEntries
+    .map((entry) => `  --openpalette-${entry.name}: ${entry.hex};`)
+    .join("\n")}\n}`;
+
+  const tailwind = `/** @type {import('tailwindcss').Config} */\nexport default {\n  theme: {\n    extend: {\n      colors: {\n        openpalette: {\n${colorEntries
+          .map((entry) => `          "${indexToken(entry.name)}": "${entry.hex}",`)
+          .join("\n")}\n        },\n      },\n    },\n  },\n};`;
+
+  const json = JSON.stringify(
+    {
+      name: "OpenPalette export",
+      colors: colorEntries,
+    },
+    null,
+    2,
+  );
+
+  const swatchWidth = 160;
+  const swatchHeight = 120;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${swatchWidth * normalizedColors.length}" height="${swatchHeight}" viewBox="0 0 ${swatchWidth * normalizedColors.length} ${swatchHeight}" role="img" aria-label="OpenPalette color swatches">\n${normalizedColors
+    .map((hex, index) => `  <rect x="${index * swatchWidth}" y="0" width="${swatchWidth}" height="${swatchHeight}" fill="${hex}" />`)
+    .join("\n")}\n</svg>`;
+
+  return {
+    CSS: css,
+    Tailwind: tailwind,
+    JSON: json,
+    SVG: svg,
+  } satisfies Record<ExportFormat, string>;
+}
+
+function indexToken(name: string) {
+  return name.replace("color-", "");
+}
+
+function getContrastRatio(firstHex: string, secondHex: string) {
+  const firstLuminance = getRelativeLuminance(firstHex);
+  const secondLuminance = getRelativeLuminance(secondHex);
+  const lighter = Math.max(firstLuminance, secondLuminance);
+  const darker = Math.min(firstLuminance, secondLuminance);
+
+  return Number(((lighter + 0.05) / (darker + 0.05)).toFixed(2));
+}
+
+function getRelativeLuminance(hex: string) {
+  const [red, green, blue] = [1, 3, 5].map((start) => {
+    const channel = Number.parseInt(hex.slice(start, start + 2), 16) / 255;
+
+    return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+  });
+
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
 }
 
 function hslToHex(hue: number, saturation: number, lightness: number) {

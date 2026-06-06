@@ -12,7 +12,7 @@ This version has breaking changes. APIs, conventions, and file structure may dif
 
 - Visible name: **OpenPalette**
 - Repository slug: `openpalette`
-- Current release: `v0.1.1`
+- Current release: `v0.2.0`
 - Product type: local-first color palette generator
 - License: MIT
 
@@ -20,13 +20,18 @@ Use **OpenPalette** in visible product copy. Use `openpalette` only for package 
 
 ## Current Scope
 
-The v0.1.x app supports:
+The v0.2.x app supports:
 
 - five-color palette generation;
 - Spacebar generation when focus is not inside an editable control;
 - per-color lock and unlock;
 - editable HEX values with normalization;
 - copy-to-clipboard for individual colors and full palettes;
+- export snippets for CSS variables, Tailwind config, JSON, and SVG swatches;
+- best black/white text-color hints with contrast ratios;
+- undo for generated and loaded palettes;
+- saved palette rename and confirmed delete;
+- keyboard shortcuts and an in-app help panel;
 - light and dark modes;
 - localStorage persistence for the active palette, theme, and saved palettes;
 - responsive layouts for mobile and desktop.

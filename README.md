@@ -59,6 +59,16 @@ It is also intentionally original. OpenPalette does not copy Coolors branding, a
 | HEX editing and normalization | Shipped |
 | Copy individual colors | Shipped |
 | Copy full palette | Shipped |
+| Rename saved palettes | Shipped |
+| Confirmed saved palette deletion | Shipped |
+| CSS variables export | Shipped |
+| Tailwind config export | Shipped |
+| JSON export | Shipped |
+| SVG swatches export | Shipped |
+| Copy export snippets | Shipped |
+| Contrast hints | Shipped |
+| Undo generated palettes | Shipped |
+| Keyboard shortcuts panel | Shipped |
 | Light and dark mode | Shipped |
 | Saved palettes in localStorage | Shipped |
 | Responsive layout | Shipped |
@@ -154,7 +164,7 @@ OpenPalette is ready for Vercel.
 4. Use the default Next.js framework settings.
 5. Deploy.
 
-No environment variables are required for v0.1.1.
+No environment variables are required for v0.2.0.
 
 ### Deploy with Vercel CLI
 
@@ -228,30 +238,30 @@ Recommended About links:
 
 ## Roadmap
 
-Near-term v0.2 work is focused on practical exports and smoother editing:
+Near-term v0.3 work is focused on screenshots, file downloads, import, and shareability:
 
-- Rename saved palettes.
-- Export CSS variables, Tailwind tokens, JSON, and SVG swatches.
-- Add undo.
-- Add contrast hints.
-- Improve keyboard shortcut help.
+- Add screenshot assets for README.
+- Export downloadable `.json` and `.svg` files.
+- Add import from pasted HEX lists.
+- Add shareable URL state without a backend.
+- Add collection-level saved palette management.
 
 See [ROADMAP.md](ROADMAP.md).
 
 ## Release Notes
 
-The current release preparation target is `v0.1.1`.
+The current release preparation target is `v0.2.0`.
 
 Suggested first GitHub release title:
 
 ```text
-OpenPalette v0.1.1
+OpenPalette v0.2.0
 ```
 
 Suggested first release summary:
 
 ```text
-Initial polished public release of OpenPalette: a local-first five-color palette generator with locking, HEX editing, copy actions, dark mode, saved palettes, PWA metadata, CI, Dependabot, and open-source documentation.
+OpenPalette v0.2.0 adds practical export tools, contrast hints, undo, keyboard help, and saved-palette management while preserving the local-first architecture and original OpenPalette branding.
 ```
 
 ## Contributing

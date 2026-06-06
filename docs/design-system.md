@@ -45,9 +45,20 @@ Five responsive color panels. Each panel owns:
 
 Right-side rail on desktop, stacked below the generator on smaller screens. Saved palettes show compact five-swatch previews.
 
+### Export Panel
+
+Export tools sit below the primary palette workflow. Format choices use a compact vertical tab list on desktop and stack naturally on mobile. Snippets use Geist Mono and the subtle surface token.
+
+### Contrast Hints
+
+Contrast hints are plain utility text, not decorative scores. Each color reports the better readable text color (`black` or `white`) and the contrast ratio for that pairing.
+
 ## Interaction Notes
 
 - Spacebar generates a palette only when focus is not inside an input.
 - Locked colors persist across generation.
 - HEX inputs normalize on blur.
 - Copy actions announce short status messages in the header area.
+- `U` restores the previous generated or loaded palette.
+- `S` saves the active palette.
+- `?` toggles keyboard help.
