@@ -12,7 +12,7 @@ This version has breaking changes. APIs, conventions, and file structure may dif
 
 - Visible name: **OpenPalette**
 - Repository slug: `openpalette`
-- Current release: `v0.1.0`
+- Current release: `v0.1.1`
 - Product type: local-first color palette generator
 - License: MIT
 
@@ -20,7 +20,7 @@ Use **OpenPalette** in visible product copy. Use `openpalette` only for package 
 
 ## Current Scope
 
-The v0.1 app supports:
+The v0.1.x app supports:
 
 - five-color palette generation;
 - Spacebar generation when focus is not inside an editable control;
@@ -55,6 +55,7 @@ The v0.1 app supports:
 Before finishing a code change, run:
 
 ```bash
+npm audit --audit-level=moderate
 npm run lint
 npm run typecheck
 npm run build

@@ -21,6 +21,7 @@ export function OpenPaletteApp() {
   const [savedPalettes, setSavedPalettes] = useState<SavedPalette[]>([]);
   const [theme, setTheme] = useState<Theme>("light");
   const [notice, setNotice] = useState("Ready");
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     const storedPalette = window.localStorage.getItem(paletteStorageKey);
@@ -70,21 +71,34 @@ export function OpenPaletteApp() {
       if (nextTheme) {
         setTheme(nextTheme);
       }
+
+      setHydrated(true);
     });
   }, []);
 
   useEffect(() => {
+    if (!hydrated) {
+      return;
+    }
+
     window.localStorage.setItem(paletteStorageKey, JSON.stringify(colors));
-  }, [colors]);
+  }, [colors, hydrated]);
 
   useEffect(() => {
+    if (!hydrated) {
+      return;
+    }
+
     window.localStorage.setItem(savedStorageKey, JSON.stringify(savedPalettes));
-  }, [savedPalettes]);
+  }, [savedPalettes, hydrated]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
-    window.localStorage.setItem(themeStorageKey, theme);
-  }, [theme]);
+
+    if (hydrated) {
+      window.localStorage.setItem(themeStorageKey, theme);
+    }
+  }, [theme, hydrated]);
 
   const paletteHex = useMemo(() => colors.map((color) => color.hex), [colors]);
 
@@ -188,14 +202,23 @@ export function OpenPaletteApp() {
             </a>
           </div>
 
-          <nav className="flex flex-wrap items-center gap-2 text-sm">
+          <nav className="flex flex-wrap items-center gap-2 text-sm" aria-label="Palette actions">
             <button className="button button-secondary" type="button" onClick={savePalette}>
               Save
             </button>
-            <button className="button button-secondary" type="button" onClick={() => copyText(paletteHex.join(" "), "Palette")}>
+            <button
+              className="button button-secondary"
+              type="button"
+              onClick={() => copyText(paletteHex.join(" "), "Palette")}
+            >
               Copy palette
             </button>
-            <button className="button button-secondary" type="button" onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+            <button
+              aria-pressed={theme === "dark"}
+              className="button button-secondary"
+              type="button"
+              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            >
               {theme === "light" ? "Dark" : "Light"} mode
             </button>
             <button className="button button-primary" type="button" onClick={generate}>
@@ -211,7 +234,11 @@ export function OpenPaletteApp() {
                 <h1 className="text-2xl font-semibold tracking-tight">Five colors. Fast decisions.</h1>
                 <p className="text-sm text-[var(--muted)]">Press Space to generate. Lock colors you want to keep.</p>
               </div>
-              <p className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
+              <p
+                aria-live="polite"
+                className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-[var(--muted)]"
+                role="status"
+              >
                 {notice}
               </p>
             </div>
@@ -245,6 +272,9 @@ export function OpenPaletteApp() {
                         <span className="sr-only">HEX value for color {index + 1}</span>
                         <input
                           className="w-full rounded-lg border border-white/30 bg-white/20 px-3 py-2 font-mono text-lg font-semibold uppercase outline-none backdrop-blur placeholder:text-current/70 focus:border-white"
+                          inputMode="text"
+                          maxLength={7}
+                          pattern="#?[0-9A-Fa-f]{3}([0-9A-Fa-f]{3})?"
                           value={color.hex}
                           spellCheck={false}
                           onBlur={() => commitHex(color.id)}
@@ -271,12 +301,13 @@ export function OpenPaletteApp() {
               <div className="mt-4 space-y-3">
                 {paletteHex.map((hex) => (
                   <button
+                    aria-label={`Copy ${hex}`}
                     className="flex w-full items-center gap-3 rounded-lg border border-[var(--border)] p-2 text-left transition hover:bg-[var(--subtle)]"
                     key={hex}
                     type="button"
                     onClick={() => copyText(hex, hex)}
                   >
-                    <span className="size-9 rounded-md border border-black/10" style={{ backgroundColor: hex }} />
+                    <span aria-hidden="true" className="size-9 rounded-md border border-black/10" style={{ backgroundColor: hex }} />
                     <span className="font-mono text-sm font-semibold">{hex}</span>
                   </button>
                 ))}
@@ -301,11 +332,12 @@ export function OpenPaletteApp() {
                         <span className="block text-sm font-semibold">{savedPalette.name}</span>
                         <span className="mt-2 grid grid-cols-5 overflow-hidden rounded-md">
                           {savedPalette.colors.map((hex) => (
-                            <span className="h-8" key={hex} style={{ backgroundColor: hex }} />
+                            <span aria-hidden="true" className="h-8" key={hex} style={{ backgroundColor: hex }} />
                           ))}
                         </span>
                       </button>
                       <button
+                        aria-label={`Remove ${savedPalette.name}`}
                         className="mt-2 text-xs font-semibold text-[var(--muted)] transition hover:text-[var(--foreground)]"
                         type="button"
                         onClick={() => removeSavedPalette(savedPalette.id)}

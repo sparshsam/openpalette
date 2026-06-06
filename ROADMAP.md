@@ -21,6 +21,16 @@ OpenPalette starts as a local-first color palette generator and should stay focu
 - [x] GitHub Actions CI
 - [x] Open-source documentation and MIT license
 
+### v0.1.1
+
+- [x] README publishing polish
+- [x] Screenshots placeholder section
+- [x] Vercel deployment instructions
+- [x] GitHub About description and topics documented
+- [x] PWA manifest metadata
+- [x] Accessibility polish for status, swatches, controls, and HEX inputs
+- [x] localStorage hydration hardening
+
 ## Near-Term
 
 ### v0.2.0
@@ -30,7 +40,6 @@ OpenPalette starts as a local-first color palette generator and should stay focu
 - [ ] Add undo for generated palettes.
 - [ ] Add contrast hints for adjacent colors.
 - [ ] Improve keyboard shortcuts and visible shortcut help.
-- [ ] Add browser-level installability with PWA metadata.
 - [ ] Add screenshot assets for README.
 
 ## Mid-Term

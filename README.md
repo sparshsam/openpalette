@@ -23,7 +23,11 @@
   <p>
     <a href="#features"><strong>Features</strong></a>
     &nbsp;&nbsp;·&nbsp;&nbsp;
+    <a href="#screenshots"><strong>Screenshots</strong></a>
+    &nbsp;&nbsp;·&nbsp;&nbsp;
     <a href="#quick-start"><strong>Quick Start</strong></a>
+    &nbsp;&nbsp;·&nbsp;&nbsp;
+    <a href="#deployment"><strong>Deploy</strong></a>
     &nbsp;&nbsp;·&nbsp;&nbsp;
     <a href="#architecture"><strong>Architecture</strong></a>
     &nbsp;&nbsp;·&nbsp;&nbsp;
@@ -43,6 +47,8 @@ OpenPalette is a practical color palette tool for designers, developers, and bui
 
 The app is intentionally local-first. Palettes are generated in the browser, copied through the Clipboard API, and saved in `localStorage`.
 
+It is also intentionally original. OpenPalette does not copy Coolors branding, assets, product language, or visual identity.
+
 ## Features
 
 | Feature | Status |
@@ -56,7 +62,20 @@ The app is intentionally local-first. Palettes are generated in the browser, cop
 | Light and dark mode | Shipped |
 | Saved palettes in localStorage | Shipped |
 | Responsive layout | Shipped |
+| PWA metadata | Shipped |
 | GitHub Actions CI | Shipped |
+
+## Screenshots
+
+Screenshots will be added after the first hosted release is published.
+
+Recommended assets:
+
+| Asset | Path | Purpose |
+|---|---|---|
+| Desktop app screenshot | `assets/screenshots/openpalette-desktop.png` | README hero and release notes |
+| Mobile app screenshot | `assets/screenshots/openpalette-mobile.png` | Responsive proof |
+| Saved palettes screenshot | `assets/screenshots/openpalette-saved.png` | Feature documentation |
 
 ## What OpenPalette Is
 
@@ -93,6 +112,25 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Local Development
+
+Requirements:
+
+| Tool | Version |
+|---|---|
+| Node.js | `>=22.0.0 <25.0.0` |
+| npm | `>=10.0.0` |
+
+Recommended development loop:
+
+```bash
+npm install
+npm run dev
+npm run lint
+npm run typecheck
+npm run build
+```
+
 ## Scripts
 
 | Command | Purpose |
@@ -102,6 +140,46 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run typecheck` | Run TypeScript checks |
 | `npm run build` | Build for production |
 | `npm run start` | Start the production server |
+| `npm audit --audit-level=moderate` | Check dependency advisories |
+
+## Deployment
+
+OpenPalette is ready for Vercel.
+
+### Deploy with Vercel Dashboard
+
+1. Create a GitHub repository named `openpalette`.
+2. Push this repository to GitHub.
+3. Import the project in Vercel.
+4. Use the default Next.js framework settings.
+5. Deploy.
+
+No environment variables are required for v0.1.1.
+
+### Deploy with Vercel CLI
+
+```bash
+npm install -g vercel
+vercel
+vercel --prod
+```
+
+Production build command:
+
+```bash
+npm run build
+```
+
+## Release Checks
+
+Run these before tagging or publishing a release:
+
+```bash
+npm audit --audit-level=moderate
+npm run lint
+npm run typecheck
+npm run build
+```
 
 ## Architecture
 
@@ -125,6 +203,29 @@ See [docs/architecture.md](docs/architecture.md), [docs/product-spec.md](docs/pr
 
 OpenPalette does not require login, analytics, backend APIs, or external palette services. Saved palettes live in your browser's localStorage.
 
+## GitHub Repository Setup
+
+Recommended GitHub About description:
+
+```text
+Local-first, open-source five-color palette generator built with Next.js, TypeScript, and Tailwind CSS.
+```
+
+Recommended topics:
+
+```text
+color-palette, palette-generator, nextjs, typescript, tailwindcss, local-first, design-tools, open-source, frontend, accessibility
+```
+
+Recommended About links:
+
+| Link | Value |
+|---|---|
+| Website | Vercel production URL after deployment |
+| Releases | `https://github.com/sparshsam/openpalette/releases` |
+| Issues | `https://github.com/sparshsam/openpalette/issues` |
+| Security | `SECURITY.md` |
+
 ## Roadmap
 
 Near-term v0.2 work is focused on practical exports and smoother editing:
@@ -136,6 +237,22 @@ Near-term v0.2 work is focused on practical exports and smoother editing:
 - Improve keyboard shortcut help.
 
 See [ROADMAP.md](ROADMAP.md).
+
+## Release Notes
+
+The current release preparation target is `v0.1.1`.
+
+Suggested first GitHub release title:
+
+```text
+OpenPalette v0.1.1
+```
+
+Suggested first release summary:
+
+```text
+Initial polished public release of OpenPalette: a local-first five-color palette generator with locking, HEX editing, copy actions, dark mode, saved palettes, PWA metadata, CI, Dependabot, and open-source documentation.
+```
 
 ## Contributing
 

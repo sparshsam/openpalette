@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -13,10 +13,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  applicationName: "OpenPalette",
   title: "OpenPalette",
   description:
     "A local-first, open-source five-color palette generator built with Next.js, TypeScript, and Tailwind CSS.",
   metadataBase: new URL("https://github.com/sparshsam/openpalette"),
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "OpenPalette",
+    statusBarStyle: "default",
+  },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
   openGraph: {
     title: "OpenPalette",
     description:
@@ -31,6 +43,14 @@ export const metadata: Metadata = {
     description:
       "A local-first, open-source five-color palette generator.",
   },
+};
+
+export const viewport: Viewport = {
+  colorScheme: "light dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F6F4EF" },
+    { media: "(prefers-color-scheme: dark)", color: "#11110F" },
+  ],
 };
 
 export default function RootLayout({
