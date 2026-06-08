@@ -74,3 +74,19 @@ Documentation-only changes may skip runtime checks if no code, package, config, 
 - Keep `README.md`, `ROADMAP.md`, and docs aligned with shipped behavior.
 - Preserve semver-style release notes.
 - Do not mark future work as shipped.
+
+## Branch Naming
+
+Use conventional prefix branches off `main`:
+- `feat/*` — New features
+- `fix/*` — Bug fixes
+- `docs/*` — Documentation changes
+- `refactor/*` — Code restructuring
+- `chore/*` — Maintenance tasks
+
+## Workflow
+
+1. Always branch from `main`.
+2. Run validation before every PR: `npm run lint && npm run typecheck && npm run build`
+3. Open a pull request for every merge into `main`.
+4. No direct pushes to `main`.
