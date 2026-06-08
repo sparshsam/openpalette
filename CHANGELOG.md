@@ -2,6 +2,19 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
+## v0.4.0 - 2026-06-08
+
+- Refined the platform expansion into a calmer production-grade design tool.
+- Split palette, accessibility, gradient, import, export, library, and image extraction logic into focused engines.
+- Added Vitest unit tests and V8 coverage for core platform engines.
+- Added Style Dictionary compatible token export.
+- Added design-system previews for semantic color roles, spacing, typography, and radii.
+- Collapsed advanced RGB/HSL editing by default to reduce interface density.
+- Deferred local library filtering to keep search typing responsive.
+- Added performance and testing documentation.
+- Added an animated product demo GIF.
+- Updated CI to run coverage before build.
+
 ## v0.3.0 - 2026-06-08
 
 - Expanded OpenPalette into a local-first design color platform.

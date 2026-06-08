@@ -1,7 +1,7 @@
 {
   "name": "openpalette",
   "version": "0.2.0",
-  "description": "A local-first, open-source five-color palette generator built with Next.js, TypeScript, and Tailwind CSS.",
+  "description": "A local-first, open-source design color platform built with Next.js, TypeScript, and Tailwind CSS.",
   "private": true,
   "license": "MIT",
   "author": "Sparsh Sam",
@@ -35,7 +35,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "next": "16.2.7",
@@ -47,9 +49,12 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^4.1.8",
     "eslint": "^9",
     "eslint-config-next": "16.2.7",
+    "playwright": "^1.60.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.8"
   }
 }

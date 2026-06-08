@@ -62,6 +62,20 @@ Contrast hints are plain utility text, not decorative scores. Each color reports
 - Visualizer panel: tabbed realistic previews for website, mobile, dashboard, poster, social, typography, and brand contexts.
 - Accessibility panel: score badge, color-vision simulation, readability previews, and replacement suggestions.
 
+### Design-System Preview
+
+The design-system preview maps active palette colors into semantic roles and shows spacing, typography, and radius scales. This keeps OpenPalette oriented around reusable product tokens instead of isolated swatches.
+
+Semantic roles:
+
+- `semantic.ink`
+- `semantic.muted`
+- `semantic.accent`
+- `semantic.surface`
+- `semantic.palette-*`
+
+Exported token sets include color, spacing, radii, shadow, and motion scales, including a Style Dictionary compatible JSON output.
+
 ## Interaction Notes
 
 - Spacebar generates a palette only when focus is not inside an input.

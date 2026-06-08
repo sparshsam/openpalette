@@ -35,6 +35,8 @@
     &nbsp;&nbsp;·&nbsp;&nbsp;
     <a href="#architecture"><strong>Architecture</strong></a>
     &nbsp;&nbsp;·&nbsp;&nbsp;
+    <a href="#performance-and-testing"><strong>Performance</strong></a>
+    &nbsp;&nbsp;·&nbsp;&nbsp;
     <a href="#tech-stack"><strong>Tech Stack</strong></a>
     &nbsp;&nbsp;·&nbsp;&nbsp;
     <a href="#roadmap"><strong>Roadmap</strong></a>
@@ -53,6 +55,8 @@
 - [Architecture](docs/architecture.md)
 - [Design System](docs/design-system.md)
 - [Product Spec](docs/product-spec.md)
+- [Performance Notes](docs/performance.md)
+- [Testing](docs/testing.md)
 - [Roadmap](ROADMAP.md)
 - [Changelog](CHANGELOG.md)
 - [Contributing](CONTRIBUTING.md)
@@ -110,6 +114,9 @@ assets/screenshots/
 ├── studio.png       # Main palette studio
 ├── visualizer.png   # Visualizer and accessibility panels
 └── mobile.png       # Responsive mobile layout
+
+assets/demos/
+└── openpalette-refinement.gif
 ```
 
 ## Feature Comparison
@@ -123,6 +130,15 @@ assets/screenshots/
 | Design-token exports | Yes | Often paid or limited |
 | Image extraction in-browser | Yes | Varies |
 | Open-source architecture | Yes | Usually no |
+
+## Feature Showcase
+
+![OpenPalette refinement demo](assets/demos/openpalette-refinement.gif)
+
+- Calm palette studio with core controls first and advanced RGB/HSL editing collapsed by default.
+- Local design-token preview for semantic color roles, spacing, typography, and radii.
+- Focused engines for palette, accessibility, gradient, import, export, library, and image extraction behavior.
+- Coverage-backed reliability for the color platform internals.
 
 ## Tech Stack
 
@@ -153,6 +169,7 @@ npm run build
 # Validation
 npm run lint
 npm run typecheck
+npm run test:coverage
 ```
 
 ## Repository Structure
@@ -197,6 +214,27 @@ OpenPalette is a single-page application with client-side state management:
 - **Extraction:** Image colors are sampled with browser canvas APIs and never leave the device.
 
 See [docs/architecture.md](docs/architecture.md) for the full architecture document.
+
+## Performance and Testing
+
+The product refinement pass split the platform into focused engines, added deferred library filtering, collapsed advanced controls by default, and introduced Vitest coverage.
+
+Current validation:
+
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test:coverage`
+- `npm run build`
+
+Coverage from the local refinement run:
+
+- 13 tests across 4 files
+- 89.32% statements
+- 89.65% lines
+- 93.02% functions
+- 66.22% branches
+
+See [docs/performance.md](docs/performance.md) and [docs/testing.md](docs/testing.md).
 
 ## Limitations
 

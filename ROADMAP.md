@@ -33,6 +33,18 @@ OpenPalette starts as a local-first color palette generator and should stay focu
 
 ## Near-Term
 
+### v0.4.0
+
+- [x] Split core platform engines into focused modules.
+- [x] Add Vitest coverage for palette, accessibility, import/export, gradient, and image extraction behavior.
+- [x] Collapse advanced controls by default.
+- [x] Add semantic token and scale previews.
+- [x] Add Style Dictionary compatible export.
+- [x] Add performance and testing docs.
+- [x] Add animated demo GIF.
+- [ ] Add browser interaction tests for the full palette workflow.
+- [ ] Add trustworthy Lighthouse CI on a hosted preview URL.
+
 ### v0.3.0
 
 - [x] Palette harmony modes.
@@ -60,7 +72,7 @@ OpenPalette starts as a local-first color palette generator and should stay focu
 
 ## Mid-Term
 
-### v0.4.0
+### v0.5.0
 
 - [ ] Add native Adobe ASE binary parser.
 - [ ] Add IndexedDB migration layer for large libraries.
