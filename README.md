@@ -51,7 +51,7 @@
 
 ## Quick Links
 
-- [Live demo](https://openpalette.vercel.app) (if deployed)
+- [Live demo](https://openpalette-delta.vercel.app)
 - [Architecture](docs/architecture.md)
 - [Design System](docs/design-system.md)
 - [Product Spec](docs/product-spec.md)
