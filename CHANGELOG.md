@@ -2,6 +2,20 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
+## v0.3.0 - 2026-06-08
+
+- Expanded OpenPalette into a local-first design color platform.
+- Added harmony modes, dynamic 2-10 color palettes, and lock-aware generation.
+- Added HEX, RGB, HSL, alpha, visual color editing, and per-format copying.
+- Added gradient generation with CSS, SVG, and PNG export.
+- Added imports for HEX lists, JSON, Tailwind snippets, CSS variables, and shareable URL state.
+- Added downloadable CSS, SCSS, Tailwind, JSON, SVG, PNG, PDF, and design token exports.
+- Added website, mobile, dashboard, poster, social, typography, and brand visualizers.
+- Added WCAG AA/AAA scoring, accessibility warnings, readable previews, suggested replacements, and color-vision simulation.
+- Added local library collections architecture with tags, search, favorites, history, duplicate detection, and sorting.
+- Added client-side image color extraction with vibrant, muted, and balanced modes.
+- Added command palette, smoother responsive behavior, richer empty states, and repository templates.
+
 ## v0.2.0 - 2026-06-06
 
 - Added saved palette renaming.

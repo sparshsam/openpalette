@@ -22,6 +22,9 @@ npm run dev
 3. Keep the change focused.
 4. Update documentation when behavior changes.
 5. Run the required checks before opening a PR.
+6. Confirm local-first constraints: no analytics, telemetry, auth requirement, or mandatory backend.
+7. For import/export changes, include sample input and output in the PR description.
+8. For color math changes, include accessibility or contrast edge cases where relevant.
 
 ```bash
 npm run lint

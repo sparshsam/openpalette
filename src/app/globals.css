@@ -40,7 +40,9 @@ body {
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
 }
 
@@ -78,4 +80,144 @@ input {
 .button-secondary {
   background: var(--surface);
   color: var(--foreground);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+  transform: none;
+}
+
+.panel {
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.05);
+}
+
+.section-title {
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.status-pill,
+.chip {
+  display: inline-flex;
+  min-height: 2rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.chip {
+  background: var(--surface);
+  color: var(--foreground);
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.chip:hover {
+  transform: translateY(-1px);
+}
+
+.chip-active {
+  border-color: var(--foreground);
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.palette-grid {
+  display: grid;
+  grid-auto-rows: minmax(330px, auto);
+}
+
+.swatch-action {
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.18);
+  padding: 0.42rem 0.68rem;
+  font-size: 0.74rem;
+  font-weight: 750;
+  backdrop-filter: blur(10px);
+  transition: background-color 160ms ease;
+}
+
+.swatch-action:hover {
+  background: rgb(0 0 0 / 0.3);
+}
+
+.swatch-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.control-label {
+  display: grid;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.field,
+.mini-field input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--background);
+  color: var(--foreground);
+  outline: none;
+}
+
+.field {
+  padding: 0.62rem 0.7rem;
+}
+
+.field:focus,
+.mini-field input:focus {
+  border-color: var(--foreground);
+}
+
+.mini-field {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.mini-field input {
+  padding: 0.42rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+@media (max-width: 900px) {
+  .palette-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }
