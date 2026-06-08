@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   applicationName: "OpenPalette",
   title: "OpenPalette",
   description:
-    "A local-first, open-source five-color palette generator built with Next.js, TypeScript, and Tailwind CSS.",
+    "A local-first, open-source design color platform with palettes, gradients, accessibility checks, visualizers, imports, exports, and image extraction.",
   metadataBase: new URL("https://github.com/sparshsam/openpalette"),
   manifest: "/manifest.webmanifest",
   appleWebApp: {
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "OpenPalette",
     description:
-      "Generate, lock, edit, copy, and save five-color palettes locally in your browser.",
+      "Build palettes, gradients, tokens, accessible previews, and local libraries directly in your browser.",
     url: "https://github.com/sparshsam/openpalette",
     siteName: "OpenPalette",
     type: "website",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "OpenPalette",
     description:
-      "A local-first, open-source five-color palette generator.",
+      "A local-first, open-source design color platform.",
   },
 };
 

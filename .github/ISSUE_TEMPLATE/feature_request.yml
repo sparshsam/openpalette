@@ -1,0 +1,26 @@
+name: Feature request
+description: Suggest a local-first design color workflow
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What color workflow should OpenPalette improve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: Describe the local-first behavior and export/import expectations.
+    validations:
+      required: true
+  - type: checkboxes
+    id: principles
+    attributes:
+      label: Product principles
+      options:
+        - label: This can work without accounts, telemetry, or a required backend.
+          required: true

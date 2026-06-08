@@ -33,6 +33,33 @@ OpenPalette starts as a local-first color palette generator and should stay focu
 
 ## Near-Term
 
+### v0.4.0
+
+- [x] Split core platform engines into focused modules.
+- [x] Add Vitest coverage for palette, accessibility, import/export, gradient, and image extraction behavior.
+- [x] Collapse advanced controls by default.
+- [x] Add semantic token and scale previews.
+- [x] Add Style Dictionary compatible export.
+- [x] Add performance and testing docs.
+- [x] Add animated demo GIF.
+- [ ] Add browser interaction tests for the full palette workflow.
+- [ ] Add trustworthy Lighthouse CI on a hosted preview URL.
+
+### v0.3.0
+
+- [x] Palette harmony modes.
+- [x] Dynamic 2-10 color palettes.
+- [x] HSL, RGB, alpha, and visual color editing.
+- [x] Gradient system with linear/radial CSS, SVG, and PNG exports.
+- [x] Import HEX lists, JSON, Tailwind snippets, CSS variables, and URL palette state.
+- [x] Download CSS, SCSS, Tailwind, JSON, SVG, PNG, PDF, and design token exports.
+- [x] Shareable URL state without a backend.
+- [x] Visualizer previews for website, mobile, dashboard, poster, social, typography, and brand surfaces.
+- [x] WCAG AA/AAA accessibility toolkit and color-vision simulation.
+- [x] Local library with tags, search, favorites, history, duplicate detection, and sorting.
+- [x] Client-side image color extraction.
+- [x] Command palette and keyboard-first workflow.
+
 ### v0.2.0
 
 - [x] Rename saved palettes.
@@ -45,24 +72,19 @@ OpenPalette starts as a local-first color palette generator and should stay focu
 
 ## Mid-Term
 
-### v0.3.0
+### v0.5.0
 
-- [ ] Add screenshot assets for README.
-- [ ] Export downloadable `.json` and `.svg` files.
-- [ ] Add import from pasted HEX lists.
-- [ ] Add shareable URL state without a backend.
-- [ ] Add collection-level saved palette management.
+- [ ] Add native Adobe ASE binary parser.
+- [ ] Add IndexedDB migration layer for large libraries.
 - [ ] Add visual regression checks for the core interface.
-
-- [ ] Palette harmony modes.
-- [ ] Accessible contrast scoring.
+- [ ] Add richer PDF sheet layouts.
+- [ ] Add installable offline PWA service worker.
 
 ## Long-Term
 
 - [ ] Optional self-hosted sync adapter.
-- [ ] Design-token package export.
 - [ ] Figma/design-tool handoff formats.
-- [ ] Visual regression tests for core UI.
+- [ ] Semantic palette suggestion engine.
 
 ## Non-Goals
 

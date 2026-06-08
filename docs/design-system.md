@@ -34,16 +34,18 @@ Compact brand block, direct action buttons, and theme toggle.
 
 ### Palette Panels
 
-Five responsive color panels. Each panel owns:
+Responsive 2-10 color panels. Each panel owns:
 
 - position marker;
 - lock control;
+- visual color picker;
 - HEX input;
-- copy action.
+- RGB, HSL, and alpha controls;
+- copy actions.
 
-### Saved Palette Rail
+### Local Library Rail
 
-Right-side rail on desktop, stacked below the generator on smaller screens. Saved palettes show compact five-swatch previews.
+Right-side rail on desktop, stacked below the generator on smaller screens. Library records show compact swatch previews, editable names, tags, favorites, and delete controls.
 
 ### Export Panel
 
@@ -53,6 +55,27 @@ Export tools sit below the primary palette workflow. Format choices use a compac
 
 Contrast hints are plain utility text, not decorative scores. Each color reports the better readable text color (`black` or `white`) and the contrast ratio for that pairing.
 
+### Platform Panels
+
+- Gradient panel: canvas preview, angle slider, CSS/SVG/PNG actions.
+- Import panel: textarea import, image upload, drag/drop, extraction controls.
+- Visualizer panel: tabbed realistic previews for website, mobile, dashboard, poster, social, typography, and brand contexts.
+- Accessibility panel: score badge, color-vision simulation, readability previews, and replacement suggestions.
+
+### Design-System Preview
+
+The design-system preview maps active palette colors into semantic roles and shows spacing, typography, and radius scales. This keeps OpenPalette oriented around reusable product tokens instead of isolated swatches.
+
+Semantic roles:
+
+- `semantic.ink`
+- `semantic.muted`
+- `semantic.accent`
+- `semantic.surface`
+- `semantic.palette-*`
+
+Exported token sets include color, spacing, radii, shadow, and motion scales, including a Style Dictionary compatible JSON output.
+
 ## Interaction Notes
 
 - Spacebar generates a palette only when focus is not inside an input.
@@ -61,4 +84,5 @@ Contrast hints are plain utility text, not decorative scores. Each color reports
 - Copy actions announce short status messages in the header area.
 - `U` restores the previous generated or loaded palette.
 - `S` saves the active palette.
-- `?` toggles keyboard help.
+- `Ctrl/Command K` opens the command palette.
+- Shortcut help documents the keyboard-first path.

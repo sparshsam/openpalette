@@ -3,11 +3,11 @@
 
   <h1>OpenPalette</h1>
   <p>
-    <em>A local-first, open-source five-color palette generator.</em>
+    <em>A local-first, open-source design color platform.</em>
   </p>
 
   <p>
-    Generate, lock, edit, copy, and save color palettes directly in your browser.
+    Generate palettes, edit color channels, extract image colors, preview design surfaces, validate accessibility, and export tokens directly in your browser.
   </p>
 
   <p>
@@ -35,6 +35,8 @@
     &nbsp;&nbsp;·&nbsp;&nbsp;
     <a href="#architecture"><strong>Architecture</strong></a>
     &nbsp;&nbsp;·&nbsp;&nbsp;
+    <a href="#performance-and-testing"><strong>Performance</strong></a>
+    &nbsp;&nbsp;·&nbsp;&nbsp;
     <a href="#tech-stack"><strong>Tech Stack</strong></a>
     &nbsp;&nbsp;·&nbsp;&nbsp;
     <a href="#roadmap"><strong>Roadmap</strong></a>
@@ -53,15 +55,17 @@
 - [Architecture](docs/architecture.md)
 - [Design System](docs/design-system.md)
 - [Product Spec](docs/product-spec.md)
+- [Performance Notes](docs/performance.md)
+- [Testing](docs/testing.md)
 - [Roadmap](ROADMAP.md)
 - [Changelog](CHANGELOG.md)
 - [Contributing](CONTRIBUTING.md)
 
 ## Overview
 
-OpenPalette is a practical color palette tool for designers, developers, and builders who want quick palette exploration without accounts, tracking, or cloud dependency.
+OpenPalette is a practical color platform for designers, developers, and builders who want fast palette exploration without accounts, tracking, or cloud dependency.
 
-The app is intentionally local-first. Palettes are generated in the browser, copied through the Clipboard API, and saved in `localStorage`.
+The app is intentionally local-first. Palettes, collections, history, imports, exports, gradients, and image extraction run in the browser and persist with `localStorage`.
 
 It is also intentionally original. OpenPalette does not copy Coolors branding, assets, product language, or visual identity.
 
@@ -69,14 +73,24 @@ It is also intentionally original. OpenPalette does not copy Coolors branding, a
 
 | Feature | Status |
 |---|---|
-| Five-color palette generator | Shipped |
+| 2-10 color palette generator | Shipped |
+| Harmony modes: analogous, monochromatic, complementary, triadic, split complementary, tetradic, random | Shipped |
 | Spacebar generation | Shipped |
 | Lock and unlock individual colors | Shipped |
-| HEX editing and normalization | Shipped |
-| Copy individual colors | Shipped |
+| HEX, RGB, HSL, alpha, and visual color editing | Shipped |
+| Copy HEX, RGB, HSL, and Tailwind-ready variables | Shipped |
 | Copy full palette | Shipped |
-| Rename saved palettes | Shipped |
-| Confirmed saved palette deletion | Shipped |
+| Gradient generator with linear, radial, angle, CSS, SVG, and PNG | Shipped |
+| Import HEX lists, JSON, Tailwind snippets, CSS variables, and URL state | Shipped |
+| Download JSON, SVG, CSS, SCSS, Tailwind config, PNG, PDF sheet, and design token JSON | Shipped |
+| Shareable URL state without a backend | Shipped |
+| Website, mobile, dashboard, poster, social, typography, and brand previews | Shipped |
+| WCAG AA/AAA contrast validation and accessibility score | Shipped |
+| Protanopia, deuteranopia, and tritanopia simulation | Shipped |
+| Suggested accessible replacement colors | Shipped |
+| Collections-ready local library with tags, search, favorites, history, duplicate detection, and sorting | Shipped |
+| Client-side image color extraction with vibrant/muted modes | Shipped |
+| Command palette and keyboard-first workflow | Shipped |
 | CSS variables export | Shipped |
 | Tailwind config export | Shipped |
 | JSON export | Shipped |
@@ -93,14 +107,38 @@ It is also intentionally original. OpenPalette does not copy Coolors branding, a
 
 ## Screenshots
 
-> Screenshots will be added after the first hosted release is published.
+Real screenshots are committed in `assets/screenshots/` for the platform studio.
 
 ```
 assets/screenshots/
-├── generator.png    # Main palette generator interface
-├── saved.png        # Saved palettes view
-└── export.png       # Export options panel
+├── studio.png       # Main palette studio
+├── visualizer.png   # Visualizer and accessibility panels
+└── mobile.png       # Responsive mobile layout
+
+assets/demos/
+└── openpalette-refinement.gif
 ```
+
+## Feature Comparison
+
+| Capability | OpenPalette | Cloud-first palette tools |
+|---|---:|---:|
+| Works without an account | Yes | Sometimes |
+| Local palette persistence | Yes | Rarely |
+| No telemetry by design | Yes | Varies |
+| Shareable URLs without a backend | Yes | Usually backend-backed |
+| Design-token exports | Yes | Often paid or limited |
+| Image extraction in-browser | Yes | Varies |
+| Open-source architecture | Yes | Usually no |
+
+## Feature Showcase
+
+![OpenPalette refinement demo](assets/demos/openpalette-refinement.gif)
+
+- Calm palette studio with core controls first and advanced RGB/HSL editing collapsed by default.
+- Local design-token preview for semantic color roles, spacing, typography, and radii.
+- Focused engines for palette, accessibility, gradient, import, export, library, and image extraction behavior.
+- Coverage-backed reliability for the color platform internals.
 
 ## Tech Stack
 
@@ -131,6 +169,7 @@ npm run build
 # Validation
 npm run lint
 npm run typecheck
+npm run test:coverage
 ```
 
 ## Repository Structure
@@ -168,19 +207,42 @@ openpalette/
 
 OpenPalette is a single-page application with client-side state management:
 
-- **Generation:** Color harmonies are computed in-browser using HSL color math.
+- **Generation:** Color harmonies are computed in-browser using HSL color math and lock-aware replacement.
 - **Locking:** Individual colors can be locked to preserve them during regeneration.
-- **Persistence:** Saved palettes are stored in localStorage — no backend.
-- **Exports:** CSS, Tailwind, JSON, and SVG formats are generated client-side.
+- **Persistence:** Current palette, library, tags, favorites, and history are stored in localStorage — no backend.
+- **Exports:** CSS, SCSS, Tailwind, JSON, SVG, PNG, PDF, and design-token formats are generated client-side.
+- **Extraction:** Image colors are sampled with browser canvas APIs and never leave the device.
 
 See [docs/architecture.md](docs/architecture.md) for the full architecture document.
+
+## Performance and Testing
+
+The product refinement pass split the platform into focused engines, added deferred library filtering, collapsed advanced controls by default, and introduced Vitest coverage.
+
+Current validation:
+
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test:coverage`
+- `npm run build`
+
+Coverage from the local refinement run:
+
+- 13 tests across 4 files
+- 89.32% statements
+- 89.65% lines
+- 93.02% functions
+- 66.22% branches
+
+See [docs/performance.md](docs/performance.md) and [docs/testing.md](docs/testing.md).
 
 ## Limitations
 
 - **Local-first.** Palettes are stored in browser localStorage. Clearing browser data will lose unsaved palettes.
 - **No accounts.** No cloud sync, no sharing, no collaborative features.
-- **Desktop-first.** Optimized for desktop browsers. Mobile experience is functional but not optimized.
-- **Five-color only.** Currently limited to five-color palettes. Custom size is not supported.
+- **localStorage limit.** Large libraries may eventually need the planned IndexedDB migration layer.
+- **ASE binary import.** Text exports containing HEX values import today; native binary ASE parsing remains a future parser.
+- **PDF export.** The current palette sheet is intentionally lightweight and dependency-free.
 
 ## Workflow
 

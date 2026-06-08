@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "OpenPalette",
     short_name: "OpenPalette",
     description:
-      "A local-first, open-source five-color palette generator built with Next.js, TypeScript, and Tailwind CSS.",
+      "A local-first, open-source design color platform for palettes, gradients, accessibility, visualizers, and exports.",
     start_url: "/",
     display: "standalone",
     background_color: "#F6F4EF",
