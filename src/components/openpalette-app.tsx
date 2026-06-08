@@ -1,6 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { VisualizerPreview, visualizers, type Visualizer } from "@/components/studio/visualizers";
+import { createSimplePdf, drawSwatches, extensionFor, tokenPreviewRows } from "@/lib/browser-exports";
 import {
   createExportSnippets,
   createGradientCss,
@@ -8,6 +10,9 @@ import {
   createPalette,
   decodePaletteState,
   encodePaletteState,
+  exportFormats,
+  drawGradient,
+  extractPaletteFromPixels,
   generatePalette,
   getContrastHint,
   getPairContrasts,
@@ -27,6 +32,7 @@ import {
   simulateVision,
   sortPalettes,
   suggestAccessibleReplacement,
+  type ExtractionMode,
   type ExportFormat,
   type GradientKind,
   type LibrarySort,
@@ -40,8 +46,6 @@ const paletteStorageKey = "openpalette.current.v1";
 const libraryStorageKey = "openpalette.library.v1";
 const historyStorageKey = "openpalette.history.v1";
 const themeStorageKey = "openpalette.theme";
-const exportFormats: ExportFormat[] = ["CSS", "SCSS", "Tailwind", "JSON", "Tokens", "SVG"];
-const visualizers = ["Website", "Mobile", "Dashboard", "Poster", "Social", "Typography", "Brand"] as const;
 const sorts: { label: string; value: LibrarySort }[] = [
   { label: "Recently used", value: "recent" },
   { label: "Brightness", value: "brightness" },
@@ -51,7 +55,6 @@ const sorts: { label: string; value: LibrarySort }[] = [
 ];
 
 type Theme = "light" | "dark";
-type Visualizer = (typeof visualizers)[number];
 type CurrentState = { colors: PaletteColor[]; mode: PaletteMode };
 
 export function OpenPaletteApp() {
@@ -74,12 +77,15 @@ export function OpenPaletteApp() {
   const [visionMode, setVisionMode] = useState<VisionMode>("none");
   const [commandOpen, setCommandOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
   const [extractionCount, setExtractionCount] = useState(5);
-  const [extractionMode, setExtractionMode] = useState<"balanced" | "vibrant" | "muted">("balanced");
+  const [extractionMode, setExtractionMode] = useState<ExtractionMode>("balanced");
   const gradientCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const paletteHex = useMemo(() => colors.map((color) => normalizeHex(color.hex) ?? "#111827"), [colors]);
   const paletteAlphas = useMemo(() => colors.map((color) => color.alpha), [colors]);
+  const deferredQuery = useDeferredValue(query);
+  const deferredTagFilter = useDeferredValue(tagFilter);
   const exportSnippets = useMemo(() => createExportSnippets(paletteHex, paletteAlphas), [paletteHex, paletteAlphas]);
   const gradientCss = useMemo(
     () => createGradientCss(paletteHex, gradientKind, gradientAngle),
@@ -92,6 +98,7 @@ export function OpenPaletteApp() {
   const contrastHints = useMemo(() => paletteHex.map((hex) => getContrastHint(hex)), [paletteHex]);
   const pairContrasts = useMemo(() => getPairContrasts(paletteHex), [paletteHex]);
   const accessibilityScore = useMemo(() => getPaletteAccessibilityScore(paletteHex), [paletteHex]);
+  const tokenRows = useMemo(() => tokenPreviewRows(paletteHex), [paletteHex]);
   const shareUrl = useMemo(() => {
     if (!hydrated) {
       return "";
@@ -106,8 +113,8 @@ export function OpenPaletteApp() {
     [library, paletteHex],
   );
   const filteredLibrary = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
-    const normalizedTag = tagFilter.trim().toLowerCase();
+    const normalizedQuery = deferredQuery.trim().toLowerCase();
+    const normalizedTag = deferredTagFilter.trim().toLowerCase();
 
     return sortPalettes(library, sort).filter((record) => {
       const haystack = [record.name, record.collection, record.mode, record.colors.join(" "), record.tags.join(" ")]
@@ -117,7 +124,7 @@ export function OpenPaletteApp() {
       const matchesTag = normalizedTag.length === 0 || record.tags.some((tag) => tag.toLowerCase().includes(normalizedTag));
       return matchesQuery && matchesTag;
     });
-  }, [library, query, sort, tagFilter]);
+  }, [deferredQuery, deferredTagFilter, library, sort]);
 
   const announce = useCallback((message: string) => {
     setNotice(message);
@@ -608,6 +615,17 @@ export function OpenPaletteApp() {
                     Add
                   </button>
                 </div>
+                <div className="lg:col-span-3">
+                  <button
+                    aria-expanded={advancedOpen}
+                    className="button button-secondary w-full justify-between gap-2"
+                    type="button"
+                    onClick={() => setAdvancedOpen((open) => !open)}
+                  >
+                    Advanced channel editing
+                    <span className="text-[var(--muted)]">{advancedOpen ? "Shown" : "Hidden"}</span>
+                  </button>
+                </div>
               </div>
 
               <div className="palette-grid" style={{ gridTemplateColumns: `repeat(${Math.min(colors.length, 5)}, minmax(0, 1fr))` }}>
@@ -657,34 +675,38 @@ export function OpenPaletteApp() {
                             onChange={(event) => updateHex(color.id, event.target.value)}
                           />
                         </label>
-                        <div className="grid grid-cols-3 gap-2">
-                          {(["h", "s", "l"] as const).map((channel) => (
-                            <label className="mini-field" key={channel}>
-                              {channel.toUpperCase()}
-                              <input
-                                max={channel === "h" ? 360 : 100}
-                                min={0}
-                                type="number"
-                                value={hsl[channel]}
-                                onChange={(event) => updateFromHsl(color.id, channel, Number(event.target.value))}
-                              />
-                            </label>
-                          ))}
-                        </div>
-                        <div className="grid grid-cols-3 gap-2">
-                          {(["r", "g", "b"] as const).map((channel) => (
-                            <label className="mini-field" key={channel}>
-                              {channel.toUpperCase()}
-                              <input
-                                max={255}
-                                min={0}
-                                type="number"
-                                value={rgb[channel]}
-                                onChange={(event) => updateFromRgb(color.id, channel, Number(event.target.value))}
-                              />
-                            </label>
-                          ))}
-                        </div>
+                        {advancedOpen ? (
+                          <>
+                            <div className="grid grid-cols-3 gap-2">
+                              {(["h", "s", "l"] as const).map((channel) => (
+                                <label className="mini-field" key={channel}>
+                                  {channel.toUpperCase()}
+                                  <input
+                                    max={channel === "h" ? 360 : 100}
+                                    min={0}
+                                    type="number"
+                                    value={hsl[channel]}
+                                    onChange={(event) => updateFromHsl(color.id, channel, Number(event.target.value))}
+                                  />
+                                </label>
+                              ))}
+                            </div>
+                            <div className="grid grid-cols-3 gap-2">
+                              {(["r", "g", "b"] as const).map((channel) => (
+                                <label className="mini-field" key={channel}>
+                                  {channel.toUpperCase()}
+                                  <input
+                                    max={255}
+                                    min={0}
+                                    type="number"
+                                    value={rgb[channel]}
+                                    onChange={(event) => updateFromRgb(color.id, channel, Number(event.target.value))}
+                                  />
+                                </label>
+                              ))}
+                            </div>
+                          </>
+                        ) : null}
                         <label className="control-label text-current">
                           Alpha {color.alpha}%
                           <input
@@ -745,6 +767,7 @@ export function OpenPaletteApp() {
             </section>
 
             <VisualizerPanel active={visualizer} colors={paletteHex} gradient={gradientCss} onActive={setVisualizer} />
+            <DesignSystemPanel tokenRows={tokenRows} />
             <AccessibilityPanel
               colors={paletteHex}
               pairContrasts={pairContrasts}
@@ -992,8 +1015,6 @@ function VisualizerPanel({
   gradient: string;
   onActive: (active: Visualizer) => void;
 }) {
-  const [primary, secondary, accent, surface, ink] = fillColors(colors);
-
   return (
     <section className="panel p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -1007,13 +1028,73 @@ function VisualizerPanel({
         </div>
       </div>
       <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--background)] p-4">
-        {active === "Website" ? <WebsitePreview primary={primary} secondary={secondary} accent={accent} surface={surface} ink={ink} /> : null}
-        {active === "Mobile" ? <MobilePreview primary={primary} secondary={secondary} accent={accent} surface={surface} ink={ink} /> : null}
-        {active === "Dashboard" ? <DashboardPreview primary={primary} secondary={secondary} accent={accent} surface={surface} ink={ink} /> : null}
-        {active === "Poster" ? <PosterPreview gradient={gradient} ink={ink} /> : null}
-        {active === "Social" ? <SocialPreview primary={primary} secondary={secondary} accent={accent} surface={surface} ink={ink} /> : null}
-        {active === "Typography" ? <TypographyPreview primary={primary} secondary={secondary} accent={accent} surface={surface} ink={ink} /> : null}
-        {active === "Brand" ? <BrandPreview colors={colors} primary={primary} secondary={secondary} accent={accent} surface={surface} ink={ink} /> : null}
+        <VisualizerPreview active={active} colors={colors} gradient={gradient} />
+      </div>
+    </section>
+  );
+}
+
+function DesignSystemPanel({
+  tokenRows,
+}: {
+  tokenRows: ReturnType<typeof tokenPreviewRows>;
+}) {
+  const spacingScale = [0, 2, 4, 8, 12, 16, 24, 32, 48, 64];
+  const typeScale = [
+    ["Caption", "0.75rem"],
+    ["Body", "1rem"],
+    ["Title", "1.5rem"],
+    ["Display", "2.5rem"],
+  ];
+
+  return (
+    <section className="panel p-4">
+      <div>
+        <h2 className="section-title">Design system foundation</h2>
+        <p className="mt-1 text-sm text-[var(--muted)]">
+          Semantic roles and scales preview how this palette behaves as reusable product infrastructure.
+        </p>
+      </div>
+      <div className="mt-4 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+        <div className="grid gap-2 sm:grid-cols-2">
+          {tokenRows.map((row) => (
+            <div className="rounded-lg border border-[var(--border)] p-3" key={row.name}>
+              <div className="h-16 rounded-md" style={{ backgroundColor: row.value }} />
+              <p className="mt-2 font-mono text-sm font-semibold">{row.name}</p>
+              <p className="text-xs text-[var(--muted)]">{row.value} · text {row.text}</p>
+            </div>
+          ))}
+        </div>
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Spacing scale</h3>
+            <div className="mt-2 space-y-2">
+              {spacingScale.slice(2).map((space) => (
+                <div className="flex items-center gap-3 text-xs" key={space}>
+                  <span className="w-10 font-mono">{space}px</span>
+                  <span className="h-2 rounded-full bg-[var(--foreground)]" style={{ width: `${space * 2}px` }} />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Typography scale</h3>
+            <div className="mt-2 space-y-2">
+              {typeScale.map(([label, size]) => (
+                <p key={label} style={{ fontSize: size }}>
+                  <span className="font-semibold">{label}</span> <span className="text-[var(--muted)]">{size}</span>
+                </p>
+              ))}
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {[4, 8, 12].map((radius) => (
+              <div className="grid h-16 place-items-center border border-[var(--border)] text-xs" key={radius} style={{ borderRadius: radius }}>
+                {radius}px
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -1247,103 +1328,6 @@ function ShortcutKey({ keys, label }: { keys: string; label: string }) {
   );
 }
 
-function WebsitePreview({ primary, secondary, accent, surface, ink }: PreviewProps) {
-  return (
-    <div className="rounded-xl p-5" style={{ background: surface, color: ink }}>
-      <div className="flex items-center justify-between">
-        <strong>Northstar Studio</strong>
-        <button className="rounded-md px-3 py-2 text-sm font-semibold" style={{ background: primary, color: getReadableTextColor(primary) }}>Start</button>
-      </div>
-      <div className="mt-14 max-w-xl">
-        <h3 className="text-4xl font-semibold">Design systems that feel built, not borrowed.</h3>
-        <p className="mt-3 text-sm opacity-75">A realistic website hero checks text, buttons, surfaces, and accent roles.</p>
-      </div>
-      <div className="mt-8 grid gap-3 sm:grid-cols-3">
-        {[primary, secondary, accent].map((color, index) => <span className="h-24 rounded-lg" key={color} style={{ background: color, opacity: index === 1 ? 0.8 : 1 }} />)}
-      </div>
-    </div>
-  );
-}
-
-function MobilePreview({ primary, secondary, accent, surface, ink }: PreviewProps) {
-  return (
-    <div className="mx-auto max-w-xs rounded-[2rem] border-8 border-[var(--foreground)] p-4" style={{ background: surface, color: ink }}>
-      <div className="h-6 rounded-full" style={{ background: primary }} />
-      <h3 className="mt-6 text-2xl font-semibold">Today</h3>
-      <div className="mt-4 space-y-3">
-        {[primary, secondary, accent].map((color, index) => <div className="rounded-xl p-4 text-sm font-semibold" key={color} style={{ background: color, color: getReadableTextColor(color) }}>Task card {index + 1}</div>)}
-      </div>
-    </div>
-  );
-}
-
-function DashboardPreview({ primary, secondary, accent, surface, ink }: PreviewProps) {
-  return (
-    <div className="grid gap-3 rounded-xl p-4 md:grid-cols-[180px_1fr]" style={{ background: surface, color: ink }}>
-      <aside className="rounded-lg p-3" style={{ background: primary, color: getReadableTextColor(primary) }}>Analytics</aside>
-      <div className="grid gap-3 sm:grid-cols-3">
-        {[primary, secondary, accent].map((color) => <div className="h-28 rounded-lg p-3 text-sm font-semibold" key={color} style={{ background: color, color: getReadableTextColor(color) }}>Metric</div>)}
-        <div className="h-32 rounded-lg sm:col-span-3" style={{ background: `linear-gradient(90deg, ${primary}, ${accent})` }} />
-      </div>
-    </div>
-  );
-}
-
-function PosterPreview({ gradient, ink }: { gradient: string; ink: string }) {
-  return (
-    <div className="grid min-h-96 place-items-center rounded-xl p-8 text-center" style={{ background: gradient, color: ink }}>
-      <div>
-        <p className="text-sm font-semibold uppercase tracking-[0.3em]">OpenPalette</p>
-        <h3 className="mt-4 text-6xl font-black tracking-tight">Color Field</h3>
-      </div>
-    </div>
-  );
-}
-
-function SocialPreview({ primary, secondary, accent, surface, ink }: PreviewProps) {
-  return (
-    <div className="aspect-[1.91/1] rounded-xl p-5" style={{ background: primary, color: getReadableTextColor(primary) }}>
-      <div className="flex h-full flex-col justify-between rounded-lg p-5" style={{ background: surface, color: ink }}>
-        <h3 className="text-3xl font-semibold">Launch palette</h3>
-        <div className="flex gap-2">
-          {[secondary, accent, primary].map((color) => <span className="h-12 flex-1 rounded-md" key={color} style={{ background: color }} />)}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function TypographyPreview({ primary, secondary, accent, surface, ink }: PreviewProps) {
-  return (
-    <div className="rounded-xl p-6" style={{ background: surface, color: ink }}>
-      <p className="text-sm font-semibold uppercase tracking-[0.2em]" style={{ color: accent }}>Type scale</p>
-      <h3 className="mt-3 text-5xl font-semibold">Readable by default</h3>
-      <p className="mt-3 max-w-2xl text-lg" style={{ color: secondary }}>Preview headings, body text, links, and callouts against the active palette.</p>
-      <button className="mt-5 rounded-md px-4 py-2 font-semibold" style={{ background: primary, color: getReadableTextColor(primary) }}>Primary action</button>
-    </div>
-  );
-}
-
-function BrandPreview({ colors, primary, secondary, accent, surface, ink }: PreviewProps & { colors: string[] }) {
-  return (
-    <div className="rounded-xl p-5" style={{ background: surface, color: ink }}>
-      <div className="flex items-center gap-3">
-        <span className="grid size-16 place-items-center rounded-xl text-xl font-black" style={{ background: primary, color: getReadableTextColor(primary) }}>B</span>
-        <div>
-          <h3 className="text-3xl font-semibold">Brand kit</h3>
-          <p style={{ color: secondary }}>Logo, marks, token ramps, and accents.</p>
-        </div>
-      </div>
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
-        {colors.map((color) => <div className="h-24 rounded-lg p-2 font-mono text-xs" key={color} style={{ background: color, color: getReadableTextColor(color) }}>{color}</div>)}
-      </div>
-      <div className="mt-4 h-2 rounded-full" style={{ background: accent }} />
-    </div>
-  );
-}
-
-type PreviewProps = { primary: string; secondary: string; accent: string; surface: string; ink: string };
-
 function createRecord(colors: PaletteColor[], mode: PaletteMode, name: string, favorite: boolean): PaletteRecord {
   const now = new Date().toISOString();
   return {
@@ -1359,122 +1343,4 @@ function createRecord(colors: PaletteColor[], mode: PaletteMode, name: string, f
     updatedAt: now,
     usedAt: now,
   };
-}
-
-function fillColors(colors: string[]) {
-  return [colors[0] ?? "#111827", colors[1] ?? "#64748B", colors[2] ?? "#F97316", colors[3] ?? "#F8FAFC", colors[4] ?? "#111827"];
-}
-
-function drawGradient(context: CanvasRenderingContext2D, width: number, height: number, colors: string[], kind: GradientKind, angle: number) {
-  const gradient =
-    kind === "radial"
-      ? context.createRadialGradient(width / 2, height / 2, 10, width / 2, height / 2, Math.max(width, height) / 1.5)
-      : createCanvasLinearGradient(context, width, height, angle);
-  colors.forEach((hex, index) => gradient.addColorStop(index / Math.max(colors.length - 1, 1), hex));
-  context.fillStyle = gradient;
-  context.fillRect(0, 0, width, height);
-}
-
-function createCanvasLinearGradient(context: CanvasRenderingContext2D, width: number, height: number, angle: number) {
-  const radians = (angle * Math.PI) / 180;
-  const x = Math.cos(radians) * width;
-  const y = Math.sin(radians) * height;
-  return context.createLinearGradient(width / 2 - x / 2, height / 2 - y / 2, width / 2 + x / 2, height / 2 + y / 2);
-}
-
-function drawSwatches(context: CanvasRenderingContext2D, width: number, height: number, colors: string[]) {
-  context.fillStyle = "#FFFFFF";
-  context.fillRect(0, 0, width, height);
-  const swatchWidth = width / colors.length;
-  colors.forEach((hex, index) => {
-    context.fillStyle = hex;
-    context.fillRect(index * swatchWidth, 0, swatchWidth, height * 0.78);
-    context.fillStyle = "#111827";
-    context.font = "28px monospace";
-    context.fillText(hex, index * swatchWidth + 24, height - 70);
-  });
-}
-
-function extractPaletteFromPixels(data: Uint8ClampedArray, count: number, mode: "balanced" | "vibrant" | "muted") {
-  const buckets = new Map<string, { r: number; g: number; b: number; hits: number; score: number }>();
-
-  for (let index = 0; index < data.length; index += 16) {
-    const alpha = data[index + 3];
-    if (alpha < 180) {
-      continue;
-    }
-
-    const r = data[index];
-    const g = data[index + 1];
-    const b = data[index + 2];
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    const saturation = max === 0 ? 0 : (max - min) / max;
-    const lightness = (max + min) / 510;
-    const wantsVibrant = mode === "vibrant" ? saturation > 0.28 : true;
-    const wantsMuted = mode === "muted" ? saturation < 0.55 && lightness > 0.18 && lightness < 0.88 : true;
-
-    if (!wantsVibrant || !wantsMuted || lightness < 0.06 || lightness > 0.96) {
-      continue;
-    }
-
-    const key = `${Math.round(r / 24) * 24}-${Math.round(g / 24) * 24}-${Math.round(b / 24) * 24}`;
-    const bucket = buckets.get(key) ?? { r: 0, g: 0, b: 0, hits: 0, score: 0 };
-    bucket.r += r;
-    bucket.g += g;
-    bucket.b += b;
-    bucket.hits += 1;
-    bucket.score += saturation + (1 - Math.abs(lightness - 0.5));
-    buckets.set(key, bucket);
-  }
-
-  const selected: string[] = [];
-  const candidates = [...buckets.values()]
-    .map((bucket) => rgbToHex({ r: bucket.r / bucket.hits, g: bucket.g / bucket.hits, b: bucket.b / bucket.hits }))
-    .sort((first, second) => getContrastHint(second).ratio - getContrastHint(first).ratio);
-
-  for (const candidate of candidates) {
-    if (selected.every((hex) => colorDistance(hex, candidate) > 48)) {
-      selected.push(candidate);
-    }
-    if (selected.length >= count) {
-      break;
-    }
-  }
-
-  return selected;
-}
-
-function colorDistance(first: string, second: string) {
-  const a = hexToRgb(first);
-  const b = hexToRgb(second);
-  return Math.hypot(a.r - b.r, a.g - b.g, a.b - b.b);
-}
-
-function createSimplePdf(colors: string[]) {
-  const lines = ["OpenPalette palette sheet", "", ...colors.map((hex, index) => `${index + 1}. ${hex}`)];
-  const stream = `BT /F1 24 Tf 72 740 Td (${lines.join(") Tj T* (")}) Tj ET`;
-  const objects = [
-    "<< /Type /Catalog /Pages 2 0 R >>",
-    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
-    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
-    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
-    `<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`,
-  ];
-  let offset = "%PDF-1.4\n".length;
-  const xref = ["0000000000 65535 f "];
-  const body = objects
-    .map((object, index) => {
-      xref.push(`${String(offset).padStart(10, "0")} 00000 n `);
-      const entry = `${index + 1} 0 obj\n${object}\nendobj\n`;
-      offset += entry.length;
-      return entry;
-    })
-    .join("");
-  const table = `xref\n0 ${objects.length + 1}\n${xref.join("\n")}\ntrailer << /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${offset}\n%%EOF`;
-  return `%PDF-1.4\n${body}${table}`;
-}
-
-function extensionFor(format: ExportFormat) {
-  return format === "Tailwind" ? "tailwind.config.js" : format === "Tokens" ? "tokens.json" : format.toLowerCase();
 }

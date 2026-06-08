@@ -12,7 +12,7 @@ env:
 
 jobs:
   check:
-    name: Lint, TypeScript, and Build
+    name: Lint, TypeScript, Tests, and Build
     runs-on: ubuntu-latest
 
     steps:
@@ -36,6 +36,9 @@ jobs:
 
       - name: Run TypeScript
         run: npm run typecheck
+
+      - name: Run unit tests with coverage
+        run: npm run test:coverage
 
       - name: Build Next.js
         run: npm run build
