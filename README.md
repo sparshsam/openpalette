@@ -11,7 +11,7 @@
   </p>
 
   <p>
-    <strong>Maturity:</strong> Stable. Core features are shipped and production-ready.
+    <strong>Maturity:</strong> Maintained. Releases, changelog, and issue tracking are active.
   </p>
 
   <p>
@@ -243,6 +243,15 @@ See [docs/performance.md](docs/performance.md) and [docs/testing.md](docs/testin
 - **localStorage limit.** Large libraries may eventually need the planned IndexedDB migration layer.
 - **ASE binary import.** Text exports containing HEX values import today; native binary ASE parsing remains a future parser.
 - **PDF export.** The current palette sheet is intentionally lightweight and dependency-free.
+
+## Ecosystem Role
+
+OpenPalette is a **local-first design-tool** in the Sparsh Sam ecosystem. It fills the role of lightweight, browser-native color infrastructure — complementary to:
+
+- **Chess by Sparsh** — local-first casual gaming (color palette inspiration for UI themes).
+- **OpenScrabble** — local-first word gaming (shares the local-first, no-account design philosophy).
+
+All three repos demonstrate a commitment to privacy-respecting, open-source tooling that runs entirely in the browser without backends, accounts, or telemetry.
 
 ## Workflow
 
