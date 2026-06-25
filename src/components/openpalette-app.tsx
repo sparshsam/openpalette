@@ -60,10 +60,12 @@ export function OpenPaletteApp() {
   const [activeTab, setActiveTab] = useState<Tab>("studio");
   return <div className="mx-auto max-w-7xl px-6 pt-4 pb-20">
     <nav className="flex justify-center mb-6" aria-label="Tabs">
-      <div className="inline-flex gap-0.5 p-1 rounded-full bg-[var(--bg-surface-muted)] overflow-x-auto">
+      <div className="inline-flex gap-0.5 p-1 rounded-full bg-[#fff5fc] dark:bg-[#2d001e] overflow-x-auto shadow-sm">
         {tabs.map((t) => (
           <button key={t.id} className={`rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap transition-all ${
-            activeTab === t.id ? "bg-[var(--accent)] text-[#11000d] shadow-sm" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+            activeTab === t.id
+              ? "bg-[#ff66c4] text-[#1a001a] dark:bg-[#ff85d0] dark:text-[#1a0012] shadow-sm"
+              : "text-[#6b3a5a] dark:text-[#d4a0c0] hover:text-[#3a0d2b] dark:hover:text-[#ffe0f5]"
           }`} type="button" onClick={() => setActiveTab(t.id)}>{t.label}</button>
         ))}
       </div>
