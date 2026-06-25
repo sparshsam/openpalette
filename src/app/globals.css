@@ -3,28 +3,28 @@
 /* ── Design Playbook tokens — pink-accent theme ─── */
 
 :root {
-  --bg-base: #fff5fc;
-  --bg-surface: #fae8f3;
-  --bg-surface-muted: #f0d6e8;
-  --text-primary: #3a0d2b;
-  --text-secondary: #6b3a5a;
-  --text-muted: #8a6a7e;
-  --border-default: rgba(58, 13, 43, 0.06);
+  --bg-base: #ff66c4;
+  --bg-surface: #ff7acc;
+  --bg-surface-muted: #ff8fd5;
+  --text-primary: #1a001a;
+  --text-secondary: #3d003d;
+  --text-muted: #6b3362;
+  --border-default: rgba(26, 0, 26, 0.08);
   --accent: #ff66c4;
   --accent-hover: #ff4db8;
-  --error: #d32f2f;
+  --error: #b00020;
 }
 
 [data-theme="dark"] {
-  --bg-base: #12000d;
-  --bg-surface: #1f0a18;
-  --bg-surface-muted: #2d1424;
+  --bg-base: #1a0012;
+  --bg-surface: #2d001e;
+  --bg-surface-muted: #3d0a28;
   --text-primary: #ffe0f5;
   --text-secondary: #d4a0c0;
-  --text-muted: #8a6a7e;
-  --border-default: rgba(255, 230, 245, 0.06);
-  --accent: #ff66c4;
-  --accent-hover: #ff85d0;
+  --text-muted: #996b8a;
+  --border-default: rgba(255, 224, 245, 0.06);
+  --accent: #ff85d0;
+  --accent-hover: #ff9eda;
   --error: #ff4d4d;
 }
 
@@ -55,7 +55,7 @@ body {
   transition: background 180ms, color 180ms;
 }
 
-::selection { background: var(--accent); color: #fff; }
+::selection { background: #fff; color: #1a001a; }
 
 /* ── All buttons are pills ──────────────────────── */
 
@@ -77,38 +77,38 @@ body {
 .pill:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .pill-primary {
-  background: var(--accent);
-  color: #11000d;
+  background: #fff;
+  color: #1a001a;
 }
 
 .pill-primary:hover:not(:disabled) {
-  background: var(--accent-hover);
+  background: #f0f0f0;
 }
 
 .pill-secondary {
-  background: color-mix(in srgb, var(--accent) 25%, var(--bg-base));
-  color: var(--accent);
+  background: color-mix(in srgb, #fff 20%, transparent);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.15);
 }
 
 .pill-secondary:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--accent) 45%, var(--bg-base));
-  color: #11000d;
+  background: color-mix(in srgb, #fff 35%, transparent);
 }
 
 .pill-danger {
-  background: color-mix(in srgb, var(--error) 12%, transparent);
-  color: var(--error);
-  border: 1px solid color-mix(in srgb, var(--error) 25%, transparent);
+  background: color-mix(in srgb, var(--error) 15%, transparent);
+  color: #fff;
+  border: 1px solid color-mix(in srgb, var(--error) 35%, transparent);
 }
 
 .pill-accent-ghost {
   background: transparent;
-  color: var(--accent);
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.25);
 }
 
 .pill-accent-ghost:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  background: color-mix(in srgb, #fff 12%, transparent);
 }
 
 /* ── Chips / toggle pills ───────────────────────── */
@@ -123,27 +123,27 @@ body {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   background: transparent;
-  color: var(--text-muted);
-  border: 1px solid var(--border-default);
+  color: rgba(255,255,255,0.7);
+  border: 1px solid rgba(255,255,255,0.15);
   cursor: pointer;
   transition: all 140ms;
 }
 
 .chip:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--accent) 15%, transparent);
-  color: var(--accent);
-  border-color: var(--accent);
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  border-color: rgba(255,255,255,0.4);
 }
 
 .chip-active {
-  background: var(--accent);
-  color: #11000d;
+  background: #fff;
+  color: #1a001a;
   border-color: transparent;
 }
 
 .chip-active:hover:not(:disabled) {
-  background: var(--accent-hover);
-  color: #11000d;
+  background: #f0f0f0;
+  color: #1a001a;
 }
 
 /* ── Fields ─────────────────────────────────────── */
@@ -153,14 +153,21 @@ body {
   border-radius: 999px;
   padding: 0.625rem 1rem;
   font-size: 0.875rem;
-  background: var(--bg-surface-muted);
-  color: var(--text-primary);
+  background: rgba(255,255,255,0.2);
+  color: #fff;
   outline: none;
-  border: none;
-  transition: box-shadow 140ms;
+  border: 1px solid rgba(255,255,255,0.15);
+  transition: box-shadow 140ms, border-color 140ms;
 }
 
-.field:focus { box-shadow: 0 0 0 2px var(--accent); }
+.field:focus {
+  border-color: rgba(255,255,255,0.5);
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.2);
+}
+
+.field::placeholder {
+  color: rgba(255,255,255,0.4);
+}
 
 /* ── Swatch actions ─────────────────────────────── */
 
