@@ -78,7 +78,7 @@ body {
 
 .pill-primary {
   background: var(--accent);
-  color: #fff;
+  color: #11000d;
 }
 
 .pill-primary:hover:not(:disabled) {
@@ -86,28 +86,29 @@ body {
 }
 
 .pill-secondary {
-  background: var(--bg-surface-muted);
-  color: var(--text-primary);
-}
-
-.pill-secondary:hover:not(:disabled) {
-  background: var(--accent);
-  color: #fff;
-}
-
-.pill-danger {
-  background: color-mix(in srgb, var(--error) 10%, transparent);
-  color: var(--error);
-  border: 1px solid color-mix(in srgb, var(--error) 20%, transparent);
-}
-
-.pill-accent-ghost {
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  background: color-mix(in srgb, var(--accent) 25%, var(--bg-base));
   color: var(--accent);
 }
 
+.pill-secondary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 45%, var(--bg-base));
+  color: #11000d;
+}
+
+.pill-danger {
+  background: color-mix(in srgb, var(--error) 12%, transparent);
+  color: var(--error);
+  border: 1px solid color-mix(in srgb, var(--error) 25%, transparent);
+}
+
+.pill-accent-ghost {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
 .pill-accent-ghost:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--accent) 25%, transparent);
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
 /* ── Chips / toggle pills ───────────────────────── */
@@ -136,12 +137,13 @@ body {
 
 .chip-active {
   background: var(--accent);
-  color: #fff;
+  color: #11000d;
   border-color: transparent;
 }
 
 .chip-active:hover:not(:disabled) {
   background: var(--accent-hover);
+  color: #11000d;
 }
 
 /* ── Fields ─────────────────────────────────────── */
@@ -226,10 +228,10 @@ body {
 
 .tab-btn-active {
   background: var(--accent);
-  color: #fff;
+  color: #11000d;
 }
 
-.tab-btn-active:hover { background: var(--accent-hover); color: #fff; }
+.tab-btn-active:hover { background: var(--accent-hover); color: #11000d; }
 
 /* ── Section headings ──────────────────────────────── */
 
