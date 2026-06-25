@@ -20,12 +20,6 @@ export function Header() {
         {/* Nav */}
         <nav className="flex items-center gap-1" aria-label="Primary">
           <Link
-            href="/"
-            className="rounded-full px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--bg-surface-muted)] hover:text-[var(--text-primary)] transition-colors"
-          >
-            Studio
-          </Link>
-          <Link
             href="/about"
             className="rounded-full px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--bg-surface-muted)] hover:text-[var(--text-primary)] transition-colors"
           >
