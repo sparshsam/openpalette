@@ -45,7 +45,6 @@ import {
 const paletteStorageKey = "openpalette.current.v1";
 const libraryStorageKey = "openpalette.library.v1";
 const historyStorageKey = "openpalette.history.v1";
-const themeStorageKey = "openpalette.theme";
 const sorts: { label: string; value: LibrarySort }[] = [
   { label: "Recently used", value: "recent" },
   { label: "Brightness", value: "brightness" },
@@ -54,7 +53,6 @@ const sorts: { label: string; value: LibrarySort }[] = [
   { label: "Favorites", value: "favorites" },
 ];
 
-type Theme = "light" | "dark";
 type CurrentState = { colors: PaletteColor[]; mode: PaletteMode };
 
 export function OpenPaletteApp() {
@@ -62,7 +60,6 @@ export function OpenPaletteApp() {
   const [mode, setMode] = useState<PaletteMode>("Analogous");
   const [library, setLibrary] = useState<PaletteRecord[]>([]);
   const [history, setHistory] = useState<PaletteRecord[]>([]);
-  const [theme, setTheme] = useState<Theme>("light");
   const [notice, setNotice] = useState("Ready");
   const [hydrated, setHydrated] = useState(false);
   const [undoStack, setUndoStack] = useState<CurrentState[]>([]);
@@ -100,10 +97,7 @@ export function OpenPaletteApp() {
   const accessibilityScore = useMemo(() => getPaletteAccessibilityScore(paletteHex), [paletteHex]);
   const tokenRows = useMemo(() => tokenPreviewRows(paletteHex), [paletteHex]);
   const shareUrl = useMemo(() => {
-    if (!hydrated) {
-      return "";
-    }
-
+    if (!hydrated) return "";
     const url = new URL(window.location.href);
     url.searchParams.set("palette", encodePaletteState(colors, mode));
     return url.toString();
@@ -115,7 +109,6 @@ export function OpenPaletteApp() {
   const filteredLibrary = useMemo(() => {
     const normalizedQuery = deferredQuery.trim().toLowerCase();
     const normalizedTag = deferredTagFilter.trim().toLowerCase();
-
     return sortPalettes(library, sort).filter((record) => {
       const haystack = [record.name, record.collection, record.mode, record.colors.join(" "), record.tags.join(" ")]
         .join(" ")
@@ -151,13 +144,11 @@ export function OpenPaletteApp() {
     const storedPalette = window.localStorage.getItem(paletteStorageKey);
     const storedLibrary = window.localStorage.getItem(libraryStorageKey);
     const storedHistory = window.localStorage.getItem(historyStorageKey);
-    const storedTheme = window.localStorage.getItem(themeStorageKey) as Theme | null;
     const decoded = shared ? decodePaletteState(shared) : null;
     let nextColors: PaletteColor[] | null = null;
     let nextMode: PaletteMode | null = null;
     let nextLibrary: PaletteRecord[] | null = null;
     let nextHistory: PaletteRecord[] | null = null;
-    let nextTheme: Theme | null = null;
     let nextNotice: string | null = null;
 
     if (decoded) {
@@ -171,103 +162,34 @@ export function OpenPaletteApp() {
           nextColors = parsed.colors;
           nextMode = parsed.mode ?? "Analogous";
         }
-      } catch {
-        window.localStorage.removeItem(paletteStorageKey);
-      }
+      } catch { window.localStorage.removeItem(paletteStorageKey); }
     }
-
     if (storedLibrary) {
-      try {
-        const parsed = JSON.parse(storedLibrary) as PaletteRecord[];
-        if (Array.isArray(parsed)) {
-          nextLibrary = parsed;
-        }
-      } catch {
-        window.localStorage.removeItem(libraryStorageKey);
-      }
+      try { const parsed = JSON.parse(storedLibrary) as PaletteRecord[]; if (Array.isArray(parsed)) nextLibrary = parsed; }
+      catch { window.localStorage.removeItem(libraryStorageKey); }
     }
-
     if (storedHistory) {
-      try {
-        const parsed = JSON.parse(storedHistory) as PaletteRecord[];
-        if (Array.isArray(parsed)) {
-          nextHistory = parsed;
-        }
-      } catch {
-        window.localStorage.removeItem(historyStorageKey);
-      }
+      try { const parsed = JSON.parse(storedHistory) as PaletteRecord[]; if (Array.isArray(parsed)) nextHistory = parsed; }
+      catch { window.localStorage.removeItem(historyStorageKey); }
     }
-
-    if (storedTheme === "light" || storedTheme === "dark") {
-      nextTheme = storedTheme;
-    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      nextTheme = "dark";
-    }
-
     window.queueMicrotask(() => {
-      if (nextColors) {
-        setColors(nextColors);
-      }
-
-      if (nextMode) {
-        setMode(nextMode);
-      }
-
-      if (nextLibrary) {
-        setLibrary(nextLibrary);
-      }
-
-      if (nextHistory) {
-        setHistory(nextHistory);
-      }
-
-      if (nextTheme) {
-        setTheme(nextTheme);
-      }
-
-      if (nextNotice) {
-        announce(nextNotice);
-      }
-
+      if (nextColors) setColors(nextColors);
+      if (nextMode) setMode(nextMode);
+      if (nextLibrary) setLibrary(nextLibrary);
+      if (nextHistory) setHistory(nextHistory);
+      if (nextNotice) announce(nextNotice);
       setHydrated(true);
     });
   }, [announce]);
 
-  useEffect(() => {
-    if (!hydrated) {
-      return;
-    }
-
-    window.localStorage.setItem(paletteStorageKey, JSON.stringify({ colors, mode }));
-  }, [colors, hydrated, mode]);
-
-  useEffect(() => {
-    if (hydrated) {
-      window.localStorage.setItem(libraryStorageKey, JSON.stringify(library));
-    }
-  }, [hydrated, library]);
-
-  useEffect(() => {
-    if (hydrated) {
-      window.localStorage.setItem(historyStorageKey, JSON.stringify(history));
-    }
-  }, [history, hydrated]);
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    if (hydrated) {
-      window.localStorage.setItem(themeStorageKey, theme);
-    }
-  }, [hydrated, theme]);
+  useEffect(() => { if (hydrated) window.localStorage.setItem(paletteStorageKey, JSON.stringify({ colors, mode })); }, [colors, hydrated, mode]);
+  useEffect(() => { if (hydrated) window.localStorage.setItem(libraryStorageKey, JSON.stringify(library)); }, [hydrated, library]);
+  useEffect(() => { if (hydrated) window.localStorage.setItem(historyStorageKey, JSON.stringify(history)); }, [history, hydrated]);
 
   useEffect(() => {
     const canvas = gradientCanvasRef.current;
     const context = canvas?.getContext("2d");
-
-    if (!canvas || !context) {
-      return;
-    }
-
+    if (!canvas || !context) return;
     drawGradient(context, canvas.width, canvas.height, paletteHex, gradientKind, gradientAngle);
   }, [gradientAngle, gradientKind, paletteHex]);
 
@@ -275,1055 +197,490 @@ export function OpenPaletteApp() {
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
       const isEditing = target?.tagName === "INPUT" || target?.tagName === "TEXTAREA" || target?.isContentEditable;
-
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault();
-        setCommandOpen((open) => !open);
-        return;
-      }
-
-      if (event.key === "Escape") {
-        setCommandOpen(false);
-        setHelpOpen(false);
-      }
-
-      if (isEditing) {
-        return;
-      }
-
-      if (event.code === "Space") {
-        event.preventDefault();
-        generate();
-      }
-
-      if (event.key.toLowerCase() === "u") {
-        event.preventDefault();
-        undo();
-      }
-
-      if (event.key.toLowerCase() === "s") {
-        event.preventDefault();
-        savePalette();
-      }
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") { event.preventDefault(); setCommandOpen((open) => !open); return; }
+      if (event.key === "Escape") { setCommandOpen(false); setHelpOpen(false); }
+      if (isEditing) return;
+      if (event.code === "Space") { event.preventDefault(); generate(); }
+      if (event.key.toLowerCase() === "u") { event.preventDefault(); undo(); }
+      if (event.key.toLowerCase() === "s") { event.preventDefault(); savePalette(); }
     };
-
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   });
 
-  function generate() {
-    setPalette(generatePalette(colors, mode, colors.length), mode, `${mode} palette generated`);
-  }
-
+  function generate() { setPalette(generatePalette(colors, mode, colors.length), mode, `${mode} palette generated`); }
   function undo() {
     setUndoStack((stack) => {
       const [previous, ...rest] = stack;
-
-      if (!previous) {
-        announce("Nothing to undo");
-        return stack;
-      }
-
-      setColors(previous.colors);
-      setMode(previous.mode);
-      announce("Restored previous palette");
+      if (!previous) { announce("Nothing to undo"); return stack; }
+      setColors(previous.colors); setMode(previous.mode); announce("Restored previous palette");
       return rest;
     });
   }
-
   function savePalette() {
     const record = createRecord(colors, mode, `Palette ${library.length + 1}`, true);
     setLibrary((current) => [record, ...current.filter((item) => paletteSignature(item.colors) !== paletteSignature(record.colors))]);
     announce(duplicateExists ? "Duplicate updated in library" : "Palette saved locally");
   }
-
-  function updateHex(id: string, value: string) {
-    setColors((current) =>
-      current.map((color) => (color.id === id ? { ...color, hex: normalizeHex(value) ?? value.toUpperCase() } : color)),
-    );
-  }
-
+  function updateHex(id: string, value: string) { setColors((current) => current.map((color) => (color.id === id ? { ...color, hex: normalizeHex(value) ?? value.toUpperCase() } : color))); }
   function updateFromHsl(id: string, channel: "h" | "s" | "l", value: number) {
-    setColors((current) =>
-      current.map((color) => {
-        if (color.id !== id) {
-          return color;
-        }
-
-        const hsl = hexToHsl(color.hex);
-        return { ...color, hex: hslToHex(channel === "h" ? value : hsl.h, channel === "s" ? value : hsl.s, channel === "l" ? value : hsl.l) };
-      }),
-    );
-  }
-
-  function updateFromRgb(id: string, channel: "r" | "g" | "b", value: number) {
-    setColors((current) =>
-      current.map((color) => {
-        if (color.id !== id) {
-          return color;
-        }
-
-        const rgb = hexToRgb(color.hex);
-        return { ...color, hex: rgbToHex({ ...rgb, [channel]: value }) };
-      }),
-    );
-  }
-
-  function updateAlpha(id: string, alpha: number) {
-    setColors((current) => current.map((color) => (color.id === id ? { ...color, alpha } : color)));
-  }
-
-  function toggleLock(id: string) {
-    setColors((current) => current.map((color) => (color.id === id ? { ...color, locked: !color.locked } : color)));
-  }
-
-  function setPaletteSize(size: number) {
-    setPalette(resizePalette(colors, size, mode), mode, `${size} color palette`);
-  }
-
-  function addColor() {
-    setPaletteSize(colors.length + 1);
-  }
-
-  function removeColor(id: string) {
-    if (colors.length <= minPaletteSize) {
-      announce("Minimum palette size reached");
-      return;
-    }
-
-    setPalette(colors.filter((color) => color.id !== id), mode, "Color removed");
-  }
-
-  function switchMode(nextMode: PaletteMode) {
-    setPalette(generatePalette(colors, nextMode, colors.length), nextMode, `${nextMode} mode`);
-  }
-
-  function importPalette() {
-    const parsed = parsePaletteInput(importText);
-
-    if (parsed.length < minPaletteSize) {
-      announce("Import needs at least two HEX colors");
-      return;
-    }
-
-    setPalette(createPalette(parsed, parsed.length), mode, `Imported ${parsed.length} colors`);
-  }
-
-  function loadRecord(record: PaletteRecord) {
-    const nextColors = createPalette(record.colors, record.colors.length).map((color, index) => ({
-      ...color,
-      alpha: record.alphas[index] ?? 100,
+    setColors((current) => current.map((color) => {
+      if (color.id !== id) return color;
+      const hsl = hexToHsl(color.hex);
+      return { ...color, hex: hslToHex(channel === "h" ? value : hsl.h, channel === "s" ? value : hsl.s, channel === "l" ? value : hsl.l) };
     }));
+  }
+  function updateFromRgb(id: string, channel: "r" | "g" | "b", value: number) {
+    setColors((current) => current.map((color) => {
+      if (color.id !== id) return color;
+      const rgb = hexToRgb(color.hex);
+      return { ...color, hex: rgbToHex({ ...rgb, [channel]: value }) };
+    }));
+  }
+  function updateAlpha(id: string, alpha: number) { setColors((current) => current.map((color) => (color.id === id ? { ...color, alpha } : color))); }
+  function toggleLock(id: string) { setColors((current) => current.map((color) => (color.id === id ? { ...color, locked: !color.locked } : color))); }
+  function setPaletteSize(size: number) { setPalette(resizePalette(colors, size, mode), mode, `${size} color palette`); }
+  function addColor() { setPaletteSize(colors.length + 1); }
+  function removeColor(id: string) { if (colors.length <= minPaletteSize) { announce("Minimum palette size reached"); return; } setPalette(colors.filter((color) => color.id !== id), mode, "Color removed"); }
+  function switchMode(nextMode: PaletteMode) { setPalette(generatePalette(colors, nextMode, colors.length), nextMode, `${nextMode} mode`); }
+  function importPalette() { const parsed = parsePaletteInput(importText); if (parsed.length < minPaletteSize) { announce("Import needs at least two HEX colors"); return; } setPalette(createPalette(parsed, parsed.length), mode, `Imported ${parsed.length} colors`); }
+  function loadRecord(record: PaletteRecord) {
+    const nextColors = createPalette(record.colors, record.colors.length).map((color, index) => ({ ...color, alpha: record.alphas[index] ?? 100 }));
     setPalette(nextColors, record.mode, `${record.name} loaded`);
     setLibrary((current) => current.map((item) => (item.id === record.id ? { ...item, usedAt: new Date().toISOString() } : item)));
   }
-
-  function updateRecord(id: string, update: Partial<PaletteRecord>) {
-    setLibrary((current) =>
-      current.map((record) => (record.id === id ? { ...record, ...update, updatedAt: new Date().toISOString() } : record)),
-    );
-  }
-
-  async function copyText(value: string, label: string) {
-    try {
-      await navigator.clipboard.writeText(value);
-      announce(`${label} copied`);
-    } catch {
-      announce("Copy failed");
-    }
-  }
-
-  function downloadText(filename: string, content: string, type = "text/plain") {
-    const url = URL.createObjectURL(new Blob([content], { type }));
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = filename;
-    anchor.click();
-    URL.revokeObjectURL(url);
-    announce(`${filename} downloaded`);
-  }
-
+  function updateRecord(id: string, update: Partial<PaletteRecord>) { setLibrary((current) => current.map((record) => (record.id === id ? { ...record, ...update, updatedAt: new Date().toISOString() } : record))); }
+  async function copyText(value: string, label: string) { try { await navigator.clipboard.writeText(value); announce(`${label} copied`); } catch { announce("Copy failed"); } }
+  function downloadText(filename: string, content: string, type = "text/plain") { const url = URL.createObjectURL(new Blob([content], { type })); const anchor = document.createElement("a"); anchor.href = url; anchor.download = filename; anchor.click(); URL.revokeObjectURL(url); announce(`${filename} downloaded`); }
   function downloadPng(filename: string, variant: "swatches" | "gradient") {
-    const canvas = document.createElement("canvas");
-    canvas.width = 1400;
-    canvas.height = 840;
-    const context = canvas.getContext("2d");
-
-    if (!context) {
-      announce("PNG export failed");
-      return;
-    }
-
-    if (variant === "gradient") {
-      drawGradient(context, canvas.width, canvas.height, paletteHex, gradientKind, gradientAngle);
-    } else {
-      drawSwatches(context, canvas.width, canvas.height, paletteHex);
-    }
-
-    canvas.toBlob((blob) => {
-      if (!blob) {
-        announce("PNG export failed");
-        return;
-      }
-
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = filename;
-      anchor.click();
-      URL.revokeObjectURL(url);
-      announce(`${filename} downloaded`);
-    });
+    const canvas = document.createElement("canvas"); canvas.width = 1400; canvas.height = 840; const context = canvas.getContext("2d");
+    if (!context) { announce("PNG export failed"); return; }
+    if (variant === "gradient") drawGradient(context, canvas.width, canvas.height, paletteHex, gradientKind, gradientAngle);
+    else drawSwatches(context, canvas.width, canvas.height, paletteHex);
+    canvas.toBlob((blob) => { if (!blob) { announce("PNG export failed"); return; } const url = URL.createObjectURL(blob); const anchor = document.createElement("a"); anchor.href = url; anchor.download = filename; anchor.click(); URL.revokeObjectURL(url); announce(`${filename} downloaded`); });
   }
-
-  function downloadPdf() {
-    downloadText("openpalette-sheet.pdf", createSimplePdf(paletteHex), "application/pdf");
-  }
-
+  function downloadPdf() { downloadText("openpalette-sheet.pdf", createSimplePdf(paletteHex), "application/pdf"); }
   async function extractFromImage(file: File | null) {
-    if (!file) {
-      return;
-    }
-
+    if (!file) return;
     try {
-      const bitmap = await createImageBitmap(file);
-      const canvas = document.createElement("canvas");
-      const context = canvas.getContext("2d", { willReadFrequently: true });
-
-      if (!context) {
-        announce("Image extraction unavailable");
-        return;
-      }
-
-      const maxSide = 180;
-      const scale = Math.min(maxSide / bitmap.width, maxSide / bitmap.height, 1);
-      canvas.width = Math.max(1, Math.round(bitmap.width * scale));
-      canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+      const bitmap = await createImageBitmap(file); const canvas = document.createElement("canvas"); const context = canvas.getContext("2d", { willReadFrequently: true });
+      if (!context) { announce("Image extraction unavailable"); return; }
+      const maxSide = 180; const scale = Math.min(maxSide / bitmap.width, maxSide / bitmap.height, 1);
+      canvas.width = Math.max(1, Math.round(bitmap.width * scale)); canvas.height = Math.max(1, Math.round(bitmap.height * scale));
       context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-
       const extracted = extractPaletteFromPixels(context.getImageData(0, 0, canvas.width, canvas.height).data, extractionCount, extractionMode);
-      if (extracted.length >= minPaletteSize) {
-        setPalette(createPalette(extracted, extracted.length), "Random", `Extracted ${extracted.length} image colors`);
-      } else {
-        announce("No usable colors found");
-      }
-    } catch {
-      announce("Image extraction failed");
-    }
+      if (extracted.length >= minPaletteSize) setPalette(createPalette(extracted, extracted.length), "Random", `Extracted ${extracted.length} image colors`); else announce("No usable colors found");
+    } catch { announce("Image extraction failed"); }
   }
 
   return (
-    <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] transition-colors">
-      <div className="mx-auto flex min-h-screen w-full max-w-[1500px] flex-col px-4 py-4 sm:px-6 lg:px-8">
-        <header className="sticky top-0 z-30 -mx-4 border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--background)_88%,transparent)] px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-          <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-            <a href="#studio" className="inline-flex items-center gap-3">
-              <span className="grid size-10 place-items-center rounded-lg bg-[var(--foreground)] text-sm font-bold text-[var(--background)]">
-                OP
-              </span>
-              <span>
-                <span className="block text-xl font-semibold tracking-tight">OpenPalette</span>
-                <span className="block text-sm text-[var(--muted)]">Local-first color systems for design tools.</span>
-              </span>
-            </a>
-            <nav className="flex flex-wrap items-center gap-2 text-sm" aria-label="Primary actions">
-              <button className="button button-secondary" type="button" onClick={() => setCommandOpen(true)}>
-                Command
-              </button>
-              <button className="button button-secondary" disabled={undoStack.length === 0} type="button" onClick={undo}>
-                Undo
-              </button>
-              <button className="button button-secondary" type="button" onClick={savePalette}>
-                Save
-              </button>
-              <button className="button button-secondary" type="button" onClick={() => copyText(shareUrl, "Share URL")}>
-                Share URL
-              </button>
-              <button className="button button-secondary" type="button" onClick={() => setHelpOpen((open) => !open)}>
-                Shortcuts
-              </button>
-              <button
-                aria-pressed={theme === "dark"}
-                className="button button-secondary"
-                type="button"
-                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-              >
-                {theme === "light" ? "Dark" : "Light"}
-              </button>
-              <button className="button button-primary" type="button" onClick={generate}>
-                Generate
-              </button>
-            </nav>
+    <div className="mx-auto max-w-7xl px-6">
+      {/* ── HERO: Toolbar + actions on the canvas ── */}
+      <section className="pt-16 sm:pt-24 pb-6">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight">
+              Palette Studio
+            </h1>
+            <p className="mt-2 text-sm text-[var(--text-secondary)] max-w-lg">
+              Generate color systems, lock decisions, edit channels, extract from
+              images, and export as tokens. Everything happens in your browser.
+            </p>
           </div>
-        </header>
-
-        {helpOpen ? <HelpPanel onClose={() => setHelpOpen(false)} /> : null}
-        {commandOpen ? (
-          <CommandPalette
-            onClose={() => setCommandOpen(false)}
-            onGenerate={generate}
-            onSave={savePalette}
-            onShare={() => copyText(shareUrl, "Share URL")}
-            onTheme={() => setTheme(theme === "light" ? "dark" : "light")}
-          />
-        ) : null}
-
-        <section className="grid min-w-0 flex-1 gap-5 py-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(360px,0.75fr)]" id="studio">
-          <div className="min-w-0 space-y-5">
-            <section className="panel overflow-hidden">
-              <div className="flex flex-col gap-4 border-b border-[var(--border)] p-4 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                  <h1 className="text-2xl font-semibold tracking-tight">Palette studio</h1>
-                  <p className="text-sm text-[var(--muted)]">
-                    Generate 2-10 color systems, lock decisions, edit channels, export tokens, and preview locally.
-                  </p>
-                </div>
-                <p aria-live="polite" className="status-pill" role="status">
-                  {notice}
-                </p>
-              </div>
-
-              <div className="grid items-start gap-3 border-b border-[var(--border)] p-4 lg:grid-cols-[1fr_220px_170px]">
-                <div className="flex flex-wrap gap-2" aria-label="Palette harmony modes">
-                  {paletteModes.map((paletteMode) => (
-                    <button
-                      aria-pressed={mode === paletteMode}
-                      className={`chip ${mode === paletteMode ? "chip-active" : ""}`}
-                      key={paletteMode}
-                      type="button"
-                      onClick={() => switchMode(paletteMode)}
-                    >
-                      {paletteMode}
-                    </button>
-                  ))}
-                </div>
-                <label className="control-label">
-                  Palette size: {colors.length}
-                  <input
-                    min={minPaletteSize}
-                    max={maxPaletteSize}
-                    type="range"
-                    value={colors.length}
-                    onChange={(event) => setPaletteSize(Number(event.target.value))}
-                  />
-                </label>
-                <div className="grid grid-cols-2 gap-2 self-end">
-                  <button className="button button-secondary" disabled={colors.length <= minPaletteSize} type="button" onClick={() => setPaletteSize(colors.length - 1)}>
-                    Remove
-                  </button>
-                  <button className="button button-secondary" disabled={colors.length >= maxPaletteSize} type="button" onClick={addColor}>
-                    Add
-                  </button>
-                </div>
-                <div className="lg:col-span-3">
-                  <button
-                    aria-expanded={advancedOpen}
-                    className="button button-secondary w-full justify-between gap-2"
-                    type="button"
-                    onClick={() => setAdvancedOpen((open) => !open)}
-                  >
-                    Advanced channel editing
-                    <span className="text-[var(--muted)]">{advancedOpen ? "Shown" : "Hidden"}</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="palette-grid" style={{ gridTemplateColumns: `repeat(${Math.min(colors.length, 5)}, minmax(0, 1fr))` }}>
-                {colors.map((color, index) => {
-                  const normalizedHex = normalizeHex(color.hex) ?? "#111827";
-                  const simulatedHex = simulateVision(normalizedHex, visionMode);
-                  const textColor = getReadableTextColor(simulatedHex);
-                  const hint = contrastHints[index];
-                  const hsl = hexToHsl(normalizedHex);
-                  const rgb = hexToRgb(normalizedHex);
-
-                  return (
-                    <article
-                      className="group flex min-h-[330px] flex-col justify-between p-4"
-                      key={color.id}
-                      style={{ backgroundColor: simulatedHex, color: textColor }}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="rounded-full bg-black/15 px-3 py-1 text-xs font-semibold backdrop-blur">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
-                        <div className="flex gap-2">
-                          <button className="swatch-action" type="button" onClick={() => toggleLock(color.id)}>
-                            {color.locked ? "Locked" : "Lock"}
-                          </button>
-                          <button className="swatch-action" disabled={colors.length <= minPaletteSize} type="button" onClick={() => removeColor(color.id)}>
-                            -
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="space-y-3 rounded-xl bg-black/15 p-3 backdrop-blur">
-                        <input
-                          aria-label={`Visual color picker for color ${index + 1}`}
-                          className="h-10 w-full cursor-pointer rounded-lg border border-white/40 bg-transparent"
-                          type="color"
-                          value={normalizedHex}
-                          onChange={(event) => updateHex(color.id, event.target.value)}
-                        />
-                        <label className="block">
-                          <span className="text-xs font-semibold uppercase tracking-[0.16em]">HEX</span>
-                          <input
-                            className="mt-1 w-full rounded-lg border border-white/30 bg-white/20 px-3 py-2 font-mono text-base font-semibold uppercase outline-none focus:border-white"
-                            value={color.hex}
-                            spellCheck={false}
-                            onBlur={() => updateHex(color.id, color.hex)}
-                            onChange={(event) => updateHex(color.id, event.target.value)}
-                          />
-                        </label>
-                        {advancedOpen ? (
-                          <>
-                            <div className="grid grid-cols-3 gap-2">
-                              {(["h", "s", "l"] as const).map((channel) => (
-                                <label className="mini-field" key={channel}>
-                                  {channel.toUpperCase()}
-                                  <input
-                                    max={channel === "h" ? 360 : 100}
-                                    min={0}
-                                    type="number"
-                                    value={hsl[channel]}
-                                    onChange={(event) => updateFromHsl(color.id, channel, Number(event.target.value))}
-                                  />
-                                </label>
-                              ))}
-                            </div>
-                            <div className="grid grid-cols-3 gap-2">
-                              {(["r", "g", "b"] as const).map((channel) => (
-                                <label className="mini-field" key={channel}>
-                                  {channel.toUpperCase()}
-                                  <input
-                                    max={255}
-                                    min={0}
-                                    type="number"
-                                    value={rgb[channel]}
-                                    onChange={(event) => updateFromRgb(color.id, channel, Number(event.target.value))}
-                                  />
-                                </label>
-                              ))}
-                            </div>
-                          </>
-                        ) : null}
-                        <label className="control-label text-current">
-                          Alpha {color.alpha}%
-                          <input
-                            min={0}
-                            max={100}
-                            type="range"
-                            value={color.alpha}
-                            onChange={(event) => updateAlpha(color.id, Number(event.target.value))}
-                          />
-                        </label>
-                        <div className="grid grid-cols-2 gap-2 text-xs">
-                          <button className="swatch-action" type="button" onClick={() => copyText(normalizedHex, "HEX")}>
-                            HEX
-                          </button>
-                          <button className="swatch-action" type="button" onClick={() => copyText(`rgb(${rgb.r} ${rgb.g} ${rgb.b} / ${color.alpha}%)`, "RGB")}>
-                            RGB
-                          </button>
-                          <button className="swatch-action" type="button" onClick={() => copyText(`hsl(${hsl.h} ${hsl.s}% ${hsl.l}% / ${color.alpha}%)`, "HSL")}>
-                            HSL
-                          </button>
-                          <button className="swatch-action" type="button" onClick={() => copyText(`--color-${index + 1}: ${normalizedHex};`, "Variable")}>
-                            Var
-                          </button>
-                        </div>
-                        <p className="text-xs font-semibold">
-                          {hint.rating} contrast · {hint.ratio.toFixed(2)} with {hint.bestTextColor === "#000000" ? "black" : "white"} text
-                        </p>
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-            </section>
-
-            <section className="grid gap-5 lg:grid-cols-2">
-              <GradientPanel
-                angle={gradientAngle}
-                canvasRef={gradientCanvasRef}
-                css={gradientCss}
-                kind={gradientKind}
-                svg={gradientSvg}
-                onAngle={setGradientAngle}
-                onCopy={copyText}
-                onDownloadPng={() => downloadPng("openpalette-gradient.png", "gradient")}
-                onDownloadSvg={() => downloadText("openpalette-gradient.svg", gradientSvg, "image/svg+xml")}
-                onKind={setGradientKind}
-              />
-              <ImportImagePanel
-                extractionCount={extractionCount}
-                extractionMode={extractionMode}
-                importText={importText}
-                onExtract={extractFromImage}
-                onImport={importPalette}
-                onImportText={setImportText}
-                onMode={setExtractionMode}
-                onCount={setExtractionCount}
-              />
-            </section>
-
-            <VisualizerPanel active={visualizer} colors={paletteHex} gradient={gradientCss} onActive={setVisualizer} />
-            <DesignSystemPanel tokenRows={tokenRows} />
-            <AccessibilityPanel
-              colors={paletteHex}
-              pairContrasts={pairContrasts}
-              score={accessibilityScore}
-              visionMode={visionMode}
-              onVisionMode={setVisionMode}
-            />
+          <div className="flex flex-wrap items-center gap-2">
+            <button className="pill pill-secondary" type="button" onClick={() => setCommandOpen(true)}>
+              Command
+            </button>
+            <button className="pill pill-secondary" disabled={undoStack.length === 0} type="button" onClick={undo}>
+              Undo
+            </button>
+            <button className="pill pill-secondary" type="button" onClick={savePalette}>
+              Save
+            </button>
+            <button className="pill pill-secondary" type="button" onClick={() => copyText(shareUrl, "Share URL")}>
+              Share
+            </button>
+            <button className="pill pill-secondary" type="button" onClick={() => setHelpOpen((open) => !open)}>
+              Shortcuts
+            </button>
+            <button className="pill pill-primary" type="button" onClick={generate}>
+              Generate
+            </button>
+            <span aria-live="polite" role="status" className="text-xs text-[var(--text-muted)] ml-1">
+              {notice}
+            </span>
           </div>
+        </div>
+      </section>
 
-          <aside className="min-w-0 space-y-5">
-            <section className="panel p-4">
-              <div className="flex items-center justify-between gap-3">
-                <h2 className="section-title">Current palette</h2>
-                <span className={`status-pill ${duplicateExists ? "border-amber-500 text-amber-700" : ""}`}>
-                  {duplicateExists ? "Duplicate" : `${accessibilityScore}/100`}
-                </span>
-              </div>
-              <div className="mt-4 space-y-3">
-                {paletteHex.map((hex, index) => (
-                  <button
-                    aria-label={`Copy ${hex}`}
-                    className="flex w-full items-center gap-3 rounded-lg border border-[var(--border)] p-2 text-left transition hover:bg-[var(--subtle)]"
-                    key={`${hex}-${index}`}
-                    type="button"
-                    onClick={() => copyText(hex, hex)}
-                  >
-                    <span className="size-10 rounded-md border border-black/10" style={{ backgroundColor: hex }} />
-                    <span>
-                      <span className="block font-mono text-sm font-semibold">{hex}</span>
-                      <span className="block text-xs text-[var(--muted)]">Alpha {paletteAlphas[index]}% · {mode}</span>
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </section>
-
-            <section className="panel p-4">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <h2 className="section-title">Exports</h2>
-                <button className="button button-primary" type="button" onClick={() => copyText(exportSnippets[activeExportFormat], `${activeExportFormat} export`)}>
-                  Copy
-                </button>
-              </div>
-              <div className="mt-4 flex flex-wrap gap-2" role="tablist" aria-label="Export formats">
-                {exportFormats.map((format) => (
-                  <button
-                    aria-selected={activeExportFormat === format}
-                    className={`chip ${activeExportFormat === format ? "chip-active" : ""}`}
-                    key={format}
-                    role="tab"
-                    type="button"
-                    onClick={() => setActiveExportFormat(format)}
-                  >
-                    {format}
-                  </button>
-                ))}
-              </div>
-              <pre className="mt-4 max-h-72 overflow-auto rounded-lg bg-[var(--subtle)] p-3 text-xs leading-5">
-                <code>{exportSnippets[activeExportFormat]}</code>
-              </pre>
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                <button className="button button-secondary" type="button" onClick={() => downloadText(`openpalette.${extensionFor(activeExportFormat)}`, exportSnippets[activeExportFormat])}>
-                  Download
-                </button>
-                <button className="button button-secondary" type="button" onClick={() => downloadPng("openpalette-swatches.png", "swatches")}>
-                  PNG
-                </button>
-                <button className="button button-secondary" type="button" onClick={downloadPdf}>
-                  PDF sheet
-                </button>
-                <button className="button button-secondary" type="button" onClick={() => downloadText("openpalette.svg", exportSnippets.SVG, "image/svg+xml")}>
-                  SVG
-                </button>
-              </div>
-            </section>
-
-            <LibraryPanel
-              history={history}
-              library={filteredLibrary}
-              rawCount={library.length}
-              query={query}
-              sort={sort}
-              tagFilter={tagFilter}
-              onDelete={(id) => setLibrary((current) => current.filter((record) => record.id !== id))}
-              onFavorite={(record) => updateRecord(record.id, { favorite: !record.favorite })}
-              onLoad={loadRecord}
-              onQuery={setQuery}
-              onRename={(record, name) => updateRecord(record.id, { name })}
-              onSort={setSort}
-              onTagFilter={setTagFilter}
-              onTags={(record, tags) =>
-                updateRecord(record.id, {
-                  tags: tags
-                    .split(",")
-                    .map((tag) => tag.trim())
-                    .filter(Boolean),
-                })
-              }
-            />
-          </aside>
+      {helpOpen && (
+        <section className="pb-6 max-w-lg" aria-label="Keyboard shortcuts">
+          <div className="border-t border-[var(--border-default)] pt-6">
+            <h2 className="text-xs font-bold tracking-wider uppercase text-[var(--text-muted)]">
+              Keyboard shortcuts
+            </h2>
+            <dl className="mt-3 grid gap-4 sm:grid-cols-4">
+              <div><dt className="font-mono text-xs font-semibold uppercase text-[var(--text-muted)]">Space</dt><dd className="mt-0.5 text-sm">Generate unlocked colors</dd></div>
+              <div><dt className="font-mono text-xs font-semibold uppercase text-[var(--text-muted)]">U</dt><dd className="mt-0.5 text-sm">Undo</dd></div>
+              <div><dt className="font-mono text-xs font-semibold uppercase text-[var(--text-muted)]">S</dt><dd className="mt-0.5 text-sm">Save palette</dd></div>
+              <div><dt className="font-mono text-xs font-semibold uppercase text-[var(--text-muted)]">Ctrl+K</dt><dd className="mt-0.5 text-sm">Command palette</dd></div>
+            </dl>
+          </div>
         </section>
-      </div>
-    </main>
-  );
-}
+      )}
 
-function GradientPanel({
-  angle,
-  canvasRef,
-  css,
-  kind,
-  svg,
-  onAngle,
-  onCopy,
-  onDownloadPng,
-  onDownloadSvg,
-  onKind,
-}: {
-  angle: number;
-  canvasRef: React.RefObject<HTMLCanvasElement | null>;
-  css: string;
-  kind: GradientKind;
-  svg: string;
-  onAngle: (angle: number) => void;
-  onCopy: (value: string, label: string) => void;
-  onDownloadPng: () => void;
-  onDownloadSvg: () => void;
-  onKind: (kind: GradientKind) => void;
-}) {
-  return (
-    <section className="panel p-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="section-title">Gradient generator</h2>
+      {/* ── COMMAND PALETTE ── */}
+      {commandOpen && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" role="dialog" aria-modal="true">
+          <div className="mx-auto mt-24 max-w-lg rounded-2xl bg-[var(--bg-surface)] p-4 shadow-xl">
+            <div className="flex items-center justify-between px-2 pb-2">
+              <h2 className="text-xs font-bold tracking-wider uppercase text-[var(--text-muted)]">Command palette</h2>
+              <button className="pill pill-secondary text-xs" type="button" onClick={() => setCommandOpen(false)}>Esc</button>
+            </div>
+            <div className="space-y-1">
+              {[
+                ["Generate palette", generate],
+                ["Save locally", savePalette],
+                ["Copy share URL", () => copyText(shareUrl, "Share URL")],
+              ].map(([label, action]) => (
+                <button key={label as string} className="flex w-full rounded-xl px-3 py-3 text-left text-sm font-semibold hover:bg-[var(--bg-surface-muted)]" type="button" onClick={() => { (action as () => void)(); setCommandOpen(false); }}>{label as string}</button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── HARMONY MODES + PALETTE CONTROLS (data strip) ── */}
+      <div className="data-strip mb-10">
+        <div className="flex flex-wrap gap-1.5">
+          {paletteModes.map((paletteMode) => (
+            <button key={paletteMode} className={`chip ${mode === paletteMode ? "chip-active" : ""}`} type="button" onClick={() => switchMode(paletteMode)}>
+              {paletteMode}
+            </button>
+          ))}
+        </div>
+        <label className="flex items-center gap-3 text-xs font-semibold text-[var(--text-muted)]">
+          Size: {colors.length}
+          <input className="w-20" min={minPaletteSize} max={maxPaletteSize} type="range" value={colors.length} onChange={(e) => setPaletteSize(Number(e.target.value))} />
+        </label>
         <div className="flex gap-2">
-          {(["linear", "radial"] as const).map((item) => (
-            <button className={`chip ${kind === item ? "chip-active" : ""}`} key={item} type="button" onClick={() => onKind(item)}>
-              {item}
-            </button>
-          ))}
+          <button className="pill pill-secondary text-xs" disabled={colors.length <= minPaletteSize} type="button" onClick={() => setPaletteSize(colors.length - 1)}>−</button>
+          <button className="pill pill-secondary text-xs" disabled={colors.length >= maxPaletteSize} type="button" onClick={addColor}>+</button>
         </div>
-      </div>
-      <canvas ref={canvasRef} className="mt-4 h-48 w-full rounded-lg border border-[var(--border)]" width={900} height={420} />
-      <label className="control-label mt-4">
-        Angle {angle}deg
-        <input disabled={kind === "radial"} max={360} min={0} type="range" value={angle} onChange={(event) => onAngle(Number(event.target.value))} />
-      </label>
-      <pre className="mt-3 max-h-32 overflow-auto rounded-lg bg-[var(--subtle)] p-3 text-xs">
-        <code>{css}</code>
-      </pre>
-      <div className="mt-3 grid grid-cols-3 gap-2">
-        <button className="button button-secondary" type="button" onClick={() => onCopy(css, "CSS gradient")}>
-          CSS
-        </button>
-        <button className="button button-secondary" type="button" onClick={() => onCopy(svg, "SVG gradient")}>
-          SVG
-        </button>
-        <button className="button button-secondary" type="button" onClick={onDownloadPng}>
-          PNG
+        <button className="pill pill-accent-ghost text-xs" type="button" onClick={() => setAdvancedOpen((o) => !o)}>
+          {advancedOpen ? "Hide channels" : "Channels"}
         </button>
       </div>
-      <button className="button button-secondary mt-2 w-full" type="button" onClick={onDownloadSvg}>
-        Download SVG gradient
-      </button>
-    </section>
-  );
-}
 
-function ImportImagePanel({
-  extractionCount,
-  extractionMode,
-  importText,
-  onCount,
-  onExtract,
-  onImport,
-  onImportText,
-  onMode,
-}: {
-  extractionCount: number;
-  extractionMode: "balanced" | "vibrant" | "muted";
-  importText: string;
-  onCount: (count: number) => void;
-  onExtract: (file: File | null) => void;
-  onImport: () => void;
-  onImportText: (text: string) => void;
-  onMode: (mode: "balanced" | "vibrant" | "muted") => void;
-}) {
-  return (
-    <section className="panel p-4">
-      <h2 className="section-title">Import and image extraction</h2>
-      <textarea
-        className="mt-4 min-h-28 w-full rounded-lg border border-[var(--border)] bg-[var(--background)] p-3 font-mono text-sm outline-none focus:border-[var(--foreground)]"
-        placeholder="Paste HEX lists, JSON, Tailwind colors, CSS variables, or a shared URL palette parameter."
-        value={importText}
-        onChange={(event) => onImportText(event.target.value)}
-      />
-      <button className="button button-primary mt-3 w-full" type="button" onClick={onImport}>
-        Import palette
-      </button>
-      <div
-        className="mt-4 rounded-lg border border-dashed border-[var(--border)] bg-[var(--subtle)] p-4 text-sm text-[var(--muted)]"
-        onDragOver={(event) => event.preventDefault()}
-        onDrop={(event) => {
-          event.preventDefault();
-          onExtract(event.dataTransfer.files.item(0));
-        }}
-      >
-        <label className="block cursor-pointer">
-          <span className="font-semibold text-[var(--foreground)]">Upload or drop an image</span>
-          <span className="mt-1 block">Dominant colors are extracted in-browser with smart deduplication.</span>
-          <input
-            accept="image/*"
-            className="mt-3 block w-full text-sm"
-            type="file"
-            onChange={(event) => onExtract(event.target.files?.item(0) ?? null)}
-          />
-        </label>
-      </div>
-      <div className="mt-3 grid grid-cols-2 gap-3">
-        <label className="control-label">
-          Count {extractionCount}
-          <input min={minPaletteSize} max={maxPaletteSize} type="range" value={extractionCount} onChange={(event) => onCount(Number(event.target.value))} />
-        </label>
-        <label className="control-label">
-          Mode
-          <select className="field" value={extractionMode} onChange={(event) => onMode(event.target.value as "balanced" | "vibrant" | "muted")}>
-            <option value="balanced">Balanced</option>
-            <option value="vibrant">Vibrant</option>
-            <option value="muted">Muted</option>
-          </select>
-        </label>
-      </div>
-      <p className="mt-3 text-xs text-[var(--muted)]">ASE binary import is documented as a future parser target; text-based Adobe exports with HEX values already import.</p>
-    </section>
-  );
-}
+      {/* ── SWATCHES (the hero of the page) ── */}
+      <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 border border-[var(--border-default)] rounded-2xl overflow-hidden">
+        {colors.map((color, index) => {
+          const normalizedHex = normalizeHex(color.hex) ?? "#111827";
+          const simulatedHex = simulateVision(normalizedHex, visionMode);
+          const textColor = getReadableTextColor(simulatedHex);
+          const hint = contrastHints[index];
+          const hsl = hexToHsl(normalizedHex);
+          const rgb = hexToRgb(normalizedHex);
 
-function VisualizerPanel({
-  active,
-  colors,
-  gradient,
-  onActive,
-}: {
-  active: Visualizer;
-  colors: string[];
-  gradient: string;
-  onActive: (active: Visualizer) => void;
-}) {
-  return (
-    <section className="panel p-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="section-title">Visualizer system</h2>
-        <div className="flex flex-wrap gap-2">
-          {visualizers.map((item) => (
-            <button className={`chip ${active === item ? "chip-active" : ""}`} key={item} type="button" onClick={() => onActive(item)}>
-              {item}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--background)] p-4">
-        <VisualizerPreview active={active} colors={colors} gradient={gradient} />
-      </div>
-    </section>
-  );
-}
-
-function DesignSystemPanel({
-  tokenRows,
-}: {
-  tokenRows: ReturnType<typeof tokenPreviewRows>;
-}) {
-  const spacingScale = [0, 2, 4, 8, 12, 16, 24, 32, 48, 64];
-  const typeScale = [
-    ["Caption", "0.75rem"],
-    ["Body", "1rem"],
-    ["Title", "1.5rem"],
-    ["Display", "2.5rem"],
-  ];
-
-  return (
-    <section className="panel p-4">
-      <div>
-        <h2 className="section-title">Design system foundation</h2>
-        <p className="mt-1 text-sm text-[var(--muted)]">
-          Semantic roles and scales preview how this palette behaves as reusable product infrastructure.
-        </p>
-      </div>
-      <div className="mt-4 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-        <div className="grid gap-2 sm:grid-cols-2">
-          {tokenRows.map((row) => (
-            <div className="rounded-lg border border-[var(--border)] p-3" key={row.name}>
-              <div className="h-16 rounded-md" style={{ backgroundColor: row.value }} />
-              <p className="mt-2 font-mono text-sm font-semibold">{row.name}</p>
-              <p className="text-xs text-[var(--muted)]">{row.value} · text {row.text}</p>
-            </div>
-          ))}
-        </div>
-        <div className="space-y-4">
-          <div>
-            <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Spacing scale</h3>
-            <div className="mt-2 space-y-2">
-              {spacingScale.slice(2).map((space) => (
-                <div className="flex items-center gap-3 text-xs" key={space}>
-                  <span className="w-10 font-mono">{space}px</span>
-                  <span className="h-2 rounded-full bg-[var(--foreground)]" style={{ width: `${space * 2}px` }} />
+          return (
+            <article
+              key={color.id}
+              className="group flex flex-col justify-between min-h-[320px] p-5"
+              style={{ backgroundColor: simulatedHex, color: textColor }}
+            >
+              {/* Top bar */}
+              <div className="flex items-center justify-between gap-1">
+                <span className="swatch-action">{String(index + 1).padStart(2, "0")}</span>
+                <div className="flex gap-1">
+                  <button className="swatch-action" type="button" onClick={() => toggleLock(color.id)}>
+                    {color.locked ? "🔒" : "🔓"}
+                  </button>
+                  <button className="swatch-action" disabled={colors.length <= minPaletteSize} type="button" onClick={() => removeColor(color.id)}>✕</button>
                 </div>
-              ))}
-            </div>
-          </div>
-          <div>
-            <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Typography scale</h3>
-            <div className="mt-2 space-y-2">
-              {typeScale.map(([label, size]) => (
-                <p key={label} style={{ fontSize: size }}>
-                  <span className="font-semibold">{label}</span> <span className="text-[var(--muted)]">{size}</span>
-                </p>
-              ))}
-            </div>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            {[4, 8, 12].map((radius) => (
-              <div className="grid h-16 place-items-center border border-[var(--border)] text-xs" key={radius} style={{ borderRadius: radius }}>
-                {radius}px
               </div>
-            ))}
+
+              {/* Bottom controls */}
+              <div className="space-y-2.5">
+                {/* Color picker */}
+                <input aria-label={`Color picker ${index + 1}`} className="h-9 w-full cursor-pointer rounded-full border border-white/30 bg-transparent" type="color" value={normalizedHex} onChange={(e) => updateHex(color.id, e.target.value)} />
+
+                {/* HEX input */}
+                <input className="w-full rounded-full border border-white/30 bg-white/20 px-3 py-2 font-mono text-sm font-semibold text-center uppercase outline-none focus:border-white" value={color.hex} spellCheck={false} onChange={(e) => updateHex(color.id, e.target.value)} />
+
+                {/* Advanced channels */}
+                {advancedOpen && (
+                  <>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {(["h", "s", "l"] as const).map((ch) => (
+                        <label key={ch} className="block text-[10px] font-bold tracking-wider uppercase text-center">
+                          {ch}
+                          <input className="w-full rounded-full bg-white/20 px-2 py-1.5 text-xs font-semibold text-center outline-none" max={ch === "h" ? 360 : 100} min={0} type="number" value={hsl[ch]} onChange={(e) => updateFromHsl(color.id, ch, Number(e.target.value))} />
+                        </label>
+                      ))}
+                    </div>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {(["r", "g", "b"] as const).map((ch) => (
+                        <label key={ch} className="block text-[10px] font-bold tracking-wider uppercase text-center">
+                          {ch}
+                          <input className="w-full rounded-full bg-white/20 px-2 py-1.5 text-xs font-semibold text-center outline-none" max={255} min={0} type="number" value={rgb[ch]} onChange={(e) => updateFromRgb(color.id, ch, Number(e.target.value))} />
+                        </label>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {/* Alpha */}
+                <label className="flex items-center gap-2 text-xs font-semibold">
+                  Alpha {color.alpha}%
+                  <input className="flex-1" min={0} max={100} type="range" value={color.alpha} onChange={(e) => updateAlpha(color.id, Number(e.target.value))} />
+                </label>
+
+                {/* Copy buttons */}
+                <div className="grid grid-cols-2 gap-1">
+                  <button className="swatch-action text-center" type="button" onClick={() => copyText(normalizedHex, "HEX")}>HEX</button>
+                  <button className="swatch-action text-center" type="button" onClick={() => copyText(`rgb(${rgb.r} ${rgb.g} ${rgb.b} / ${color.alpha}%)`, "RGB")}>RGB</button>
+                  <button className="swatch-action text-center" type="button" onClick={() => copyText(`hsl(${hsl.h} ${hsl.s}% ${hsl.l}% / ${color.alpha}%)`, "HSL")}>HSL</button>
+                  <button className="swatch-action text-center" type="button" onClick={() => copyText(`--color-${index + 1}: ${normalizedHex};`, "Var")}>Var</button>
+                </div>
+
+                {/* Contrast hint */}
+                <p className="text-[11px] font-semibold text-center opacity-80">
+                  {hint.rating} · {hint.ratio.toFixed(1)}:1 with {hint.bestTextColor === "#000000" ? "black" : "white"}
+                </p>
+              </div>
+            </article>
+          );
+        })}
+      </section>
+
+      {/* ── GRADIENT GENERATOR ── */}
+      <section className="py-20 sm:py-28">
+        <h2 className="text-3xl sm:text-4xl font-black tracking-tight">Gradient</h2>
+        <div className="mt-6 flex flex-wrap items-center gap-3">
+          {(["linear", "radial"] as const).map((item) => (
+            <button key={item} className={`chip ${gradientKind === item ? "chip-active" : ""}`} type="button" onClick={() => setGradientKind(item)}>{item}</button>
+          ))}
+          <label className="flex items-center gap-2 text-xs font-semibold text-[var(--text-muted)]">
+            Angle {gradientAngle}°
+            <input className="w-20" disabled={gradientKind === "radial"} max={360} min={0} type="range" value={gradientAngle} onChange={(e) => setGradientAngle(Number(e.target.value))} />
+          </label>
+        </div>
+        <canvas ref={gradientCanvasRef} className="mt-6 w-full h-48 sm:h-56 rounded-2xl border border-[var(--border-default)]" width={1200} height={420} />
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button className="pill pill-secondary text-xs" type="button" onClick={() => copyText(gradientCss, "CSS")}>Copy CSS</button>
+          <button className="pill pill-secondary text-xs" type="button" onClick={() => copyText(gradientSvg, "SVG")}>Copy SVG</button>
+          <button className="pill pill-secondary text-xs" type="button" onClick={() => downloadPng("openpalette-gradient.png", "gradient")}>Download PNG</button>
+          <button className="pill pill-secondary text-xs" type="button" onClick={() => downloadText("openpalette-gradient.svg", gradientSvg, "image/svg+xml")}>Download SVG</button>
+        </div>
+      </section>
+
+      {/* ── IMPORT + IMAGE EXTRACTION ── */}
+      <section className="py-20 sm:py-28 border-t border-[var(--border-default)]">
+        <h2 className="text-3xl sm:text-4xl font-black tracking-tight">Import</h2>
+        <p className="mt-2 text-sm text-[var(--text-secondary)] max-w-lg">
+          Paste HEX lists, JSON, Tailwind config, CSS vars, or a shared URL parameter. Or drop an image to extract dominant colors.
+        </p>
+        <div className="mt-6 max-w-2xl space-y-4">
+          <textarea
+            className="w-full rounded-2xl bg-[var(--bg-surface-muted)] p-4 font-mono text-sm min-h-[100px] outline-none"
+            placeholder="Paste HEX lists, JSON, Tailwind colors, CSS variables..."
+            value={importText}
+            onChange={(e) => setImportText(e.target.value)}
+          />
+          <div className="flex gap-2">
+            <button className="pill pill-primary" type="button" onClick={importPalette}>Import palette</button>
+          </div>
+          <div
+            className="rounded-2xl p-6 bg-[var(--bg-surface-muted)] hover:bg-[#222] cursor-pointer transition text-sm text-[var(--text-secondary)]"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => { e.preventDefault(); extractFromImage(e.dataTransfer.files.item(0)); }}
+          >
+            <label className="block cursor-pointer">
+              <span className="font-semibold text-[var(--text-primary)]">Drop an image or click to upload</span>
+              <span className="mt-1 block">Dominant colors extracted in-browser. No uploads — everything stays local.</span>
+              <input accept="image/*" className="mt-3 block w-full text-sm" type="file" onChange={(e) => extractFromImage(e.target.files?.item(0) ?? null)} />
+            </label>
+          </div>
+          <div className="flex flex-wrap gap-4">
+            <label className="flex items-center gap-2 text-xs font-semibold text-[var(--text-muted)]">
+              Colors: {extractionCount}
+              <input className="w-20" min={minPaletteSize} max={maxPaletteSize} type="range" value={extractionCount} onChange={(e) => setExtractionCount(Number(e.target.value))} />
+            </label>
+            <label className="flex items-center gap-2 text-xs font-semibold text-[var(--text-muted)]">
+              Mode
+              <select className="field text-xs w-auto" value={extractionMode} onChange={(e) => setExtractionMode(e.target.value as ExtractionMode)}>
+                <option value="balanced">Balanced</option>
+                <option value="vibrant">Vibrant</option>
+                <option value="muted">Muted</option>
+              </select>
+            </label>
           </div>
         </div>
-      </div>
-    </section>
-  );
-}
+      </section>
 
-function AccessibilityPanel({
-  colors,
-  pairContrasts,
-  score,
-  visionMode,
-  onVisionMode,
-}: {
-  colors: string[];
-  pairContrasts: ReturnType<typeof getPairContrasts>;
-  score: number;
-  visionMode: VisionMode;
-  onVisionMode: (mode: VisionMode) => void;
-}) {
-  const weakest = pairContrasts[0];
-  const replacement = weakest ? suggestAccessibleReplacement(weakest.foreground, weakest.background) : colors[0];
-
-  return (
-    <section className="panel p-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="section-title">Accessibility toolkit</h2>
-          <p className="mt-1 text-sm text-[var(--muted)]">WCAG checks, readability previews, warnings, and color-vision simulations.</p>
+      {/* ── VISUALIZER ── */}
+      <section className="py-20 sm:py-28 border-t border-[var(--border-default)]">
+        <h2 className="text-3xl sm:text-4xl font-black tracking-tight">Visualizer</h2>
+        <p className="mt-2 text-sm text-[var(--text-secondary)] max-w-lg">
+          Preview how your palette looks as real UI patterns — website, dashboard, form, and more.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-2">
+          {visualizers.map((item) => (
+            <button key={item} className={`chip ${visualizer === item ? "chip-active" : ""}`} type="button" onClick={() => setVisualizer(item)}>{item}</button>
+          ))}
         </div>
-        <strong className="rounded-full bg-[var(--foreground)] px-4 py-2 text-sm text-[var(--background)]">{score}/100</strong>
-      </div>
-      <div className="mt-4 grid gap-3 lg:grid-cols-[220px_1fr]">
-        <label className="control-label">
-          Simulation
-          <select className="field" value={visionMode} onChange={(event) => onVisionMode(event.target.value as VisionMode)}>
-            <option value="none">None</option>
-            <option value="protanopia">Protanopia</option>
-            <option value="deuteranopia">Deuteranopia</option>
-            <option value="tritanopia">Tritanopia</option>
-          </select>
-        </label>
-        <div className="grid gap-2 sm:grid-cols-3">
-          {colors.slice(0, 3).map((hex) => {
+        <div className="mt-6 rounded-2xl border border-[var(--border-default)] p-6 bg-[var(--bg-surface)]">
+          <VisualizerPreview active={visualizer} colors={paletteHex} gradient={gradientCss} />
+        </div>
+      </section>
+
+      {/* ── DESIGN SYSTEM FOUNDATION ── */}
+      <section className="py-20 sm:py-28 border-t border-[var(--border-default)]">
+        <h2 className="text-3xl sm:text-4xl font-black tracking-tight">Tokens</h2>
+        <p className="mt-2 text-sm text-[var(--text-secondary)] max-w-lg">
+          Semantic roles and scale previews showing how this palette behaves as reusable design infrastructure.
+        </p>
+        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {tokenRows.map((row) => (
+            <div key={row.name} className="rounded-2xl overflow-hidden border border-[var(--border-default)]">
+              <div className="h-20" style={{ backgroundColor: row.value }} />
+              <div className="p-4">
+                <p className="font-mono text-sm font-semibold">{row.name}</p>
+                <p className="text-xs text-[var(--text-muted)]">{row.value} · text {row.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── ACCESSIBILITY ── */}
+      <section className="py-20 sm:py-28 border-t border-[var(--border-default)]">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tight">Accessibility</h2>
+            <p className="mt-2 text-sm text-[var(--text-secondary)] max-w-lg">
+              WCAG contrast checks, readability previews, and color-vision simulations.
+            </p>
+          </div>
+          <span className="pill pill-accent-ghost text-sm font-bold">{accessibilityScore}/100</span>
+        </div>
+        <div className="mt-6 flex flex-wrap gap-4">
+          <label className="flex items-center gap-2 text-xs font-semibold text-[var(--text-muted)]">
+            Simulation
+            <select className="field text-xs w-auto" value={visionMode} onChange={(e) => setVisionMode(e.target.value as VisionMode)}>
+              <option value="none">None</option>
+              <option value="protanopia">Protanopia</option>
+              <option value="deuteranopia">Deuteranopia</option>
+              <option value="tritanopia">Tritanopia</option>
+            </select>
+          </label>
+        </div>
+        {/* Readable previews */}
+        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+          {paletteHex.slice(0, 3).map((hex) => {
             const hint = getContrastHint(hex);
             return (
-              <div className="rounded-lg p-4" key={hex} style={{ backgroundColor: hex, color: getReadableTextColor(hex) }}>
+              <div key={hex} className="rounded-2xl p-5 space-y-2" style={{ backgroundColor: hex, color: getReadableTextColor(hex) }}>
                 <p className="text-sm font-semibold">Readable text preview</p>
-                <p className="mt-8 text-xs">{hint.rating} · {hint.ratio.toFixed(2)} contrast</p>
+                <p className="text-xs opacity-70">{hint.rating} · {hint.ratio.toFixed(2)}:1 contrast</p>
               </div>
             );
           })}
         </div>
-      </div>
-      {weakest ? (
-        <div className="mt-4 rounded-lg border border-[var(--border)] p-3 text-sm">
-          <p className="font-semibold">Lowest pair: {weakest.foreground} on {weakest.background} · {weakest.ratio.toFixed(2)}</p>
-          <p className="mt-1 text-[var(--muted)]">Suggested accessible replacement: <span className="font-mono text-[var(--foreground)]">{replacement}</span></p>
-        </div>
-      ) : null}
-    </section>
-  );
-}
-
-function LibraryPanel({
-  history,
-  library,
-  rawCount,
-  query,
-  sort,
-  tagFilter,
-  onDelete,
-  onFavorite,
-  onLoad,
-  onQuery,
-  onRename,
-  onSort,
-  onTagFilter,
-  onTags,
-}: {
-  history: PaletteRecord[];
-  library: PaletteRecord[];
-  rawCount: number;
-  query: string;
-  sort: LibrarySort;
-  tagFilter: string;
-  onDelete: (id: string) => void;
-  onFavorite: (record: PaletteRecord) => void;
-  onLoad: (record: PaletteRecord) => void;
-  onQuery: (query: string) => void;
-  onRename: (record: PaletteRecord, name: string) => void;
-  onSort: (sort: LibrarySort) => void;
-  onTagFilter: (tag: string) => void;
-  onTags: (record: PaletteRecord, tags: string) => void;
-}) {
-  return (
-    <section className="panel p-4">
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="section-title">Local library</h2>
-        <span className="text-xs text-[var(--muted)]">{rawCount} saved</span>
-      </div>
-      <div className="mt-4 grid gap-2">
-        <input className="field" placeholder="Search palettes" value={query} onChange={(event) => onQuery(event.target.value)} />
-        <input className="field" placeholder="Filter tags" value={tagFilter} onChange={(event) => onTagFilter(event.target.value)} />
-        <select className="field" value={sort} onChange={(event) => onSort(event.target.value as LibrarySort)}>
-          {sorts.map((item) => (
-            <option key={item.value} value={item.value}>
-              {item.label}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="mt-4 space-y-3">
-        {library.length === 0 ? (
-          <p className="rounded-lg bg-[var(--subtle)] p-3 text-sm text-[var(--muted)]">No palettes match yet. Save the current palette to create your first local collection item.</p>
-        ) : (
-          library.slice(0, 12).map((record) => (
-            <article className="rounded-lg border border-[var(--border)] p-3" key={record.id}>
-              <input className="field font-semibold" value={record.name} onChange={(event) => onRename(record, event.target.value)} />
-              <button className="mt-2 grid w-full overflow-hidden rounded-md" style={{ gridTemplateColumns: `repeat(${record.colors.length}, minmax(0, 1fr))` }} type="button" onClick={() => onLoad(record)}>
-                {record.colors.map((hex, index) => (
-                  <span className="h-9" key={`${record.id}-${hex}-${index}`} style={{ backgroundColor: hex }} />
-                ))}
-              </button>
-              <input className="field mt-2 text-xs" placeholder="tags, comma separated" value={record.tags.join(", ")} onChange={(event) => onTags(record, event.target.value)} />
-              <div className="mt-2 flex gap-2">
-                <button className="button button-secondary flex-1" type="button" onClick={() => onFavorite(record)}>
-                  {record.favorite ? "Favorited" : "Favorite"}
-                </button>
-                <button className="button button-secondary flex-1" type="button" onClick={() => onDelete(record.id)}>
-                  Delete
-                </button>
-              </div>
-            </article>
-          ))
+        {pairContrasts[0] && (
+          <div className="mt-4 text-sm text-[var(--text-secondary)]">
+            <p><span className="font-semibold text-[var(--text-primary)]">Lowest pair:</span> {pairContrasts[0].foreground} on {pairContrasts[0].background} · {pairContrasts[0].ratio.toFixed(2)}:1</p>
+            <p className="mt-1">Suggested: <span className="font-mono text-[var(--accent)]">{suggestAccessibleReplacement(pairContrasts[0].foreground, pairContrasts[0].background)}</span></p>
+          </div>
         )}
-      </div>
-      <div className="mt-4 border-t border-[var(--border)] pt-4">
-        <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Recent timeline</h3>
-        <div className="mt-3 space-y-2">
-          {history.slice(0, 5).map((record) => (
-            <button className="flex w-full items-center gap-2 text-left text-xs" key={record.id} type="button" onClick={() => onLoad(record)}>
-              <span className="grid flex-1 grid-flow-col overflow-hidden rounded">
-                {record.colors.map((hex, index) => (
-                  <span className="h-5" key={`${record.id}-history-${index}`} style={{ backgroundColor: hex }} />
-                ))}
-              </span>
-              <span className="text-[var(--muted)]">{record.mode}</span>
+      </section>
+
+      {/* ── EXPORTS ── */}
+      <section className="py-20 sm:py-28 border-t border-[var(--border-default)]">
+        <h2 className="text-3xl sm:text-4xl font-black tracking-tight">Export</h2>
+        <p className="mt-2 text-sm text-[var(--text-secondary)] max-w-lg">
+          Copy or download your palette as CSS, Tailwind, SCSS, JSON, SVG, or PNG.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-2">
+          {exportFormats.map((format) => (
+            <button key={format} className={`chip ${activeExportFormat === format ? "chip-active" : ""}`} role="tab" type="button" onClick={() => setActiveExportFormat(format)}>
+              {format}
             </button>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
-
-function HelpPanel({ onClose }: { onClose: () => void }) {
-  return (
-    <section className="panel mt-4 p-4" aria-label="Keyboard shortcuts">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h2 className="section-title">Keyboard workflow</h2>
-          <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-4">
-            <ShortcutKey keys="Space" label="Generate unlocked colors" />
-            <ShortcutKey keys="U" label="Undo generation or load" />
-            <ShortcutKey keys="S" label="Save active palette" />
-            <ShortcutKey keys="Ctrl/⌘ K" label="Open command palette" />
-          </dl>
+        <pre className="mt-4 max-h-48 overflow-auto rounded-2xl bg-[var(--bg-surface-muted)] p-4 text-xs leading-relaxed">
+          <code>{exportSnippets[activeExportFormat]}</code>
+        </pre>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button className="pill pill-secondary text-xs" type="button" onClick={() => copyText(exportSnippets[activeExportFormat], `${activeExportFormat} export`)}>Copy</button>
+          <button className="pill pill-secondary text-xs" type="button" onClick={() => downloadText(`openpalette.${extensionFor(activeExportFormat)}`, exportSnippets[activeExportFormat])}>Download</button>
+          <button className="pill pill-secondary text-xs" type="button" onClick={() => downloadPng("openpalette-swatches.png", "swatches")}>PNG</button>
+          <button className="pill pill-secondary text-xs" type="button" onClick={downloadPdf}>PDF</button>
+          <button className="pill pill-secondary text-xs" type="button" onClick={() => downloadText("openpalette.svg", exportSnippets.SVG, "image/svg+xml")}>SVG</button>
         </div>
-        <button className="button button-secondary" type="button" onClick={onClose}>
-          Close
-        </button>
-      </div>
-    </section>
-  );
-}
+      </section>
 
-function CommandPalette({
-  onClose,
-  onGenerate,
-  onSave,
-  onShare,
-  onTheme,
-}: {
-  onClose: () => void;
-  onGenerate: () => void;
-  onSave: () => void;
-  onShare: () => void;
-  onTheme: () => void;
-}) {
-  const commands = [
-    ["Generate palette", onGenerate],
-    ["Save locally", onSave],
-    ["Copy share URL", onShare],
-    ["Toggle theme", onTheme],
-  ] as const;
-
-  return (
-    <div className="fixed inset-0 z-50 bg-black/40 p-4 backdrop-blur-sm" role="dialog" aria-modal="true">
-      <div className="mx-auto mt-24 max-w-lg rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 shadow-xl">
-        <div className="flex items-center justify-between px-2 py-1">
-          <h2 className="section-title">Command palette</h2>
-          <button className="button button-secondary" type="button" onClick={onClose}>
-            Esc
+      {/* ── SIDE STRIP: Current palette summary ── */}
+      <section className="data-strip py-3">
+        <span className="text-xs font-bold tracking-wider uppercase text-[var(--text-muted)]">Current</span>
+        {paletteHex.map((hex, i) => (
+          <button key={`${hex}-${i}`} className="flex items-center gap-2 text-xs" type="button" onClick={() => copyText(hex, hex)}>
+            <span className="size-5 rounded-full border border-[var(--border-default)]" style={{ backgroundColor: hex }} />
+            <span className="font-mono font-semibold">{hex}</span>
           </button>
-        </div>
-        <div className="mt-2 space-y-2">
-          {commands.map(([label, action]) => (
-            <button
-              className="flex w-full rounded-lg px-3 py-3 text-left text-sm font-semibold hover:bg-[var(--subtle)]"
-              key={label}
-              type="button"
-              onClick={() => {
-                action();
-                onClose();
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
+        ))}
+        <span className="text-xs text-[var(--text-muted)]">{mode} · {duplicateExists ? "Saved" : `${accessibilityScore}/100`}</span>
+      </section>
 
-function ShortcutKey({ keys, label }: { keys: string; label: string }) {
-  return (
-    <div>
-      <dt className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">{keys}</dt>
-      <dd className="mt-1 text-[var(--foreground)]">{label}</dd>
+      {/* ── LIBRARY ── */}
+      <section className="py-20 sm:py-28">
+        <h2 className="text-3xl sm:text-4xl font-black tracking-tight">Library</h2>
+        <p className="mt-2 text-sm text-[var(--text-secondary)]">{library.length} saved palettes</p>
+        <div className="mt-6 flex flex-wrap gap-3 max-w-xl">
+          <input className="field flex-1 min-w-32" placeholder="Search palettes" value={query} onChange={(e) => setQuery(e.target.value)} />
+          <input className="field flex-1 min-w-20" placeholder="Filter tags" value={tagFilter} onChange={(e) => setTagFilter(e.target.value)} />
+          <select className="field flex-1 min-w-20" value={sort} onChange={(e) => setSort(e.target.value as LibrarySort)}>
+            {sorts.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+          </select>
+        </div>
+        {library.length === 0
+          ? <p className="mt-6 text-sm text-[var(--text-muted)]">No saved palettes yet. Generate one and hit Save.</p>
+          : <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredLibrary.slice(0, 18).map((record) => (
+                <div key={record.id} className="rounded-2xl border border-[var(--border-default)] p-4 space-y-3">
+                  <input className="w-full bg-transparent font-semibold outline-none text-sm" value={record.name} onChange={(e) => updateRecord(record.id, { name: e.target.value })} />
+                  <button className="grid w-full overflow-hidden rounded-xl" style={{ gridTemplateColumns: `repeat(${record.colors.length}, 1fr)` }} type="button" onClick={() => loadRecord(record)}>
+                    {record.colors.map((hex, i) => <span key={`${record.id}-${i}`} className="h-10" style={{ backgroundColor: hex }} />)}
+                  </button>
+                  <input className="w-full bg-transparent text-xs text-[var(--text-muted)] outline-none" placeholder="tags" value={record.tags.join(", ")} onChange={(e) => updateRecord(record.id, { tags: e.target.value.split(",").map((t) => t.trim()).filter(Boolean) })} />
+                  <div className="flex gap-2">
+                    <button className="pill pill-secondary text-xs flex-1" type="button" onClick={() => updateRecord(record.id, { favorite: !record.favorite })}>
+                      {record.favorite ? "★" : "☆"}
+                    </button>
+                    <button className="pill pill-danger text-xs flex-1" type="button" onClick={() => setLibrary((c) => c.filter((r) => r.id !== record.id))}>Delete</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+        }
+
+        {/* History */}
+        {history.length > 0 && (
+          <div className="mt-10 border-t border-[var(--border-default)] pt-8">
+            <h3 className="text-xs font-bold tracking-wider uppercase text-[var(--text-muted)]">Recent</h3>
+            <div className="mt-4 grid gap-2 sm:grid-cols-5">
+              {history.slice(0, 10).map((record) => (
+                <button key={record.id} className="flex items-center gap-2 text-xs" type="button" onClick={() => loadRecord(record)}>
+                  <span className="flex-1 grid grid-flow-col overflow-hidden rounded-md">
+                    {record.colors.map((hex, i) => <span key={`${record.id}-h-${i}`} className="h-6" style={{ backgroundColor: hex }} />)}
+                  </span>
+                  <span className="text-[var(--text-muted)]">{record.mode}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
     </div>
   );
 }

@@ -12,29 +12,36 @@ This version has breaking changes. APIs, conventions, and file structure may dif
 
 - Visible name: **OpenPalette**
 - Repository slug: `openpalette`
-- Current release: `v0.2.0`
-- Product type: local-first color palette generator
+- Current release: `v0.5.0`
+- Product type: local-first color studio
+- Brand accent: `#ff66c4`
 - License: MIT
 
 Use **OpenPalette** in visible product copy. Use `openpalette` only for package names, repository URLs, internal storage keys, and CLI references.
 
 ## Current Scope
 
-The v0.2.x app supports:
+The v0.5.x app supports:
 
-- five-color palette generation;
-- Spacebar generation when focus is not inside an editable control;
+- Palette generation across 14 harmony modes (Analogous, Complementary, etc.);
 - per-color lock and unlock;
-- editable HEX values with normalization;
-- copy-to-clipboard for individual colors and full palettes;
-- export snippets for CSS variables, Tailwind config, JSON, and SVG swatches;
-- best black/white text-color hints with contrast ratios;
-- undo for generated and loaded palettes;
-- saved palette rename and confirmed delete;
-- keyboard shortcuts and an in-app help panel;
-- light and dark modes;
-- localStorage persistence for the active palette, theme, and saved palettes;
-- responsive layouts for mobile and desktop.
+- editable HEX, HSL, and RGB channels;
+- alpha slider per color;
+- palette size control (2–10 colors);
+- gradient generator (linear/radial, angle control);
+- image extraction of dominant colors;
+- import from HEX lists, JSON, Tailwind config, or CSS;
+- design system token previews;
+- WCAG accessibility checks with color-vision simulation;
+- visualizer previews (Website, Dashboard, Form, etc.);
+- exports in CSS, Tailwind, SCSS, Less, JSON, SVG, PNG, PDF;
+- local library with search, tags, sort, favorites, and history;
+- undo stack, keyboard shortcuts, and command palette;
+- light and dark modes (intentionally designed);
+- localStorage persistence;
+- editorial layout with on-canvas swatches and spacious sections;
+- static pages: About, Terms, Privacy;
+- fully responsive.
 
 ## Do Not Add Without a Decision
 
