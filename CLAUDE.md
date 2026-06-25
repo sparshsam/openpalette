@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-OpenPalette is a local-first, open-source five-color palette generator. Built with Next.js 16 + TypeScript + Tailwind CSS v4. No backend, no accounts, no tracking.
+OpenPalette is a local-first, open-source color studio — a palette machine for designers and developers. Built with Next.js 16 + TypeScript + Tailwind CSS v4. Brand accent: #ff66c4. No backend, no accounts, no tracking.
 
 ## Tech Stack
 

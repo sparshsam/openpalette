@@ -2,6 +2,21 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
+## v0.5.0 - 2026-06-25
+
+### design: overhaul OpenPalette identity
+
+- **Design system overhaul** — Applied the OpenProof Design Playbook as the craft standard.
+- **Brand accent** — `#ff66c4` as the primary brand color (light + dark mode).
+- **Dark mode** — Intentionally designed with dedicated surface values, not auto-inverted.
+- **Theme toggle** — Light/dark switch at the far right of the sticky header.
+- **Color studio layout** — Redesigned as a palette machine, not a dashboard. No card grids, no bordered panels. Editorial sections with generous spacing, typography hierarchy, and on-canvas layout.
+- **Swatches** — Full-width hero section with inline HEX/RGB/HSL editing, alpha slider, lock control, channel toggles, and contrast hints.
+- **Footer** — Added About, Terms, and Privacy links.
+- **Static pages** — `/about`, `/terms`, `/privacy` pages with matching editorial design.
+- **App icon** — Updated PWA icons, favicon, apple-touch-icon, and manifest from the new SVG source.
+- **All functionality preserved** — Harmony modes, gradient generator, image extraction, visualizer, design tokens, accessibility toolkit, exports, library, history, undo/command palette.
+
 ## v0.4.0 - 2026-06-08
 
 - Refined the platform expansion into a calmer production-grade design tool.

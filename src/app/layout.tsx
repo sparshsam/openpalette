@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,9 +17,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   applicationName: "OpenPalette",
-  title: "OpenPalette",
+  title: "OpenPalette — Color Studio",
   description:
-    "A local-first, open-source design color platform with palettes, gradients, accessibility checks, visualizers, imports, exports, and image extraction.",
+    "A local-first, open-source color studio for creating palettes, gradients, accessibility checks, exports, and design tokens — all in your browser.",
   metadataBase: new URL("https://github.com/sparshsam/openpalette"),
   manifest: "/manifest.webmanifest",
   appleWebApp: {
@@ -25,31 +28,36 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/favicon.ico",
+    icon: [
+      { url: "/icons/openpalette-icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: [
+      { url: "/icons/openpalette-icon.png", sizes: "1024x1024", type: "image/png" },
+    ],
   },
   openGraph: {
-    title: "OpenPalette",
+    title: "OpenPalette — Color Studio",
     description:
-      "Build palettes, gradients, tokens, accessible previews, and local libraries directly in your browser.",
+      "Create palettes, gradients, tokens, accessible previews, and exports directly in your browser.",
     url: "https://github.com/sparshsam/openpalette",
     siteName: "OpenPalette",
     type: "website",
+    images: [{ url: "/icons/openpalette-icon.png", width: 1024, height: 1024 }],
   },
   twitter: {
-    card: "summary",
-    title: "OpenPalette",
-    description:
-      "A local-first, open-source design color platform.",
+    card: "summary_large_image",
+    title: "OpenPalette — Color Studio",
+    description: "A local-first, open-source color studio.",
+    images: ["/icons/openpalette-icon.png"],
   },
 };
 
 export const viewport: Viewport = {
-  colorScheme: "light dark",
+  colorScheme: "dark light",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F6F4EF" },
-    { media: "(prefers-color-scheme: dark)", color: "#11110F" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
   ],
 };
 
@@ -62,8 +70,30 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <head>
+        {/* Prevent FOUC — set initial theme before paint */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var t = localStorage.getItem('openpalette.theme');
+                if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                  document.documentElement.setAttribute('data-theme', 'dark');
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className="min-h-full flex flex-col">
+        <ThemeProvider>
+          <Header />
+          <main className="flex-1 w-full">{children}</main>
+          <Footer />
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

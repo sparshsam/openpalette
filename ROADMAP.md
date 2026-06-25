@@ -4,6 +4,17 @@ OpenPalette starts as a local-first color palette generator and should stay focu
 
 ## Completed Foundation
 
+### v0.5.0 — Design Identity
+
+- [x] OpenProof Design Playbook applied
+- [x] #ff66c4 brand accent
+- [x] Intentionally designed dark mode
+- [x] Light/dark toggle in header
+- [x] Editorial, on-canvas layout (no cards)
+- [x] Footer with About, Terms, Privacy
+- [x] /about, /terms, /privacy pages
+- [x] Updated PWA icons, favicon, manifest
+
 ### v0.1.0
 
 - [x] Next.js App Router setup

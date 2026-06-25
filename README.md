@@ -3,11 +3,15 @@
 
   <h1>OpenPalette</h1>
   <p>
-    <em>A local-first, open-source design color platform.</em>
+    <em>A local-first, open-source color studio.</em>
   </p>
 
   <p>
-    Generate palettes, edit color channels, extract image colors, preview design surfaces, validate accessibility, and export tokens directly in your browser.
+    A palette machine for designers and developers. Generate harmonies, edit channels, extract from images, preview surfaces, validate accessibility, and export tokens — all in your browser.
+  </p>
+
+  <p>
+    <strong>Brand accent:</strong> <code>#ff66c4</code> · Dark & light mode · Zero tracking
   </p>
 
   <p>
