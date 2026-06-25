@@ -116,13 +116,13 @@ function usePalette() {
 
 function FullSwatches({ palette: p }: { palette: ReturnType<typeof usePalette> }) {
   return <div className="-mx-4 sm:-mx-6 lg:-mx-8 border-y border-[rgba(255,255,255,0.2)]">
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5">
+    <div className="flex flex-col">
       {p.colors.map((color, idx) => {
         const nh = normalizeHex(color.hex) ?? "#111827";
         const hsl = hexToHsl(nh);
         const rgb = hexToRgb(nh);
         const tc = getReadableTextColor(nh);
-        return <div key={color.id} className="flex flex-col justify-end min-h-screen p-8 sm:p-10 lg:p-12" style={{ backgroundColor: nh, color: tc }}>
+        return <div key={color.id} className="h-dvh flex flex-col justify-end p-8 sm:p-10 lg:p-12" style={{ backgroundColor: nh, color: tc }}>
           {/* Top controls */}
           <div className="flex items-center justify-between mb-4">
             <span className="rounded-full bg-black/15 backdrop-blur px-3 py-1 text-xs font-semibold">{idx + 1}/{p.colors.length}</span>
