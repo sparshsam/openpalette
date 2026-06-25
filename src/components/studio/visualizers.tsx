@@ -4,41 +4,40 @@ export const visualizers = ["Website", "Mobile", "Dashboard", "Poster", "Social"
 
 export type Visualizer = (typeof visualizers)[number];
 
-export function VisualizerPreview({ active, colors, gradient }: { active: Visualizer; colors: string[]; gradient: string }) {
+export function VisualizerPreview({ active, colors, gradient, textColor }: { active: Visualizer; colors: string[]; gradient: string; textColor?: string }) {
   const [primary, secondary, accent, surface, ink] = fillColors(colors);
+  const text = textColor ?? ink;
 
   if (active === "Website") {
-    return <WebsitePreview primary={primary} secondary={secondary} accent={accent} surface={surface} ink={ink} />;
+    return <WebsitePreview primary={primary} secondary={secondary} accent={accent} surface={surface} textColor={text} />;
   }
-
   if (active === "Mobile") {
-    return <MobilePreview primary={primary} secondary={secondary} accent={accent} surface={surface} ink={ink} />;
+    return <MobilePreview primary={primary} secondary={secondary} accent={accent} surface={surface} textColor={text} />;
   }
-
   if (active === "Dashboard") {
-    return <DashboardPreview primary={primary} secondary={secondary} accent={accent} surface={surface} ink={ink} />;
+    return <DashboardPreview primary={primary} secondary={secondary} accent={accent} surface={surface} textColor={text} />;
   }
-
   if (active === "Poster") {
-    return <PosterPreview gradient={gradient} ink={ink} />;
+    return <PosterPreview gradient={gradient} textColor={text} />;
   }
-
   if (active === "Social") {
-    return <SocialPreview primary={primary} secondary={secondary} accent={accent} surface={surface} ink={ink} />;
+    return <SocialPreview primary={primary} secondary={secondary} accent={accent} surface={surface} textColor={text} />;
   }
-
   if (active === "Typography") {
-    return <TypographyPreview primary={primary} secondary={secondary} accent={accent} surface={surface} ink={ink} />;
+    return <TypographyPreview primary={primary} secondary={secondary} accent={accent} surface={surface} textColor={text} />;
   }
-
-  return <BrandPreview colors={colors} primary={primary} secondary={secondary} accent={accent} surface={surface} ink={ink} />;
+  return <BrandPreview colors={colors} primary={primary} secondary={secondary} accent={accent} surface={surface} textColor={text} />;
 }
 
-type PreviewProps = { primary: string; secondary: string; accent: string; surface: string; ink: string };
+type PreviewProps = { primary: string; secondary: string; accent: string; surface: string; textColor?: string };
 
-function WebsitePreview({ primary, secondary, accent, surface, ink }: PreviewProps) {
+function withTextColor(color: string, textColor?: string) {
+  return textColor ?? getReadableTextColor(color);
+}
+
+function WebsitePreview({ primary, secondary, accent, surface, textColor }: PreviewProps) {
   return (
-    <div className="rounded-xl p-5" style={{ background: surface, color: ink }}>
+    <div className="rounded-xl p-5" style={{ background: surface, color: withTextColor(surface, textColor) }}>
       <div className="flex items-center justify-between">
         <strong>Northstar Studio</strong>
         <button className="rounded-md px-3 py-2 text-sm font-semibold" style={{ background: primary, color: getReadableTextColor(primary) }}>Start</button>
@@ -54,9 +53,9 @@ function WebsitePreview({ primary, secondary, accent, surface, ink }: PreviewPro
   );
 }
 
-function MobilePreview({ primary, secondary, accent, surface, ink }: PreviewProps) {
+function MobilePreview({ primary, secondary, accent, surface, textColor }: PreviewProps) {
   return (
-    <div className="mx-auto max-w-xs rounded-[2rem] border-8 border-[var(--foreground)] p-4" style={{ background: surface, color: ink }}>
+    <div className="mx-auto max-w-xs rounded-[2rem] border-8 border-[var(--foreground)] p-4" style={{ background: surface, color: withTextColor(surface, textColor) }}>
       <div className="h-6 rounded-full" style={{ background: primary }} />
       <h3 className="mt-6 text-2xl font-semibold">Today</h3>
       <div className="mt-4 space-y-3">
@@ -66,9 +65,9 @@ function MobilePreview({ primary, secondary, accent, surface, ink }: PreviewProp
   );
 }
 
-function DashboardPreview({ primary, secondary, accent, surface, ink }: PreviewProps) {
+function DashboardPreview({ primary, secondary, accent, surface, textColor }: PreviewProps) {
   return (
-    <div className="grid gap-3 rounded-xl p-4 md:grid-cols-[180px_1fr]" style={{ background: surface, color: ink }}>
+    <div className="grid gap-3 rounded-xl p-4 md:grid-cols-[180px_1fr]" style={{ background: surface, color: withTextColor(surface, textColor) }}>
       <aside className="rounded-lg p-3" style={{ background: primary, color: getReadableTextColor(primary) }}>Analytics</aside>
       <div className="grid gap-3 sm:grid-cols-3">
         {[primary, secondary, accent].map((color) => <div className="h-28 rounded-lg p-3 text-sm font-semibold" key={color} style={{ background: color, color: getReadableTextColor(color) }}>Metric</div>)}
@@ -78,9 +77,9 @@ function DashboardPreview({ primary, secondary, accent, surface, ink }: PreviewP
   );
 }
 
-function PosterPreview({ gradient, ink }: { gradient: string; ink: string }) {
+function PosterPreview({ gradient, textColor }: { gradient: string; textColor?: string }) {
   return (
-    <div className="grid min-h-96 place-items-center rounded-xl p-8 text-center" style={{ background: gradient, color: ink }}>
+    <div className="grid min-h-96 place-items-center rounded-xl p-8 text-center" style={{ background: gradient, color: textColor ?? "#111827" }}>
       <div>
         <p className="text-sm font-semibold uppercase tracking-[0.3em]">OpenPalette</p>
         <h3 className="mt-4 text-6xl font-black tracking-tight">Color Field</h3>
@@ -89,10 +88,10 @@ function PosterPreview({ gradient, ink }: { gradient: string; ink: string }) {
   );
 }
 
-function SocialPreview({ primary, secondary, accent, surface, ink }: PreviewProps) {
+function SocialPreview({ primary, secondary, accent, surface, textColor }: PreviewProps) {
   return (
     <div className="aspect-[1.91/1] rounded-xl p-5" style={{ background: primary, color: getReadableTextColor(primary) }}>
-      <div className="flex h-full flex-col justify-between rounded-lg p-5" style={{ background: surface, color: ink }}>
+      <div className="flex h-full flex-col justify-between rounded-lg p-5" style={{ background: surface, color: withTextColor(surface, textColor) }}>
         <h3 className="text-3xl font-semibold">Launch palette</h3>
         <div className="flex gap-2">
           {[secondary, accent, primary].map((color) => <span className="h-12 flex-1 rounded-md" key={color} style={{ background: color }} />)}
@@ -102,25 +101,26 @@ function SocialPreview({ primary, secondary, accent, surface, ink }: PreviewProp
   );
 }
 
-function TypographyPreview({ primary, secondary, accent, surface, ink }: PreviewProps) {
+function TypographyPreview({ primary, secondary, accent, surface, textColor }: PreviewProps) {
+  const text = textColor ?? accent;
   return (
-    <div className="rounded-xl p-6" style={{ background: surface, color: ink }}>
-      <p className="text-sm font-semibold uppercase tracking-[0.2em]" style={{ color: accent }}>Type scale</p>
-      <h3 className="mt-3 text-5xl font-semibold">Readable by default</h3>
-      <p className="mt-3 max-w-2xl text-lg" style={{ color: secondary }}>Preview headings, body text, links, and callouts against the active palette.</p>
+    <div className="rounded-xl p-6" style={{ background: surface, color: text }}>
+      <p className="text-sm font-semibold uppercase tracking-[0.2em]" style={{ color: textColor ?? accent }}>Type scale</p>
+      <h3 className="mt-3 text-5xl font-semibold" style={{ color: text }}>Readable by default</h3>
+      <p className="mt-3 max-w-2xl text-lg" style={{ color: textColor ?? secondary }}>Preview headings, body text, links, and callouts against the active palette.</p>
       <button className="mt-5 rounded-md px-4 py-2 font-semibold" style={{ background: primary, color: getReadableTextColor(primary) }}>Primary action</button>
     </div>
   );
 }
 
-function BrandPreview({ colors, primary, secondary, accent, surface, ink }: PreviewProps & { colors: string[] }) {
+function BrandPreview({ colors, primary, secondary, accent, surface, textColor }: PreviewProps & { colors: string[] }) {
   return (
-    <div className="rounded-xl p-5" style={{ background: surface, color: ink }}>
+    <div className="rounded-xl p-5" style={{ background: surface, color: withTextColor(surface, textColor) }}>
       <div className="flex items-center gap-3">
         <span className="grid size-16 place-items-center rounded-xl text-xl font-black" style={{ background: primary, color: getReadableTextColor(primary) }}>B</span>
         <div>
-          <h3 className="text-3xl font-semibold">Brand kit</h3>
-          <p style={{ color: secondary }}>Logo, marks, token ramps, and accents.</p>
+          <h3 className="text-3xl font-semibold" style={{ color: textColor ?? undefined }}>Brand kit</h3>
+          <p style={{ color: textColor ?? secondary }}>Logo, marks, token ramps, and accents.</p>
         </div>
       </div>
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
