@@ -122,7 +122,7 @@ function FullSwatches({ palette: p }: { palette: ReturnType<typeof usePalette> }
         const hsl = hexToHsl(nh);
         const rgb = hexToRgb(nh);
         const tc = getReadableTextColor(nh);
-        return <div key={color.id} className="flex flex-col justify-end min-h-[50vh] sm:min-h-[60vh] lg:min-h-[70vh] p-6 sm:p-8 lg:p-10" style={{ backgroundColor: nh, color: tc }}>
+        return <div key={color.id} className="flex flex-col justify-end min-h-screen p-8 sm:p-10 lg:p-12" style={{ backgroundColor: nh, color: tc }}>
           {/* Top controls */}
           <div className="flex items-center justify-between mb-4">
             <span className="rounded-full bg-black/15 backdrop-blur px-3 py-1 text-xs font-semibold">{idx + 1}/{p.colors.length}</span>
@@ -193,14 +193,16 @@ function StudioSection() {
       </div>
     </div>
 
-    {/* Mode strip */}
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-3 flex flex-wrap gap-1.5 items-center">
+    {/* Mode strip — white bg like nav */}
+    <div className="bg-[#fff5fc] dark:bg-[#2d001e] border-b border-[rgba(26,0,26,0.08)] dark:border-[rgba(255,224,245,0.06)] px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap gap-1.5 items-center">
       {paletteModes.map((m) => <button key={m} className={`rounded-full px-3 py-1 text-xs font-bold tracking-wider uppercase transition ${
-        palette.mode === m ? "bg-white text-[#1a001a] shadow-sm" : "bg-white/15 text-white/70 hover:bg-white/25 hover:text-white"
+        palette.mode === m
+          ? "bg-[#ff66c4] text-[#1a001a] dark:bg-[#ff85d0] dark:text-[#1a0012] shadow-sm"
+          : "text-[#6b3a5a] dark:text-[#d4a0c0] hover:bg-[#f0d6e8] dark:hover:bg-[#3d0a28] hover:text-[#3a0d2b] dark:hover:text-[#ffe0f5]"
       }`} onClick={() => palette.switchMode(m)}>{m}</button>)}
-      <label className="flex items-center gap-1.5 text-xs font-semibold text-white/60 ml-2">Size {palette.colors.length}<input className="w-14" min={minPaletteSize} max={maxPaletteSize} type="range" value={palette.colors.length} onChange={(e) => palette.setSize(Number(e.target.value))} /></label>
-      <button className="rounded-full bg-white/15 px-2 py-1 text-xs text-white/80 hover:bg-white/25 transition" disabled={palette.colors.length <= minPaletteSize} onClick={() => palette.setSize(palette.colors.length - 1)}>−</button>
-      <button className="rounded-full bg-white/15 px-2 py-1 text-xs text-white/80 hover:bg-white/25 transition" disabled={palette.colors.length >= maxPaletteSize} onClick={() => palette.setSize(palette.colors.length + 1)}>+</button>
+      <label className="flex items-center gap-1.5 text-xs font-semibold text-[#6b3a5a] dark:text-[#d4a0c0] ml-2">Size {palette.colors.length}<input className="w-14" min={minPaletteSize} max={maxPaletteSize} type="range" value={palette.colors.length} onChange={(e) => palette.setSize(Number(e.target.value))} /></label>
+      <button className="rounded-full bg-[#f0d6e8] dark:bg-[#3d0a28] px-2 py-1 text-xs text-[#6b3a5a] dark:text-[#d4a0c0] hover:text-[#3a0d2b] dark:hover:text-[#ffe0f5] transition disabled:opacity-30" disabled={palette.colors.length <= minPaletteSize} onClick={() => palette.setSize(palette.colors.length - 1)}>−</button>
+      <button className="rounded-full bg-[#f0d6e8] dark:bg-[#3d0a28] px-2 py-1 text-xs text-[#6b3a5a] dark:text-[#d4a0c0] hover:text-[#3a0d2b] dark:hover:text-[#ffe0f5] transition disabled:opacity-30" disabled={palette.colors.length >= maxPaletteSize} onClick={() => palette.setSize(palette.colors.length + 1)}>+</button>
     </div>
 
     {/* Edge-to-edge swatches — tall hero */}
