@@ -4,6 +4,18 @@ OpenPalette starts as a local-first color palette generator and should stay focu
 
 ## Completed Foundation
 
+### v0.6.0 — Full-Screen Studio Refinement
+
+- [x] Page background is #ff66c4 (light) / #1a0012 (dark)
+- [x] Nav/header background #fff5fc / #2d001e
+- [x] All button colors derived from #ff66c4
+- [x] Full-screen swatches (h-dvh per color, vertical stack)
+- [x] 6 independent tab sections with own palette state
+- [x] Per-page tailored controls (Gradient, Visualizer, Access., Themes, Library)
+- [x] Curated themes browser (10 light/dark sets)
+- [x] Compact color strips for non-Studio tabs
+- [x] Dev server port changed to 1997
+
 ### v0.5.0 — Design Identity
 
 - [x] OpenProof Design Playbook applied

@@ -2,6 +2,25 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
+## v0.6.0 - 2026-06-25
+
+### design: full-screen swatches, independent tabs, per-page editors
+
+This release consolidates 5 PRs worth of design iteration:
+
+- **Page bg is #ff66c4** — bright pink background in light mode, deep maroon (#1a0012) in dark
+- **Nav/header bg:** #fff5fc (light) / #2d001e (dark) — distinct from page bg
+- **Button colors** — All derived from #ff66c4. Primary: white bg + dark text. Secondary: semi-transparent white. Active chip: solid white.
+- **Full-screen swatches** — Each color fills h-dvh (full viewport height) in a vertical stack, edge-to-edge width
+- **6 independent tabbed sections** — Studio, Gradient, Visualizer, Accessibility, Themes, Library. Each has its own palette state, generator, and keyboard shortcuts (Space=generate, U=undo, S=save)
+- **Per-page tailored controls** — Studio: full palette editor. Gradient: kind/angle. Visualizer: text color + bg mode. Accessibility: simulation + contrast matrix. Themes: curated sets + edit strip. Library: exports + browser
+- **Compact color strips** — Non-studio tabs show a clickable horizontal color strip (h-14, each swatch opens native color picker)
+- **Mode strip** — Now shares nav styling (#fff5fc / #2d001e bg) with matching button treatment
+- **Shared PaletteEditor component** — Reusable across all tabs
+- **Curated Themes tab** — 10 light/dark palette sets (Rose Garden, Noir Pink, Ocean Depth, etc.)
+- **Dev server port** — Changed to 1997
+- **Static pages** — About, Terms, Privacy with editorial playbook styling
+
 ## v0.5.0 - 2026-06-25
 
 ### design: overhaul OpenPalette identity

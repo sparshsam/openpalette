@@ -31,7 +31,7 @@
     "postcss": "^8.5.10"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 1997",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

@@ -12,36 +12,88 @@ This version has breaking changes. APIs, conventions, and file structure may dif
 
 - Visible name: **OpenPalette**
 - Repository slug: `openpalette`
-- Current release: `v0.5.0`
-- Product type: local-first color studio
-- Brand accent: `#ff66c4`
+- Current release: `v0.6.0`
+- Product type: local-first color studio / palette machine
+- Brand accent: `#ff66c4` (page background in light mode)
+- Light mode bg: `#ff66c4` (bright pink)
+- Dark mode bg: `#1a0012` (deep maroon)
+- Nav/header bg: `#fff5fc` (light mode), `#2d001e` (dark mode)
 - License: MIT
+- Dev server port: `1997`
 
-Use **OpenPalette** in visible product copy. Use `openpalette` only for package names, repository URLs, internal storage keys, and CLI references.
+## Design Standard
+
+OpenPalette follows the **OpenProof Design Playbook** (`DESIGN_PLAYBOOK.md` on Sparsh's desktop) as its craft standard:
+
+- **Color studio, not a dashboard.** Every screen serves the palette machine.
+- **Editorial layout.** Spacing replaces borders. Typography weight replaces containers.
+- **All buttons are pills** (`rounded-full`).
+- **Buttons use #ff66c4 as their foundation:** primary = white bg + dark text, secondary = semi-transparent white, active chips = solid white + dark text.
+- **Dark mode is designed intentionally** (not auto-inverted) with its own surface/border/text values.
+- **Borders are barely visible** (low opacity). Data strips replace bordered boxes.
+- **Swatches are full-screen** — each color fills the dynamic viewport height (`h-dvh`) in a vertical stack, edge-to-edge width.
+
+## Current Architecture
+
+### Tabbed layout (6 independent sections)
+
+Navigation is a floating pill group at the top of the page with `#fff5fc` / `#2d001e` background. Each tab is a **fully independent section**:
+
+| Tab | What it does |
+|-----|-------------|
+| **Studio** | Full palette editor (modes, size, channels, lock, copy) + import/image extraction |
+| **Gradient** | Linear/radial gradient builder with angle control, canvas preview, copy/download |
+| **Visualizer** | Palette preview as Website/Mobile/Dashboard/Poster/etc. + text color picker + background mode |
+| **Accessibility** | WCAG contrast scores, color-vision simulation, pair contrast matrix |
+| **Themes** | 10 curated light/dark palette sets — click to load, then edit |
+| **Library** | Saved palette browser + export tokens + history |
+
+### Shared Palette Editor (`CompletePaletteEditor`)
+
+Each tab includes its own complete palette state (via `usePalette()` hook): independent colors, mode, undo stack, generate/undo buttons, and keyboard shortcuts (Space=generate, U=undo, S=save in Library). The Studio tab uses `FullSwatches` (full-screen, edge-to-edge). Other tabs use a compact color strip with inline click-to-edit color pickers.
+
+### Color strip (non-Studio tabs)
+
+A horizontal bar of colors (`flex-1 h-14`) with each swatch clickable to open a native color picker and update that color. Hover reveals hex label.
+
+### Current Styles
+
+- Page bg: `#ff66c4` (light) / `#1a0012` (dark)
+- Nav + mode strip bg: `#fff5fc` (light) / `#2d001e` (dark)
+- Text: `#1a001a` (light) / `#ffe0f5` (dark)
+- Buttons: white bg + dark text (primary), semi-transparent white (secondary)
+- Fields: semi-transparent white bg + white text
+- Chips: white border + white text, active = solid white + dark text
+- Selection: white bg + dark text
 
 ## Current Scope
 
-The v0.5.x app supports:
+The v0.6.x app supports:
 
-- Palette generation across 14 harmony modes (Analogous, Complementary, etc.);
-- per-color lock and unlock;
-- editable HEX, HSL, and RGB channels;
-- alpha slider per color;
-- palette size control (2–10 colors);
-- gradient generator (linear/radial, angle control);
-- image extraction of dominant colors;
-- import from HEX lists, JSON, Tailwind config, or CSS;
-- design system token previews;
-- WCAG accessibility checks with color-vision simulation;
-- visualizer previews (Website, Dashboard, Form, etc.);
-- exports in CSS, Tailwind, SCSS, Less, JSON, SVG, PNG, PDF;
-- local library with search, tags, sort, favorites, and history;
-- undo stack, keyboard shortcuts, and command palette;
-- light and dark modes (intentionally designed);
-- localStorage persistence;
-- editorial layout with on-canvas swatches and spacious sections;
-- static pages: About, Terms, Privacy;
-- fully responsive.
+- 14 harmony palette generation modes (Analogous, Complementary, Triadic, etc.);
+- Full-screen color swatches (one color per viewport, vertical stack);
+- Per-color lock, unlock, remove, HEX display, inline color picker;
+- HSL and RGB channel editing (togglable);
+- Alpha slider per color;
+- Palette size control (2–10 colors) with +/- buttons;
+- Gradient generator (linear/radial, infinite angle, live canvas);
+- Image extraction of dominant colors (drag or browse, in-browser);
+- Import from HEX lists, JSON, Tailwind config, CSS variables;
+- Visualizer previews with 7 modes (Website, Mobile, Dashboard, Poster, Social, Typography, Brand) + custom text color + background mode;
+- WCAG accessibility scores, contrast hints, color-vision simulation (protanopia, deuteranopia, tritanopia);
+- Pair contrast matrix;
+- Export tokens in CSS, Tailwind, SCSS, Less, JSON, SVG, PNG, PDF;
+- Local library with search, tags, sort (5 modes), favorites, and delete;
+- Generation history (last 40, click to restore);
+- Undo stack (20 deep);
+- Keyboard shortcuts (Space=generate, U=undo, S=save);
+- Independent state per tab (each tab has its own palette + undo);
+- Curated themes browser (10 light/dark palette sets);
+- Light and dark modes (intentionally designed);
+- All localStorage persistence;
+- Static pages: About, Terms, Privacy (editorial playbook style);
+- PWA with updated icons, manifest, metadata;
+- Fully responsive.
 
 ## Do Not Add Without a Decision
 
@@ -61,6 +113,27 @@ The v0.5.x app supports:
 - Prefer semantic HTML and accessible labels for controls.
 - Keep UI calm, original, fast, and legible.
 - Avoid broad rewrites unless there is a clear maintenance reason.
+- Dark mode must be designed intentionally (not auto-inverted).
+- Tab styles must match nav styling (consistent background and colors).
+
+## Key Files
+
+| Path | Purpose |
+|------|---------|
+| `src/app/page.tsx` | Single-page app entry |
+| `src/app/layout.tsx` | Root layout, fonts, metadata, ThemeProvider |
+| `src/app/globals.css` | Design tokens, pill/chip/field/action classes |
+| `src/app/manifest.ts` | PWA manifest |
+| `src/app/about/page.tsx` | About page |
+| `src/app/terms/page.tsx` | Terms of use |
+| `src/app/privacy/page.tsx` | Privacy policy |
+| `src/components/openpalette-app.tsx` | Main app — all 6 tabs + usePalette hook |
+| `src/components/header.tsx` | Sticky header (logo, About link, theme toggle) |
+| `src/components/footer.tsx` | Footer (About, Terms, Privacy) |
+| `src/components/theme-provider.tsx` | Light/dark toggle with localStorage |
+| `src/components/studio/visualizers.tsx` | 7 visualizer previews + fillColors |
+| `src/lib/palette/` | Color engine (generation, math, contrast, export, import) |
+| `public/icons/` | PWA icon sources (SVG + PNG) |
 
 ## Required Checks
 
@@ -70,6 +143,7 @@ Before finishing a code change, run:
 npm audit --audit-level=moderate
 npm run lint
 npm run typecheck
+npm run test:coverage
 npm run build
 ```
 
@@ -81,6 +155,7 @@ Documentation-only changes may skip runtime checks if no code, package, config, 
 - Keep `README.md`, `ROADMAP.md`, and docs aligned with shipped behavior.
 - Preserve semver-style release notes.
 - Do not mark future work as shipped.
+- Dev server uses port `1997` (`npm run dev`).
 
 ## Branch Naming
 
@@ -96,4 +171,4 @@ Use conventional prefix branches off `main`:
 1. Always branch from `main`.
 2. Run validation before every PR: `npm run lint && npm run typecheck && npm run build`
 3. Open a pull request for every merge into `main`.
-4. No direct pushes to `main`.
+4. No direct pushes to `main` (branch protection).
