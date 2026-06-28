@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { StudioLinks } from "@/components/studio/studio-links";
 
 const links = [
   { href: "/about", label: "About" },
@@ -8,7 +11,9 @@ const links = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-[var(--border-default)] px-6 py-10">
+    <>
+      <StudioLinks />
+      <footer className="border-t border-[var(--border-default)] px-6 py-10">
       <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         {/* Left */}
         <p className="text-xs text-[var(--text-muted)]">
@@ -39,5 +44,6 @@ export function Footer() {
         </nav>
       </div>
     </footer>
+    </>
   );
 }

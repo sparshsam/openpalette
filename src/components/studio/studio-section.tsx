@@ -17,7 +17,6 @@ import { StudioSwatches } from "./studio-swatches";
 import { StudioColorEditor } from "./studio-color-editor";
 import { StudioColorInfo } from "./studio-color-info";
 import { ColorBlindPreview } from "./color-blind-preview";
-import { StudioLinks } from "./studio-links";
 
 export function StudioSection() {
   const palette = usePalette();
@@ -172,8 +171,6 @@ export function StudioSection() {
         </div>
       </div>
 
-      {/* Links to other tools */}
-      <StudioLinks />
     </section>
   );
 }
