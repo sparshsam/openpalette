@@ -87,13 +87,13 @@ export function OpenPaletteApp() {
   }, []);
 
   return <div>
-    <nav className="flex justify-center py-4" aria-label="Tabs">
-      <div className="inline-flex gap-0.5 p-1 rounded-full bg-[#fff5fc] dark:bg-[#2d001e] overflow-x-auto shadow-sm">
+    <nav className="flex justify-center py-3" aria-label="Tabs">
+      <div className="inline-flex gap-0.5 p-1 rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] overflow-x-auto shadow-sm">
         {tabs.map((t) => (
           <button key={t.id} className={`rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap transition-all ${
             activeTab === t.id
-              ? "bg-[#ff66c4] text-[#1a001a] dark:bg-[#ff85d0] dark:text-[#1a0012] shadow-sm"
-              : "text-[#6b3a5a] dark:text-[#d4a0c0] hover:text-[#3a0d2b] dark:hover:text-[#ffe0f5]"
+              ? "bg-[var(--accent)] text-white shadow-sm"
+              : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-muted)]"
           }`} type="button" onClick={() => setActiveTab(t.id)}>{t.label}</button>
         ))}
       </div>

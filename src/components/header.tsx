@@ -7,31 +7,33 @@ export function Header() {
   const { theme, toggle } = useTheme();
 
   return (
-    <header className="sticky top-0 z-50 bg-[#fff5fc]/95 dark:bg-[#2d001e]/95 backdrop-blur-md border-b border-[rgba(26,0,26,0.08)] dark:border-[rgba(255,224,245,0.06)]">
-      <div className="mx-auto flex items-center justify-between max-w-7xl px-6 h-16">
-        {/* Logo */}
-        <Link
-          href="/"
-          className="text-lg font-bold text-[#3a0d2b] dark:text-[#ffe0f5] hover:text-[#ff66c4] dark:hover:text-[#ff85d0] transition-colors"
-        >
-          OpenPalette
-        </Link>
-
-        {/* Nav */}
-        <nav className="flex items-center gap-1" aria-label="Primary">
+    <>
+      <header className="sticky top-0 z-50 bg-[var(--bg-surface)]/95 backdrop-blur-md border-b border-[var(--border-default)]">
+        <div className="mx-auto flex items-center justify-between max-w-7xl px-6 pr-16 h-14">
+          {/* Logo */}
           <Link
-            href="/about"
-            className="rounded-full px-4 py-2 text-sm font-semibold text-[#6b3a5a] dark:text-[#d4a0c0] hover:bg-[#f0d6e8] dark:hover:bg-[#3d0a28] hover:text-[#3a0d2b] dark:hover:text-[#ffe0f5] transition-colors"
+            href="/"
+            className="text-lg font-bold text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors"
           >
-            About
+            OpenPalette
           </Link>
-        </nav>
-      </div>
 
-      {/* Theme toggle — fixed top-right */}
+          {/* Nav */}
+          <nav className="flex items-center gap-1" aria-label="Primary">
+            <Link
+              href="/about"
+              className="rounded-full px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--bg-surface-muted)] hover:text-[var(--text-primary)] transition-colors"
+            >
+              About
+            </Link>
+          </nav>
+        </div>
+      </header>
+
+      {/* Theme toggle — fixed top-right, visually matched to header */}
       <button
         onClick={toggle}
-        className="fixed top-3 right-3 z-[60] size-11 flex items-center justify-center rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-sm hover:bg-[var(--bg-surface-muted)] transition-colors"
+        className="fixed top-2.5 right-3 z-[60] size-11 flex items-center justify-center rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-muted)] shadow-sm transition-colors"
         suppressHydrationWarning
         aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
       >
@@ -45,6 +47,6 @@ export function Header() {
           </svg>
         )}
       </button>
-    </header>
+    </>
   );
 }
