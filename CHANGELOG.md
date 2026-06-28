@@ -2,6 +2,15 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
+## v0.8.3 - 2026-06-28
+
+### feat: Image Picker tab + scrollable tab nav
+
+- **New Image Picker tab** — Added after Explore. Two-column layout with image upload (drag/drop + browse), palette extraction from uploaded images, palette size controls (2-10 colors), extracted palette strip with hex labels, Open in Studio and Copy HEX actions.
+- **Scrollable tab navigation** — Nav shows 5 tabs at a time with ◀/▶ arrow buttons to slide hidden tabs into view. Active tab tracking preserved across navigation.
+- **Image extraction** — Uses existing `extractPaletteFromPixels` engine with balanced extraction mode. Supports JPG, PNG, WebP.
+- **URL hash routing** — `/image-picker` route preserved on refresh.
+
 ## v0.8.2 - 2026-06-28
 
 ### polish: Explore spacing, URL routing, theme toggle redesign

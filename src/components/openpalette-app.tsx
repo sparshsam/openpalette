@@ -30,6 +30,7 @@ import {
 import { usePalette } from "@/components/use-palette";
 import { StudioSection } from "@/components/studio/studio-section";
 import { ExploreSection } from "@/components/explore/explore-section";
+import { ImagePickerSection } from "@/components/image-picker/image-picker-section";
 import { ErrorBoundary } from "@/components/error-boundary";
 
 const libraryStorageKey = "openpalette.library.v1";
@@ -39,11 +40,11 @@ const sorts: { label: string; value: LibrarySort }[] = [
   { label: "Contrast", value: "contrast" }, { label: "Warm/cool", value: "temperature" }, { label: "Favorites", value: "favorites" },
 ];
 
-type Tab = "studio" | "explore" | "gradient" | "visualizer" | "accessibility" | "themes" | "library";
+type Tab = "studio" | "explore" | "image-picker" | "gradient" | "visualizer" | "accessibility" | "themes" | "library";
 const tabs: { id: Tab; label: string }[] = [
-  { id: "studio", label: "Studio" }, { id: "explore", label: "Explore" }, { id: "gradient", label: "Gradient" },
-  { id: "visualizer", label: "Visualizer" }, { id: "accessibility", label: "Accessibility" },
-  { id: "themes", label: "Themes" }, { id: "library", label: "Library" },
+  { id: "studio", label: "Studio" }, { id: "explore", label: "Explore" }, { id: "image-picker", label: "Extract" },
+  { id: "gradient", label: "Gradient" }, { id: "visualizer", label: "Visualizer" },
+  { id: "accessibility", label: "Accessibility" }, { id: "themes", label: "Themes" }, { id: "library", label: "Library" },
 ];
 
 /* ═══════════════════════════════════════════════════════════
@@ -86,10 +87,25 @@ export function OpenPaletteApp() {
     };
   }, []);
 
+  // Scrollable nav: show ~5 tabs, arrows to slide
+  const navRef = useRef<HTMLDivElement>(null);
+  const [navPos, setNavPos] = useState(0);
+  const visibleCount = 5;
+  const maxNavPos = Math.max(0, tabs.length - visibleCount);
+
+  function scrollNav(dir: number) {
+    setNavPos((p) => Math.max(0, Math.min(maxNavPos, p + dir)));
+  }
+
   return <div>
-    <nav className="flex justify-center py-3" aria-label="Tabs">
-      <div className="inline-flex gap-0.5 p-1 rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] overflow-x-auto shadow-sm">
-        {tabs.map((t) => (
+    <nav className="flex justify-center items-center gap-1 py-3 px-2" aria-label="Tabs">
+      {maxNavPos > 0 && (
+        <button onClick={() => scrollNav(-1)} disabled={navPos === 0}
+          className="size-7 flex items-center justify-center rounded-full text-xs text-secondary hover:text-[var(--accent)] disabled:opacity-20 transition-colors shrink-0"
+          aria-label="Previous tabs">◀</button>
+      )}
+      <div ref={navRef} className="inline-flex gap-0.5 p-1 rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-sm overflow-hidden">
+        {tabs.slice(navPos, navPos + visibleCount).map((t) => (
           <button key={t.id} className={`rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap transition-all ${
             activeTab === t.id
               ? "bg-[var(--accent)] text-white shadow-sm"
@@ -97,9 +113,15 @@ export function OpenPaletteApp() {
           }`} type="button" onClick={() => setActiveTab(t.id)}>{t.label}</button>
         ))}
       </div>
+      {maxNavPos > 0 && (
+        <button onClick={() => scrollNav(1)} disabled={navPos >= maxNavPos}
+          className="size-7 flex items-center justify-center rounded-full text-xs text-secondary hover:text-[var(--accent)] disabled:opacity-20 transition-colors shrink-0"
+          aria-label="Next tabs">▶</button>
+      )}
     </nav>
     {activeTab === "studio" && <ErrorBoundary name="Studio"><StudioSection initialPalette={loadPalette} onConsumed={() => setLoadPalette(null)} /></ErrorBoundary>}
     {activeTab === "explore" && <ErrorBoundary name="Explore"><ExploreSection /></ErrorBoundary>}
+    {activeTab === "image-picker" && <ErrorBoundary name="ImagePicker"><ImagePickerSection /></ErrorBoundary>}
     {activeTab === "gradient" && <ErrorBoundary name="Gradient"><GradientSection /></ErrorBoundary>}
     {activeTab === "visualizer" && <ErrorBoundary name="Visualizer"><VisualizerSection /></ErrorBoundary>}
     {activeTab === "accessibility" && <ErrorBoundary name="Accessibility"><AccessibilitySection /></ErrorBoundary>}
