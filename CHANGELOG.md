@@ -2,6 +2,16 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
+## v0.7.1 - 2026-06-28
+
+### polish: studio swatch controls and toolbar cleanup
+
+- **Plus/minus toolbar** — Replaced ToolbarButton with icon-only IconBtn for +/− controls. No text label duplication, just clean SVG icons and the color count number between them.
+- **Swatch hover action rail** — Now vertical and centered on each swatch (like Coolors). Glass-background rounded buttons with consistent spacing, hover scale effect, and tooltips. Actions: Remove (✕), Copy (📋), Lock (🔒/🔓), Move Left (◀), Move Right (▶), Insert After (+).
+- **Add-swatch moved into palette** — Insert control appears as "+" button in the hover action rail (last item), inserting a new color after the current swatch. Removed the external add button at the canvas edge.
+- **2-color minimum and 10-color maximum enforced** — Remove button disabled at 2, Insert/Add disabled at 10.
+- **All existing features preserved** — Generator, vision sidebar, view modal, export modal, toolbar behavior unchanged.
+
 ## v0.7.0 - 2026-06-28
 
 ### Studio redesign — Coolors generator parity, semantic theme, sidebars, modals

@@ -37,14 +37,14 @@ export function StudioToolbar({ palette, onOpenVision, onOpenView, onOpenExport 
 
         <Divider />
 
-        {/* Add color */}
-        <ToolbarButton onClick={() => palette.setSize(Math.min(palette.colors.length + 1, maxPaletteSize))} label="+" title="Add color" disabled={palette.colors.length >= maxPaletteSize}>
+        {/* Add / remove colors */}
+        <IconBtn onClick={() => palette.setSize(Math.min(palette.colors.length + 1, maxPaletteSize))} disabled={palette.colors.length >= maxPaletteSize} title="Add color">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-        </ToolbarButton>
-        <span className="text-xs text-[var(--text-muted)] font-semibold tabular-nums w-4 text-center">{palette.colors.length}</span>
-        <ToolbarButton onClick={() => palette.setSize(Math.max(palette.colors.length - 1, minPaletteSize))} label="-" title="Remove color" disabled={palette.colors.length <= minPaletteSize}>
+        </IconBtn>
+        <span className="text-xs text-[var(--text-muted)] font-semibold tabular-nums w-5 text-center">{palette.colors.length}</span>
+        <IconBtn onClick={() => palette.setSize(Math.max(palette.colors.length - 1, minPaletteSize))} disabled={palette.colors.length <= minPaletteSize} title="Remove color">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-        </ToolbarButton>
+        </IconBtn>
 
         <Divider />
 
@@ -106,6 +106,16 @@ function ToolbarButton({ children, onClick, label, title, disabled, active }: {
 }
 
 function Divider() { return <div className="w-px h-5 bg-[var(--border-default)] shrink-0" />; }
+
+function IconBtn({ children, onClick, disabled, title }: {
+  children: ReactNode; onClick: () => void; disabled?: boolean; title?: string;
+}) {
+  return (
+    <button onClick={onClick} disabled={disabled} title={title}
+      className="size-7 flex items-center justify-center rounded-full text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+    >{children}</button>
+  );
+}
 
 function QuickTunePanel({ palette, onClose }: { palette: PaletteAPI; onClose: () => void }) {
   function updateAll(updater: (hex: string) => string) {
