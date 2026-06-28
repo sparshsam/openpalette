@@ -26,8 +26,8 @@ export function StudioToolbar({ palette }: Props) {
           <span className="text-xs text-[var(--text-muted)] opacity-60">{palette.notice}</span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <button className="rounded-full bg-white/20 backdrop-blur px-4 py-1.5 text-sm font-semibold text-white hover:bg-white/30 transition" onClick={palette.generate}>Generate (Space)</button>
-          <button className="rounded-full bg-white/20 backdrop-blur px-4 py-1.5 text-sm font-semibold text-white hover:bg-white/30 transition disabled:opacity-30" disabled={palette.undoStack.length === 0} onClick={palette.undo}>Undo (U)</button>
+          <button className="rounded-full surface backdrop-blur px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={palette.generate}>Generate (Space)</button>
+          <button className="rounded-full surface backdrop-blur px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition disabled:opacity-30" disabled={palette.undoStack.length === 0} onClick={palette.undo}>Undo (U)</button>
         </div>
       </div>
 
@@ -67,7 +67,7 @@ function QuickTuneSliders({ palette }: Props) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-3 flex flex-wrap gap-4 items-center">
-      <label className="flex items-center gap-1.5 text-xs font-semibold text-white/70">
+      <label className="flex items-center gap-1.5 text-xs font-semibold text-secondary">
         Saturation
         <input
           className="w-20"
@@ -82,7 +82,7 @@ function QuickTuneSliders({ palette }: Props) {
           }}
         />
       </label>
-      <label className="flex items-center gap-1.5 text-xs font-semibold text-white/70">
+      <label className="flex items-center gap-1.5 text-xs font-semibold text-secondary">
         Brightness
         <input
           className="w-20"
@@ -97,7 +97,7 @@ function QuickTuneSliders({ palette }: Props) {
           }}
         />
       </label>
-      <label className="flex items-center gap-1.5 text-xs font-semibold text-white/70">
+      <label className="flex items-center gap-1.5 text-xs font-semibold text-secondary">
         Temperature
         <input
           className="w-20"

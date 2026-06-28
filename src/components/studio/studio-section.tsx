@@ -93,20 +93,20 @@ export function StudioSection() {
 
       {/* Quick access: contrast hints + blind mode toggle + copy link */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center gap-3">
-        <label className="flex items-center gap-1.5 text-xs font-semibold text-white/60">
+        <label className="flex items-center gap-1.5 text-xs font-semibold text-secondary">
           Simulate
-          <select className="rounded-full bg-white/15 px-3 py-1.5 text-xs text-white outline-none" value={blindMode} onChange={(e) => setBlindMode(e.target.value as VisionMode)}>
+          <select className="rounded-full surface px-3 py-1.5 text-xs text-page outline-none" value={blindMode} onChange={(e) => setBlindMode(e.target.value as VisionMode)}>
             <option value="none">Normal</option>
             <option value="protanopia">Protanopia</option>
             <option value="deuteranopia">Deuteranopia</option>
             <option value="tritanopia">Tritanopia</option>
           </select>
         </label>
-        <button className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/25 transition" onClick={() => setAdvanced((o) => !o)}>
+        <button className="rounded-full surface px-3 py-1.5 text-xs font-semibold text-page hover-bg-muted transition" onClick={() => setAdvanced((o) => !o)}>
           {advanced ? "Hide Editor" : "Full Editor"}
         </button>
         <button
-          className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/25 transition"
+          className="rounded-full surface px-3 py-1.5 text-xs font-semibold text-page hover-bg-muted transition"
           onClick={async () => {
             const { encodePaletteState } = await import("@/lib/palette/import-engine");
             const encoded = encodePaletteState(palette.colors, palette.mode);
@@ -129,10 +129,10 @@ export function StudioSection() {
 
       {/* Import */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-3">
-        <h3 className="text-xs font-bold tracking-wider uppercase text-white/60">Import Palette</h3>
+        <h3 className="text-xs font-bold tracking-wider uppercase text-secondary">Import Palette</h3>
         <div className="max-w-xl space-y-3">
           <textarea
-            className="w-full rounded-2xl bg-white/15 p-4 font-mono text-sm min-h-[80px] text-white outline-none placeholder:text-white/40"
+            className="w-full rounded-2xl surface p-4 font-mono text-sm min-h-[80px] text-page outline-none placeholder:text-muted"
             placeholder="Paste HEX (#ff66c4), JSON, CSS variables, or Coolors URL..."
             value={importText}
             onChange={(e) => setImportText(e.target.value)}
@@ -148,21 +148,21 @@ export function StudioSection() {
             >
               Import
             </button>
-            <div className="rounded-2xl px-4 py-2 bg-white/10 text-sm cursor-pointer">
-              <label className="cursor-pointer text-white/80">
-                <span className="font-semibold text-white">Drop</span> or <span className="underline decoration-white/40">browse</span>
+            <div className="rounded-2xl px-4 py-2 surface-muted text-sm cursor-pointer">
+              <label className="cursor-pointer text-secondary">
+                <span className="font-semibold text-page">Drop</span> or <span className="underline">browse</span>
                 <input accept="image/*" className="hidden" type="file" onChange={(e) => extractFromImage(e.target.files?.item(0) ?? null)} />
               </label>
             </div>
           </div>
           <div className="flex gap-4">
-            <label className="flex items-center gap-2 text-xs font-semibold text-white/60">
+            <label className="flex items-center gap-2 text-xs font-semibold text-secondary">
               Colors {extractionCount}
               <input className="w-16" min={minPaletteSize} max={maxPaletteSize} type="range" value={extractionCount} onChange={(e) => setExtractionCount(Number(e.target.value))} />
             </label>
-            <label className="flex items-center gap-2 text-xs font-semibold text-white/60">
+            <label className="flex items-center gap-2 text-xs font-semibold text-secondary">
               Mode
-              <select className="rounded-full bg-white/15 px-3 py-1 text-xs text-white outline-none" value={extractionMode} onChange={(e) => setExtractionMode(e.target.value as ExtractionMode)}>
+              <select className="rounded-full surface px-3 py-1 text-xs text-page outline-none" value={extractionMode} onChange={(e) => setExtractionMode(e.target.value as ExtractionMode)}>
                 <option>Balanced</option>
                 <option>Vibrant</option>
                 <option>Muted</option>

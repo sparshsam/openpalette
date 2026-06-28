@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
       "A local-first color studio for palettes, gradients, accessibility, visualizers, and exports.",
     start_url: "/",
     display: "standalone",
-    background_color: "#ff66c4",
-    theme_color: "#1a001a",
+    background_color: "#f9f9f9",
+    theme_color: "#ff66c4",
     categories: ["design", "developer", "productivity", "utilities"],
     icons: [
       {

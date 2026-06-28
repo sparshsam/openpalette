@@ -68,14 +68,14 @@ export function StudioSwatches({ palette, blindMode }: Props) {
 
                 <div className="flex flex-wrap gap-2 items-center pt-1">
                   <input
-                    className="h-9 rounded-full border border-white/30 bg-white/20 px-3 py-1 font-mono text-sm font-semibold text-center uppercase outline-none focus:border-white w-28 backdrop-blur"
+                    className="h-9 rounded-full border border-default surface px-3 py-1 font-mono text-sm font-semibold text-center uppercase outline-none focus:border-white w-28 backdrop-blur"
                     value={color.hex}
                     spellCheck={false}
                     onChange={(e) => palette.updateHex(color.id, e.target.value)}
                   />
                   <input
                     aria-label={`Color ${idx + 1}`}
-                    className="h-9 rounded-full border border-white/30 bg-transparent cursor-pointer w-12"
+                    className="h-9 rounded-full border border-default bg-transparent cursor-pointer w-12"
                     type="color"
                     value={nh}
                     onChange={(e) => palette.updateHex(color.id, e.target.value)}

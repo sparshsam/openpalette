@@ -1,28 +1,28 @@
 @import "tailwindcss";
 
-/* ── Design Playbook tokens — pink-accent theme ─── */
+/* ── Design tokens ─── */
 
 :root {
-  --bg-base: #ff66c4;
-  --bg-surface: #ff7acc;
-  --bg-surface-muted: #ff8fd5;
-  --text-primary: #1a001a;
-  --text-secondary: #3d003d;
-  --text-muted: #6b3362;
-  --border-default: rgba(26, 0, 26, 0.08);
+  --bg-base: #f9f9f9;
+  --bg-surface: #f0f0f0;
+  --bg-surface-muted: #e8e8e8;
+  --text-primary: #111111;
+  --text-secondary: #555555;
+  --text-muted: #888888;
+  --border-default: rgba(0, 0, 0, 0.08);
   --accent: #ff66c4;
   --accent-hover: #ff4db8;
   --error: #b00020;
 }
 
 [data-theme="dark"] {
-  --bg-base: #1a0012;
-  --bg-surface: #2d001e;
-  --bg-surface-muted: #3d0a28;
-  --text-primary: #ffe0f5;
-  --text-secondary: #d4a0c0;
-  --text-muted: #996b8a;
-  --border-default: rgba(255, 224, 245, 0.06);
+  --bg-base: #111111;
+  --bg-surface: #1a1a1a;
+  --bg-surface-muted: #222222;
+  --text-primary: #f5f5f5;
+  --text-secondary: #aaaaaa;
+  --text-muted: #777777;
+  --border-default: rgba(255, 255, 255, 0.08);
   --accent: #ff85d0;
   --accent-hover: #ff9eda;
   --error: #ff4d4d;
@@ -42,134 +42,91 @@
   --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
 }
 
-/* ── Base ───────────────────────────────────────── */
+/* ── Semantic utilities ──────────────────────────── */
 
-* { box-sizing: border-box; }
+.text-page     { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted    { color: var(--text-muted); }
 
-html { min-height: 100%; scroll-behavior: smooth; }
+.surface       { background: var(--bg-surface); }
+.surface-muted { background: var(--bg-surface-muted); }
+.hover-bg-muted:hover { background: var(--bg-surface-muted); }
+.border-default { border-color: var(--border-default); }
 
-body {
-  min-height: 100%;
-  background: var(--bg-base);
-  color: var(--text-primary);
-  transition: background 180ms, color 180ms;
+/* ── Buttons (pill-based) ────────────────────────── */
+
+.btn-primary {
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 999px; padding: 0.5rem 1.25rem;
+  font-size: 0.875rem; font-weight: 600;
+  background: var(--accent); color: #fff;
+  cursor: pointer; user-select: none; white-space: nowrap; border: none;
+  transition: background 140ms;
 }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
 
-::selection { background: #fff; color: #1a001a; }
+.btn-secondary {
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 999px; padding: 0.5rem 1.25rem;
+  font-size: 0.875rem; font-weight: 600;
+  background: var(--bg-surface); color: var(--text-primary);
+  cursor: pointer; user-select: none; white-space: nowrap; border: none;
+  transition: background 140ms;
+}
+.btn-secondary:hover { background: var(--bg-surface-muted); }
+.btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* ── All buttons are pills ──────────────────────── */
+.btn-ghost {
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 999px; padding: 0.5rem 1.25rem;
+  font-size: 0.875rem; font-weight: 600;
+  background: transparent; color: var(--text-secondary);
+  cursor: pointer; user-select: none; white-space: nowrap; border: none;
+  transition: background 140ms, color 140ms;
+}
+.btn-ghost:hover { background: var(--bg-surface); color: var(--text-primary); }
+.btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Inputs, selects, textareas ──────────────────── */
+
+.input-surface {
+  border-radius: 999px; padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  background: var(--bg-surface); color: var(--text-primary);
+  outline: none; border: 1px solid var(--border-default);
+  transition: border-color 140ms, box-shadow 140ms;
+}
+.input-surface:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.input-surface::placeholder { color: var(--text-muted); }
+
+/* ── Legacy pill classes (kept for header toggle) ── */
 
 .pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  padding: 0.5rem 1.25rem;
-  font-size: 0.875rem;
-  font-weight: 600;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 999px; padding: 0.5rem 1.25rem;
+  font-size: 0.875rem; font-weight: 600;
   transition: background 140ms, color 140ms, opacity 140ms;
-  cursor: pointer;
-  user-select: none;
-  white-space: nowrap;
-  border: none;
+  cursor: pointer; user-select: none; white-space: nowrap; border: none;
 }
-
 .pill:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.pill-primary {
-  background: #fff;
-  color: #1a001a;
-}
-
-.pill-primary:hover:not(:disabled) {
-  background: #f0f0f0;
-}
+.pill-primary { background: #fff; color: #1a001a; }
+.pill-primary:hover:not(:disabled) { background: #f0f0f0; }
 
 .pill-secondary {
   background: color-mix(in srgb, #fff 20%, transparent);
-  color: #fff;
+  color: var(--text-primary);
   border: 1px solid rgba(255,255,255,0.15);
 }
-
 .pill-secondary:hover:not(:disabled) {
   background: color-mix(in srgb, #fff 35%, transparent);
 }
 
-.pill-danger {
-  background: color-mix(in srgb, var(--error) 15%, transparent);
-  color: #fff;
-  border: 1px solid color-mix(in srgb, var(--error) 35%, transparent);
-}
-
-.pill-accent-ghost {
-  background: transparent;
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.25);
-}
-
-.pill-accent-ghost:hover:not(:disabled) {
-  background: color-mix(in srgb, #fff 12%, transparent);
-}
-
-/* ── Chips / toggle pills ───────────────────────── */
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 999px;
-  padding: 0.35rem 0.9rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: transparent;
-  color: rgba(255,255,255,0.7);
-  border: 1px solid rgba(255,255,255,0.15);
-  cursor: pointer;
-  transition: all 140ms;
-}
-
-.chip:hover:not(:disabled) {
-  background: rgba(255,255,255,0.12);
-  color: #fff;
-  border-color: rgba(255,255,255,0.4);
-}
-
-.chip-active {
-  background: #fff;
-  color: #1a001a;
-  border-color: transparent;
-}
-
-.chip-active:hover:not(:disabled) {
-  background: #f0f0f0;
-  color: #1a001a;
-}
-
-/* ── Fields ─────────────────────────────────────── */
-
-.field {
-  width: 100%;
-  border-radius: 999px;
-  padding: 0.625rem 1rem;
-  font-size: 0.875rem;
-  background: rgba(255,255,255,0.2);
-  color: #fff;
-  outline: none;
-  border: 1px solid rgba(255,255,255,0.15);
-  transition: box-shadow 140ms, border-color 140ms;
-}
-
-.field:focus {
-  border-color: rgba(255,255,255,0.5);
-  box-shadow: 0 0 0 2px rgba(255,255,255,0.2);
-}
-
-.field::placeholder {
-  color: rgba(255,255,255,0.4);
-}
-
-/* ── Swatch actions ─────────────────────────────── */
+/* ── Swatch actions ──────────────────────────────── */
 
 .swatch-action {
   border-radius: 999px;
@@ -183,11 +140,10 @@ body {
   cursor: pointer;
   border: none;
 }
-
 .swatch-action:hover { background: rgba(0, 0, 0, 0.35); }
 .swatch-action:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* ── Data strip ─────────────────────────────────── */
+/* ── Data strip ──────────────────────────────────── */
 
 .data-strip {
   border-top: 1px solid var(--border-default);
@@ -199,9 +155,7 @@ body {
   flex-wrap: wrap;
 }
 
-/* ── Inline tab nav (rendered in JSX) ─────────────── */
-
-/* ── Section headings ──────────────────────────────── */
+/* ── Section headings ────────────────────────────── */
 
 .section-title {
   font-size: 0.75rem;
@@ -211,7 +165,22 @@ body {
   color: var(--text-muted);
 }
 
-/* ── Scrollbar ──────────────────────────────────── */
+/* ── Base ────────────────────────────────────────── */
+
+* { box-sizing: border-box; }
+html { min-height: 100%; scroll-behavior: smooth; }
+
+body {
+  min-height: 100%;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  transition: background 180ms, color 180ms;
+}
+
+::selection { background: var(--accent); color: #fff; }
+
+/* ── Scrollbar ───────────────────────────────────── */
+
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }

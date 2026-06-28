@@ -18,19 +18,19 @@ export function StudioLinks() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-3">
-      <h3 className="text-xs font-bold tracking-wider uppercase text-white/60">Tools</h3>
+      <h3 className="text-xs font-bold tracking-wider uppercase text-secondary">Tools</h3>
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {links.map((link) => (
           <button
             key={link.label}
-            className="rounded-2xl border border-white/10 p-3 text-left hover:bg-white/10 transition text-white/70 hover:text-white"
+            className="rounded-2xl border border-default p-3 text-left hover-bg-muted transition text-secondary hover:text-page"
             onClick={() => {
               // Navigate to the tab via a custom event so OpenPaletteApp can listen
               window.dispatchEvent(new CustomEvent("op-navigate", { detail: { tab: link.tab } }));
             }}
           >
             <p className="text-sm font-semibold">{link.label}</p>
-            <p className="text-[10px] text-white/40 mt-0.5">{link.desc}</p>
+            <p className="text-[10px] text-muted mt-0.5">{link.desc}</p>
           </button>
         ))}
       </div>

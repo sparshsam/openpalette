@@ -24,11 +24,11 @@ export function ColorBlindPreview({ palette }: Props) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-4">
-      <h3 className="text-xs font-bold tracking-wider uppercase text-white/60">Color Vision Simulation</h3>
+      <h3 className="text-xs font-bold tracking-wider uppercase text-secondary">Color Vision Simulation</h3>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {modes.map((mode) => (
-          <div key={mode.id} className="rounded-2xl p-3 bg-white/10 backdrop-blur space-y-2">
-            <p className="text-[10px] font-bold tracking-wider uppercase text-white/50">{mode.label}</p>
+          <div key={mode.id} className="rounded-2xl p-3 surface-muted backdrop-blur space-y-2">
+            <p className="text-[10px] font-bold tracking-wider uppercase text-muted">{mode.label}</p>
             <div className="flex rounded-xl overflow-hidden h-10">
               {palette.colors.map((color, idx) => {
                 const nh = normalizeHex(color.hex) ?? "#111827";

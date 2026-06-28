@@ -37,7 +37,7 @@ export function StudioColorEditor({ palette }: Props) {
             className={`rounded-full px-3 py-1 text-xs font-bold tracking-wider uppercase transition ${
               openTab === t.id
                 ? "bg-white text-[#1a001a]"
-                : "bg-white/15 text-white/70 hover:bg-white/25 hover:text-white"
+                : "surface text-secondary hover-bg-muted hover:text-page"
             }`}
             onClick={() => setOpenTab(t.id)}
           >
@@ -49,8 +49,8 @@ export function StudioColorEditor({ palette }: Props) {
         {palette.colors.map((color, idx) => {
           const nh = normalizeHex(color.hex) ?? "#111827";
           return (
-            <div key={color.id} className="rounded-2xl p-4 bg-white/10 backdrop-blur space-y-2">
-              <p className="text-xs font-semibold text-white/60">#{idx + 1}</p>
+            <div key={color.id} className="rounded-2xl p-4 surface-muted backdrop-blur space-y-2">
+              <p className="text-xs font-semibold text-secondary">#{idx + 1}</p>
               {openTab === "hex" && <HexEditor color={color} palette={palette} />}
               {openTab === "hsl" && <HslEditor color={color} nh={nh} palette={palette} />}
               {openTab === "rgb" && <RgbEditor color={color} nh={nh} palette={palette} />}
@@ -67,10 +67,10 @@ export function StudioColorEditor({ palette }: Props) {
 
 function HexEditor({ color, palette }: { color: typeof palette.colors[0]; palette: PaletteAPI }) {
   return (
-    <label className="text-[10px] font-bold tracking-wider uppercase text-white/70 text-center block">
+    <label className="text-[10px] font-bold tracking-wider uppercase text-secondary text-center block">
       Hex
       <input
-        className="w-full rounded-full bg-white/15 px-2 py-1.5 text-xs font-semibold text-center text-white outline-none mt-1 uppercase"
+        className="w-full rounded-full surface px-2 py-1.5 text-xs font-semibold text-center text-page outline-none mt-1 uppercase"
         value={color.hex}
         onChange={(e) => palette.updateHex(color.id, e.target.value)}
       />
@@ -83,10 +83,10 @@ function HslEditor({ color, nh, palette }: { color: typeof palette.colors[0]; nh
   return (
     <div className="grid grid-cols-3 gap-1">
       {(["h", "s", "l"] as const).map((ch) => (
-        <label key={ch} className="text-[10px] font-bold tracking-wider uppercase text-white/70 text-center">
+        <label key={ch} className="text-[10px] font-bold tracking-wider uppercase text-secondary text-center">
           {ch}
           <input
-            className="w-full rounded-full bg-white/15 px-2 py-1.5 text-xs font-semibold text-center text-white outline-none mt-1"
+            className="w-full rounded-full surface px-2 py-1.5 text-xs font-semibold text-center text-page outline-none mt-1"
             max={ch === "h" ? 360 : 100} min={0} type="number"
             value={hsl[ch]}
             onChange={(e) => palette.updateHsl(color.id, ch, Number(e.target.value))}
@@ -102,10 +102,10 @@ function RgbEditor({ color, nh, palette }: { color: typeof palette.colors[0]; nh
   return (
     <div className="grid grid-cols-3 gap-1">
       {(["r", "g", "b"] as const).map((ch) => (
-        <label key={ch} className="text-[10px] font-bold tracking-wider uppercase text-white/70 text-center">
+        <label key={ch} className="text-[10px] font-bold tracking-wider uppercase text-secondary text-center">
           {ch}
           <input
-            className="w-full rounded-full bg-white/15 px-2 py-1.5 text-xs font-semibold text-center text-white outline-none mt-1"
+            className="w-full rounded-full surface px-2 py-1.5 text-xs font-semibold text-center text-page outline-none mt-1"
             max={255} min={0} type="number"
             value={rgb[ch]}
             onChange={(e) => palette.updateRgb(color.id, ch, Number(e.target.value))}
@@ -121,10 +121,10 @@ function HsvEditor({ color, nh, palette }: { color: typeof palette.colors[0]; nh
   return (
     <div className="grid grid-cols-3 gap-1">
       {(["h", "s", "v"] as const).map((ch) => (
-        <label key={ch} className="text-[10px] font-bold tracking-wider uppercase text-white/70 text-center">
+        <label key={ch} className="text-[10px] font-bold tracking-wider uppercase text-secondary text-center">
           {ch}
           <input
-            className="w-full rounded-full bg-white/15 px-2 py-1.5 text-xs font-semibold text-center text-white outline-none mt-1"
+            className="w-full rounded-full surface px-2 py-1.5 text-xs font-semibold text-center text-page outline-none mt-1"
             max={ch === "h" ? 360 : 100} min={0} type="number"
             value={hsv[ch]}
             onChange={(e) => {
@@ -146,10 +146,10 @@ function CmykEditor({ color, nh, palette }: { color: typeof palette.colors[0]; n
   return (
     <div className="grid grid-cols-2 gap-1">
       {(["c", "m", "y", "k"] as const).map((ch) => (
-        <label key={ch} className="text-[10px] font-bold tracking-wider uppercase text-white/70 text-center">
+        <label key={ch} className="text-[10px] font-bold tracking-wider uppercase text-secondary text-center">
           {ch}
           <input
-            className="w-full rounded-full bg-white/15 px-2 py-1.5 text-xs font-semibold text-center text-white outline-none mt-1"
+            className="w-full rounded-full surface px-2 py-1.5 text-xs font-semibold text-center text-page outline-none mt-1"
             max={100} min={0} type="number"
             value={cmyk[ch]}
             onChange={(e) => {
@@ -171,8 +171,8 @@ function LabDisplay({ nh: hex }: { nh: string }) {
     <div className="grid grid-cols-3 gap-1">
       {(["l", "a", "b"] as const).map((ch) => (
         <div key={ch} className="text-center">
-          <p className="text-[10px] font-bold tracking-wider uppercase text-white/70">{ch}</p>
-          <p className="text-xs font-semibold text-white mt-1">{lab[ch].toFixed(1)}</p>
+          <p className="text-[10px] font-bold tracking-wider uppercase text-secondary">{ch}</p>
+          <p className="text-xs font-semibold text-page mt-1">{lab[ch].toFixed(1)}</p>
         </div>
       ))}
     </div>

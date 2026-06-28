@@ -100,10 +100,10 @@ function GradientSection() {
 
   return <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
     <div className="flex items-center justify-between gap-4">
-      <h2 className="text-xl font-black tracking-tight text-white">Gradient</h2>
+      <h2 className="text-xl font-black tracking-tight text-page">Gradient</h2>
       <div className="flex items-center gap-2">
-        <button className="rounded-full bg-white/20 backdrop-blur px-4 py-1.5 text-sm font-semibold text-white hover:bg-white/30 transition" onClick={palette.generate}>Generate (Space)</button>
-        <span className="text-xs text-white/50">{palette.notice}</span>
+        <button className="rounded-full surface backdrop-blur px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={palette.generate}>Generate (Space)</button>
+        <span className="text-xs text-muted">{palette.notice}</span>
       </div>
     </div>
 
@@ -116,15 +116,15 @@ function GradientSection() {
 
     <div className="flex flex-wrap items-center gap-3">
       {(["linear", "radial"] as const).map((k) => <button key={k} className={`rounded-full px-3 py-1 text-xs font-bold tracking-wider uppercase transition ${
-        kind === k ? "bg-white text-[#1a001a]" : "bg-white/15 text-white/70 hover:bg-white/25 hover:text-white"
+        kind === k ? "bg-white text-[#1a001a]" : "surface text-secondary hover-bg-muted hover:text-page"
       }`} onClick={() => setKind(k)}>{k}</button>)}
-      {kind === "linear" && <label className="flex items-center gap-2 text-xs font-semibold text-white/60">Angle {angle}°<input className="w-20" max={360} min={0} type="range" value={angle} onChange={(e) => setAngle(Number(e.target.value))} /></label>}
+      {kind === "linear" && <label className="flex items-center gap-2 text-xs font-semibold text-secondary">Angle {angle}°<input className="w-20" max={360} min={0} type="range" value={angle} onChange={(e) => setAngle(Number(e.target.value))} /></label>}
     </div>
-    <canvas ref={canvasRef} className="w-full h-48 sm:h-64 rounded-2xl border border-white/10" width={1200} height={420} />
+    <canvas ref={canvasRef} className="w-full h-48 sm:h-64 rounded-2xl border border-default" width={1200} height={420} />
     <div className="flex flex-wrap gap-2">
-      <button className="rounded-full bg-white/15 px-4 py-1.5 text-sm font-semibold text-white hover:bg-white/25 transition" onClick={async () => { try { await navigator.clipboard.writeText(css); palette.announce("CSS copied"); } catch {} }}>Copy CSS</button>
-      <button className="rounded-full bg-white/15 px-4 py-1.5 text-sm font-semibold text-white hover:bg-white/25 transition" onClick={async () => { try { await navigator.clipboard.writeText(svg); palette.announce("SVG copied"); } catch {} }}>Copy SVG</button>
-      <button className="rounded-full bg-white/15 px-4 py-1.5 text-sm font-semibold text-white hover:bg-white/25 transition" onClick={() => { const can = document.createElement("canvas"); can.width=1200; can.height=420; const ctx=can.getContext("2d"); if(!ctx)return; drawGradient(ctx, can.width, can.height, palette.paletteHex, kind, angle); can.toBlob((b)=>{if(!b)return;const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download="gradient.png";a.click();URL.revokeObjectURL(u);palette.announce("PNG downloaded");}); }}>Download PNG</button>
+      <button className="rounded-full surface px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={async () => { try { await navigator.clipboard.writeText(css); palette.announce("CSS copied"); } catch {} }}>Copy CSS</button>
+      <button className="rounded-full surface px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={async () => { try { await navigator.clipboard.writeText(svg); palette.announce("SVG copied"); } catch {} }}>Copy SVG</button>
+      <button className="rounded-full surface px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={() => { const can = document.createElement("canvas"); can.width=1200; can.height=420; const ctx=can.getContext("2d"); if(!ctx)return; drawGradient(ctx, can.width, can.height, palette.paletteHex, kind, angle); can.toBlob((b)=>{if(!b)return;const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download="gradient.png";a.click();URL.revokeObjectURL(u);palette.announce("PNG downloaded");}); }}>Download PNG</button>
     </div>
   </section>;
 }
@@ -146,10 +146,10 @@ function VisualizerSection() {
 
   return <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
     <div className="flex items-center justify-between gap-4">
-      <h2 className="text-xl font-black tracking-tight text-white">Visualizer</h2>
+      <h2 className="text-xl font-black tracking-tight text-page">Visualizer</h2>
       <div className="flex items-center gap-2">
-        <button className="rounded-full bg-white/20 backdrop-blur px-4 py-1.5 text-sm font-semibold text-white hover:bg-white/30 transition" onClick={palette.generate}>Generate (Space)</button>
-        <span className="text-xs text-white/50">{palette.notice}</span>
+        <button className="rounded-full surface backdrop-blur px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={palette.generate}>Generate (Space)</button>
+        <span className="text-xs text-muted">{palette.notice}</span>
       </div>
     </div>
 
@@ -160,27 +160,27 @@ function VisualizerSection() {
 
     <div className="flex flex-wrap items-center gap-3">
       {visualizers.map((v) => <button key={v} className={`rounded-full px-3 py-1 text-xs font-bold tracking-wider uppercase transition ${
-        activeVizz === v ? "bg-white text-[#1a001a]" : "bg-white/15 text-white/70 hover:bg-white/25 hover:text-white"
+        activeVizz === v ? "bg-white text-[#1a001a]" : "surface text-secondary hover-bg-muted hover:text-page"
       }`} onClick={() => setActiveVizz(v)}>{v}</button>)}
     </div>
 
     {/* Customization */}
     <div className="flex flex-wrap items-center gap-4">
-      <label className="flex items-center gap-2 text-xs font-semibold text-white/60">
-        Text <input className="size-7 rounded-full cursor-pointer border border-white/30" type="color" value={textColor} onChange={(e) => setTextColor(e.target.value)} />
+      <label className="flex items-center gap-2 text-xs font-semibold text-secondary">
+        Text <input className="size-7 rounded-full cursor-pointer border border-default" type="color" value={textColor} onChange={(e) => setTextColor(e.target.value)} />
       </label>
-      <div className="flex items-center gap-1 text-xs font-semibold text-white/60">
+      <div className="flex items-center gap-1 text-xs font-semibold text-secondary">
         Bg {(["auto","light","dark","custom"] as const).map((o) => <button key={o} className={`rounded-full px-2.5 py-1 text-xs transition ${
-          bgMode === o ? "bg-white text-[#1a001a]" : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white"
+          bgMode === o ? "bg-white text-[#1a001a]" : "surface-muted text-secondary hover-bg-muted hover:text-page"
         }`} onClick={() => setBgMode(o)}>{o}</button>)}
       </div>
-      {bgMode === "custom" && <label className="flex items-center gap-2 text-xs font-semibold text-white/60">
-        <input className="size-7 rounded-full cursor-pointer border border-white/30" type="color" value={customBg} onChange={(e) => setCustomBg(e.target.value)} />
+      {bgMode === "custom" && <label className="flex items-center gap-2 text-xs font-semibold text-secondary">
+        <input className="size-7 rounded-full cursor-pointer border border-default" type="color" value={customBg} onChange={(e) => setCustomBg(e.target.value)} />
         <span className="font-mono">{customBg}</span>
       </label>}
     </div>
 
-    <div className="rounded-2xl border border-white/10 p-6 transition-colors" style={{ backgroundColor: appliedBg }}>
+    <div className="rounded-2xl border border-default p-6 transition-colors" style={{ backgroundColor: appliedBg }}>
       <VisualizerPreview active={activeVizz} colors={palette.paletteHex} gradient={css} textColor={textColor} />
     </div>
   </section>;
@@ -203,12 +203,12 @@ function AccessibilitySection() {
   return <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
     <div className="flex items-center justify-between gap-4">
       <div>
-        <h2 className="text-xl font-black tracking-tight text-white">Accessibility</h2>
+        <h2 className="text-xl font-black tracking-tight text-page">Accessibility</h2>
       </div>
       <div className="flex items-center gap-2">
-        <button className="rounded-full bg-white/20 backdrop-blur px-4 py-1.5 text-sm font-semibold text-white hover:bg-white/30 transition" onClick={palette.generate}>Generate (Space)</button>
+        <button className="rounded-full surface backdrop-blur px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={palette.generate}>Generate (Space)</button>
         <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-[#1a001a]">{score}/100</span>
-        <span className="text-xs text-white/50">{palette.notice}</span>
+        <span className="text-xs text-muted">{palette.notice}</span>
       </div>
     </div>
 
@@ -218,8 +218,8 @@ function AccessibilitySection() {
     </div>
 
     <div className="flex flex-wrap items-center gap-4">
-      <label className="flex items-center gap-2 text-xs font-semibold text-white/60">
-        Simulation<select className="rounded-full bg-white/15 px-3 py-1.5 text-xs text-white outline-none" value={visionMode} onChange={(e) => setVisionMode(e.target.value as VisionMode)}>
+      <label className="flex items-center gap-2 text-xs font-semibold text-secondary">
+        Simulation<select className="rounded-full surface px-3 py-1.5 text-xs text-page outline-none" value={visionMode} onChange={(e) => setVisionMode(e.target.value as VisionMode)}>
           <option value="none">None</option><option value="protanopia">Protanopia</option><option value="deuteranopia">Deuteranopia</option><option value="tritanopia">Tritanopia</option>
         </select>
       </label>
@@ -233,18 +233,18 @@ function AccessibilitySection() {
         </div>;
       })}
     </div>
-    {weakest && <div className="rounded-2xl border border-white/10 p-4 text-sm text-white/80">
-      <p><span className="font-semibold text-white">Weakest pair:</span> <span className="font-mono">{weakest.foreground}</span> on <span className="font-mono">{weakest.background}</span> · {weakest.ratio.toFixed(2)}:1</p>
-      <p className="mt-1">Suggested: <span className="font-mono text-white">{replacement}</span></p>
+    {weakest && <div className="rounded-2xl border border-default p-4 text-sm text-secondary">
+      <p><span className="font-semibold text-page">Weakest pair:</span> <span className="font-mono">{weakest.foreground}</span> on <span className="font-mono">{weakest.background}</span> · {weakest.ratio.toFixed(2)}:1</p>
+      <p className="mt-1">Suggested: <span className="font-mono text-page">{replacement}</span></p>
     </div>}
-    {palette.paletteHex.length >= 2 && <div className="border-t border-white/10 pt-4">
-      <h3 className="text-xs font-bold tracking-wider uppercase text-white/60 mb-2">Pair contrast matrix</h3>
+    {palette.paletteHex.length >= 2 && <div className="border-t border-default pt-4">
+      <h3 className="text-xs font-bold tracking-wider uppercase text-secondary mb-2">Pair contrast matrix</h3>
       <div className="grid gap-2 sm:grid-cols-2">
-        {pairContrasts.slice(0, 8).map((p, i) => <div key={i} className="flex items-center gap-2 text-sm py-1.5 border-b border-white/10">
-          <span className="size-4 rounded-full border border-white/20" style={{ backgroundColor: p.foreground }} />
+        {pairContrasts.slice(0, 8).map((p, i) => <div key={i} className="flex items-center gap-2 text-sm py-1.5 border-b border-default">
+          <span className="size-4 rounded-full border border-default" style={{ backgroundColor: p.foreground }} />
           <span className="text-[10px] opacity-50">on</span>
-          <span className="size-4 rounded-full border border-white/20" style={{ backgroundColor: p.background }} />
-          <span className="font-mono text-xs font-semibold text-white ml-auto">{p.ratio.toFixed(2)}:1</span>
+          <span className="size-4 rounded-full border border-default" style={{ backgroundColor: p.background }} />
+          <span className="font-mono text-xs font-semibold text-page ml-auto">{p.ratio.toFixed(2)}:1</span>
         </div>)}
       </div>
     </div>}
@@ -275,20 +275,20 @@ function ThemesSection() {
   return <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
     <div className="flex items-center justify-between gap-4">
       <div>
-        <h2 className="text-xl font-black tracking-tight text-white">Themes</h2>
-        <p className="text-sm text-white/60">Click to load, then edit your palette below.</p>
+        <h2 className="text-xl font-black tracking-tight text-page">Themes</h2>
+        <p className="text-sm text-secondary">Click to load, then edit your palette below.</p>
       </div>
       <div className="flex items-center gap-2">
-        <button className="rounded-full bg-white/20 backdrop-blur px-4 py-1.5 text-sm font-semibold text-white hover:bg-white/30 transition" onClick={palette.generate}>Generate (Space)</button>
-        <span className="text-xs text-white/50">{palette.notice}</span>
+        <button className="rounded-full surface backdrop-blur px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={palette.generate}>Generate (Space)</button>
+        <span className="text-xs text-muted">{palette.notice}</span>
       </div>
     </div>
     <div className="grid gap-3 sm:grid-cols-3">
       {sets.map((s) => <button key={s.name} type="button" onClick={() => { const nc = s.colors.map((c) => ({ id: crypto.randomUUID(), hex: c.hex, alpha: 100, locked: false })); palette.setPalette(nc, "Custom" as PaletteMode, `${s.name} loaded`); }}
-        className="rounded-2xl border border-white/15 p-4 text-left hover:bg-white/10 transition">
+        className="rounded-2xl border border-default p-4 text-left hover-bg-muted transition">
         <div className="flex gap-1.5 mb-2">{s.colors.map((c) => <span key={c.hex} className="h-8 flex-1 rounded-lg" style={{ backgroundColor: c.hex }} />)}</div>
-        <p className="font-semibold text-sm text-white">{s.name}</p>
-        <p className="text-xs text-white/50">{s.desc} <span className="uppercase tracking-wider">{s.th}</span></p>
+        <p className="font-semibold text-sm text-page">{s.name}</p>
+        <p className="text-xs text-muted">{s.desc} <span className="uppercase tracking-wider">{s.th}</span></p>
       </button>)}
     </div>
 
@@ -302,7 +302,7 @@ function ThemesSection() {
     {/* Quick controls */}
     <div className="flex flex-wrap gap-2">
       {paletteModes.slice(0, 5).map((m) => <button key={m} className={`rounded-full px-3 py-1 text-xs font-bold tracking-wider uppercase transition ${
-        palette.mode === m ? "bg-white text-[#1a001a]" : "bg-white/15 text-white/70 hover:bg-white/25 hover:text-white"
+        palette.mode === m ? "bg-white text-[#1a001a]" : "surface text-secondary hover-bg-muted hover:text-page"
       }`} onClick={() => palette.switchMode(m)}>{m}</button>)}
     </div>
   </section>;
@@ -372,15 +372,15 @@ function LibrarySection() {
   return <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
     <div className="flex items-center justify-between gap-4">
       <div>
-        <h2 className="text-xl font-black tracking-tight text-white">Library</h2>
-        <p className="text-xs text-white/40 mt-0.5">Collection: {activeCollection}</p>
+        <h2 className="text-xl font-black tracking-tight text-page">Library</h2>
+        <p className="text-xs text-muted mt-0.5">Collection: {activeCollection}</p>
       </div>
       <div className="flex items-center gap-2">
-        <button className="rounded-full bg-white/20 backdrop-blur px-4 py-1.5 text-sm font-semibold text-white hover:bg-white/30 transition" onClick={palette.generate}>Generate (Space)</button>
-        <button className="rounded-full bg-white/15 px-4 py-1.5 text-sm font-semibold text-white hover:bg-white/25 transition" onClick={save}>Save (S)</button>
-        <button className="rounded-full bg-white/15 px-3 py-1.5 text-sm font-semibold text-white hover:bg-white/25 transition disabled:opacity-30" disabled={palette.undoStack.length === 0} onClick={palette.undo}>Undo</button>
+        <button className="rounded-full surface backdrop-blur px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={palette.generate}>Generate (Space)</button>
+        <button className="rounded-full surface px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={save}>Save (S)</button>
+        <button className="rounded-full surface px-3 py-1.5 text-sm font-semibold text-page hover-bg-muted transition disabled:opacity-30" disabled={palette.undoStack.length === 0} onClick={palette.undo}>Undo</button>
         <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-[#1a001a]">{score}/100</span>
-        <span className="text-xs text-white/50">{palette.notice}</span>
+        <span className="text-xs text-muted">{palette.notice}</span>
       </div>
     </div>
 
@@ -391,15 +391,15 @@ function LibrarySection() {
 
     {/* Collections bar */}
     <div className="flex flex-wrap items-center gap-2">
-      <button className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/25 transition" onClick={() => setShowCollections(!showCollections)}>
+      <button className="rounded-full surface px-3 py-1.5 text-xs font-semibold text-page hover-bg-muted transition" onClick={() => setShowCollections(!showCollections)}>
         {showCollections ? "Hide" : "Collections"} ({collections.length})
       </button>
-      <button className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/25 transition" onClick={addCollection}>+ New</button>
+      <button className="rounded-full surface px-3 py-1.5 text-xs font-semibold text-page hover-bg-muted transition" onClick={addCollection}>+ New</button>
       {collections.map((c) => (
         <button
           key={c.id}
           className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
-            activeCollection === c.name ? "bg-white text-[#1a001a]" : "bg-white/15 text-white/70 hover:bg-white/25"
+            activeCollection === c.name ? "bg-white text-[#1a001a]" : "surface text-secondary hover-bg-muted"
           }`}
           onClick={() => setActiveCollection(c.name)}
         >
@@ -411,48 +411,48 @@ function LibrarySection() {
     {/* Exports */}
     <section>
       <div className="flex flex-wrap gap-1.5 mb-3">
-        {exportFormats.map((f) => <button key={f} className={`rounded-full px-3 py-1 text-xs font-bold tracking-wider uppercase transition ${activeFormat === f ? "bg-white text-[#1a001a]" : "bg-white/15 text-white/70 hover:bg-white/25 hover:text-white"}`} onClick={() => setActiveFormat(f)}>{f}</button>)}
+        {exportFormats.map((f) => <button key={f} className={`rounded-full px-3 py-1 text-xs font-bold tracking-wider uppercase transition ${activeFormat === f ? "bg-white text-[#1a001a]" : "surface text-secondary hover-bg-muted hover:text-page"}`} onClick={() => setActiveFormat(f)}>{f}</button>)}
       </div>
-      <pre className="max-h-32 overflow-auto rounded-2xl bg-white/10 p-4 text-xs text-white/80 leading-relaxed"><code className="font-mono">{exportSnippets[activeFormat]}</code></pre>
+      <pre className="max-h-32 overflow-auto rounded-2xl surface-muted p-4 text-xs text-secondary leading-relaxed"><code className="font-mono">{exportSnippets[activeFormat]}</code></pre>
       <div className="mt-3 flex flex-wrap gap-2">
-        <button className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/25 transition" onClick={async () => { try { await navigator.clipboard.writeText(exportSnippets[activeFormat]); palette.announce("Copied"); } catch {} }}>Copy</button>
-        <button className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/25 transition" onClick={() => { const u = URL.createObjectURL(new Blob([exportSnippets[activeFormat]], { type: "text/plain" })); const a = document.createElement("a"); a.href = u; a.download = `palette.${extensionFor(activeFormat)}`; a.click(); URL.revokeObjectURL(u); palette.announce("Downloaded"); }}>Download</button>
-        <button className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/25 transition" onClick={() => { const can = document.createElement("canvas"); can.width=1400; can.height=840; const ctx=can.getContext("2d"); if(!ctx)return; drawSwatches(ctx, can.width, can.height, palette.paletteHex); can.toBlob((b)=>{if(!b)return;const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download="swatches.png";a.click();URL.revokeObjectURL(u);palette.announce("PNG downloaded");}); }}>PNG</button>
-        <button className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/25 transition" onClick={() => { const u = URL.createObjectURL(new Blob([createSimplePdf(palette.paletteHex)], { type: "application/pdf" })); const a = document.createElement("a"); a.href = u; a.download = "palette.pdf"; a.click(); URL.revokeObjectURL(u); palette.announce("PDF downloaded"); }}>PDF</button>
+        <button className="rounded-full surface px-3 py-1.5 text-xs font-semibold text-page hover-bg-muted transition" onClick={async () => { try { await navigator.clipboard.writeText(exportSnippets[activeFormat]); palette.announce("Copied"); } catch {} }}>Copy</button>
+        <button className="rounded-full surface px-3 py-1.5 text-xs font-semibold text-page hover-bg-muted transition" onClick={() => { const u = URL.createObjectURL(new Blob([exportSnippets[activeFormat]], { type: "text/plain" })); const a = document.createElement("a"); a.href = u; a.download = `palette.${extensionFor(activeFormat)}`; a.click(); URL.revokeObjectURL(u); palette.announce("Downloaded"); }}>Download</button>
+        <button className="rounded-full surface px-3 py-1.5 text-xs font-semibold text-page hover-bg-muted transition" onClick={() => { const can = document.createElement("canvas"); can.width=1400; can.height=840; const ctx=can.getContext("2d"); if(!ctx)return; drawSwatches(ctx, can.width, can.height, palette.paletteHex); can.toBlob((b)=>{if(!b)return;const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download="swatches.png";a.click();URL.revokeObjectURL(u);palette.announce("PNG downloaded");}); }}>PNG</button>
+        <button className="rounded-full surface px-3 py-1.5 text-xs font-semibold text-page hover-bg-muted transition" onClick={() => { const u = URL.createObjectURL(new Blob([createSimplePdf(palette.paletteHex)], { type: "application/pdf" })); const a = document.createElement("a"); a.href = u; a.download = "palette.pdf"; a.click(); URL.revokeObjectURL(u); palette.announce("PDF downloaded"); }}>PDF</button>
       </div>
     </section>
 
     {/* Library */}
     <section>
       <div className="flex flex-wrap gap-3 mb-4">
-        <input className="rounded-full bg-white/15 px-4 py-2 text-sm text-white outline-none placeholder:text-white/40 flex-1 min-w-28" placeholder="Search" value={query} onChange={(e) => setQuery(e.target.value)} />
-        <input className="rounded-full bg-white/15 px-4 py-2 text-sm text-white outline-none placeholder:text-white/40 flex-1 min-w-20" placeholder="Tags" value={tagFilter} onChange={(e) => setTagFilter(e.target.value)} />
-        <select className="rounded-full bg-white/15 px-4 py-2 text-sm text-white outline-none flex-1 min-w-20" value={sort} onChange={(e) => setSort(e.target.value as LibrarySort)}>{sorts.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}</select>
+        <input className="rounded-full surface px-4 py-2 text-sm text-page outline-none placeholder:text-muted flex-1 min-w-28" placeholder="Search" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <input className="rounded-full surface px-4 py-2 text-sm text-page outline-none placeholder:text-muted flex-1 min-w-20" placeholder="Tags" value={tagFilter} onChange={(e) => setTagFilter(e.target.value)} />
+        <select className="rounded-full surface px-4 py-2 text-sm text-page outline-none flex-1 min-w-20" value={sort} onChange={(e) => setSort(e.target.value as LibrarySort)}>{sorts.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}</select>
       </div>
-      {filtered.length === 0 ? <p className="text-sm text-white/50">No matches. Generate and save.</p>
+      {filtered.length === 0 ? <p className="text-sm text-muted">No matches. Generate and save.</p>
         : <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.slice(0, 24).map((r) => (
-              <div key={r.id} className="rounded-2xl border border-white/15 p-3 space-y-2">
-                <input className="w-full bg-transparent font-semibold outline-none text-sm text-white" value={r.name} onChange={(e) => upd(r.id, { name: e.target.value })} />
+              <div key={r.id} className="rounded-2xl border border-default p-3 space-y-2">
+                <input className="w-full bg-transparent font-semibold outline-none text-sm text-page" value={r.name} onChange={(e) => upd(r.id, { name: e.target.value })} />
                 <button className="grid w-full overflow-hidden rounded-xl" style={{ gridTemplateColumns: `repeat(${r.colors.length}, 1fr)` }} onClick={() => load(r)}>{r.colors.map((h, i) => <span key={`${r.id}-${i}`} className="h-8" style={{ backgroundColor: h }} />)}</button>
-                <input className="w-full bg-transparent text-xs text-white/50 outline-none" placeholder="tags" value={r.tags.join(", ")} onChange={(e) => upd(r.id, { tags: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })} />
+                <input className="w-full bg-transparent text-xs text-muted outline-none" placeholder="tags" value={r.tags.join(", ")} onChange={(e) => upd(r.id, { tags: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })} />
                 <div className="flex gap-2">
-                  <button className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white hover:bg-white/25 transition flex-1" onClick={() => upd(r.id, { favorite: !r.favorite })}>{r.favorite ? "★" : "☆"}</button>
-                  <button className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/60 hover:bg-white/20 transition flex-1" onClick={() => setLibrary((c) => c.filter((x) => x.id !== r.id))}>Delete</button>
+                  <button className="rounded-full surface px-3 py-1 text-xs font-semibold text-page hover-bg-muted transition flex-1" onClick={() => upd(r.id, { favorite: !r.favorite })}>{r.favorite ? "★" : "☆"}</button>
+                  <button className="rounded-full surface-muted px-3 py-1 text-xs font-semibold text-secondary hover-bg-muted transition flex-1" onClick={() => setLibrary((c) => c.filter((x) => x.id !== r.id))}>Delete</button>
                 </div>
-                <p className="text-[10px] text-white/30">{r.collection}</p>
+                <p className="text-[10px] text-muted">{r.collection}</p>
               </div>
             ))}
           </div>}
     </section>
 
-    {history.length > 0 && <section className="border-t border-white/10 pt-4">
-      <h3 className="text-xs font-bold tracking-wider uppercase text-white/60 mb-2">Recent</h3>
+    {history.length > 0 && <section className="border-t border-default pt-4">
+      <h3 className="text-xs font-bold tracking-wider uppercase text-secondary mb-2">Recent</h3>
       <div className="grid gap-2 sm:grid-cols-5">
         {history.slice(0, 10).map((r) => (
           <button key={r.id} className="flex items-center gap-2 text-xs" onClick={() => load(r)}>
             <span className="flex-1 grid grid-flow-col overflow-hidden rounded-md">{r.colors.map((h, i) => <span key={`${r.id}-h-${i}`} className="h-5" style={{ backgroundColor: h }} />)}</span>
-            <span className="text-white/50">{r.mode}</span>
+            <span className="text-muted">{r.mode}</span>
           </button>
         ))}
       </div>
