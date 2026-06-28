@@ -51,19 +51,23 @@ export function StudioSection() {
     return () => window.removeEventListener("keydown", fn);
   }, [palette]);
 
-  // Listen for tool navigation events
+  // Listen for tool navigation & editor toggle events
   useEffect(() => {
-    const handler = (e: Event) => {
+    const navHandler = (e: Event) => {
       const detail = (e as CustomEvent).detail;
       if (detail?.tab) {
-        // For now, just set focus to import textarea for "import" tab
         if (detail.tab === "import") {
           document.querySelector<HTMLTextAreaElement>("textarea")?.focus();
         }
       }
     };
-    window.addEventListener("op-navigate", handler);
-    return () => window.removeEventListener("op-navigate", handler);
+    const editHandler = () => setAdvanced((o) => !o);
+    window.addEventListener("op-navigate", navHandler);
+    window.addEventListener("op-toggle-editor", editHandler);
+    return () => {
+      window.removeEventListener("op-navigate", navHandler);
+      window.removeEventListener("op-toggle-editor", editHandler);
+    };
   }, []);
 
   async function extractFromImage(file: File | null) {

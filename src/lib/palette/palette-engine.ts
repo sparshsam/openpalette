@@ -58,14 +58,15 @@ export function generateHarmony(baseHex: string, mode: PaletteMode, size: number
   const hueOffsets = getHarmonyOffsets(mode, desiredSize);
 
   return hueOffsets.map((offset, index) => {
+    const hueShift = (index % 3) - 1;
     const saturation =
       mode === "Monochromatic"
-        ? clamp(base.s + (index - desiredSize / 2) * 6, 22, 92)
-        : clamp(base.s + ((index % 3) - 1) * 8, 28, 92);
+        ? clamp(base.s + (index - Math.floor(desiredSize / 2)) * 10, 25, 95)
+        : clamp(base.s + hueShift * 12, 30, 95);
     const lightness =
       mode === "Monochromatic"
-        ? clamp(18 + (index / Math.max(desiredSize - 1, 1)) * 64, 12, 88)
-        : clamp(base.l + ((index % 4) - 1.5) * 7, 18, 86);
+        ? clamp(12 + (index / Math.max(desiredSize - 1, 1)) * 76, 8, 92)
+        : clamp(base.l + (Math.floor(index / 3) + 1) * (index % 2 === 0 ? 8 : -6), 15, 88);
 
     return hslToHex((base.h + offset + 360) % 360, saturation, lightness);
   });
@@ -73,8 +74,8 @@ export function generateHarmony(baseHex: string, mode: PaletteMode, size: number
 
 export function generateHex(seed = Math.random() * 360) {
   const hue = Math.floor(seed % 360);
-  const saturation = 54 + Math.floor(Math.random() * 36);
-  const lightness = 34 + Math.floor(Math.random() * 38);
+  const saturation = 60 + Math.floor(Math.random() * 35);
+  const lightness = 40 + Math.floor(Math.random() * 35);
 
   return hslToHex(hue, saturation, lightness);
 }
