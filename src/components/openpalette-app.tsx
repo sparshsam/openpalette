@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { VisualizerPreview, visualizers, type Visualizer } from "@/components/studio/visualizers";
 import { createSimplePdf, drawSwatches, extensionFor } from "@/lib/browser-exports";
 import {
@@ -10,26 +10,15 @@ import {
   createPalette,
   exportFormats,
   drawGradient,
-  extractPaletteFromPixels,
-  generatePalette,
   getContrastHint,
   getPairContrasts,
   getPaletteAccessibilityScore,
   getReadableTextColor,
-  hexToHsl,
-  hexToRgb,
-  hslToHex,
-  maxPaletteSize,
-  minPaletteSize,
   normalizeHex,
   paletteModes,
   paletteSignature,
-  parsePaletteInput,
-  resizePalette,
-  rgbToHex,
   sortPalettes,
   suggestAccessibleReplacement,
-  type ExtractionMode,
   type ExportFormat,
   type GradientKind,
   type LibrarySort,
@@ -38,6 +27,9 @@ import {
   type PaletteRecord,
   type VisionMode,
 } from "@/lib/palette";
+import { usePalette } from "@/components/use-palette";
+import { StudioSection } from "@/components/studio/studio-section";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 const libraryStorageKey = "openpalette.library.v1";
 const historyStorageKey = "openpalette.history.v1";
@@ -58,6 +50,19 @@ const tabs: { id: Tab; label: string }[] = [
 
 export function OpenPaletteApp() {
   const [activeTab, setActiveTab] = useState<Tab>("studio");
+
+  // Listen for tool navigation events from StudioLinks
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.tab && tabs.some((t) => t.id === detail.tab)) {
+        setActiveTab(detail.tab as Tab);
+      }
+    };
+    window.addEventListener("op-navigate", handler);
+    return () => window.removeEventListener("op-navigate", handler);
+  }, []);
+
   return <div>
     <nav className="flex justify-center py-4" aria-label="Tabs">
       <div className="inline-flex gap-0.5 p-1 rounded-full bg-[#fff5fc] dark:bg-[#2d001e] overflow-x-auto shadow-sm">
@@ -70,179 +75,13 @@ export function OpenPaletteApp() {
         ))}
       </div>
     </nav>
-    {activeTab === "studio" && <StudioSection />}
-    {activeTab === "gradient" && <GradientSection />}
-    {activeTab === "visualizer" && <VisualizerSection />}
-    {activeTab === "accessibility" && <AccessibilitySection />}
-    {activeTab === "themes" && <ThemesSection />}
-    {activeTab === "library" && <LibrarySection />}
+    {activeTab === "studio" && <ErrorBoundary name="Studio"><StudioSection /></ErrorBoundary>}
+    {activeTab === "gradient" && <ErrorBoundary name="Gradient"><GradientSection /></ErrorBoundary>}
+    {activeTab === "visualizer" && <ErrorBoundary name="Visualizer"><VisualizerSection /></ErrorBoundary>}
+    {activeTab === "accessibility" && <ErrorBoundary name="Accessibility"><AccessibilitySection /></ErrorBoundary>}
+    {activeTab === "themes" && <ErrorBoundary name="Themes"><ThemesSection /></ErrorBoundary>}
+    {activeTab === "library" && <ErrorBoundary name="Library"><LibrarySection /></ErrorBoundary>}
   </div>;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   HOOK
-   ═══════════════════════════════════════════════════════════ */
-
-type CurrentState = { colors: PaletteColor[]; mode: PaletteMode };
-
-function usePalette() {
-  const [colors, setColors] = useState<PaletteColor[]>(() => createPalette());
-  const [mode, setMode] = useState<PaletteMode>("Analogous");
-  const [notice, setNotice] = useState("Ready");
-  const [undoStack, setUndoStack] = useState<CurrentState[]>([]);
-  const paletteHex = useMemo(() => colors.map((c) => normalizeHex(c.hex) ?? "#111827"), [colors]);
-  const paletteAlphas = useMemo(() => colors.map((c) => c.alpha), [colors]);
-  const announce = useCallback((m: string) => { setNotice(m); setTimeout(() => setNotice("Ready"), 2200); }, []);
-  const pushUndo = useCallback((s: CurrentState) => setUndoStack((st) => [s, ...st].slice(0, 20)), []);
-  const setPalette = useCallback((nc: PaletteColor[], nm: PaletteMode, msg: string) => { pushUndo({ colors, mode }); setColors(nc); setMode(nm); announce(msg); }, [announce, colors, mode, pushUndo]);
-  const generate = useCallback(() => setPalette(generatePalette(colors, mode, colors.length), mode, `${mode}`), [colors, mode, setPalette]);
-  const undo = useCallback(() => setUndoStack((s) => { const [p, ...r] = s; if (!p) { announce("Nothing to undo"); return s; } setColors(p.colors); setMode(p.mode); announce("Undone"); return r; }), [announce]);
-  return {
-    colors, setColors, mode, setMode, paletteHex, paletteAlphas, notice, undoStack,
-    announce, generate, undo, setPalette,
-    updateHex: (id: string, v: string) => setColors((c) => c.map((x) => x.id === id ? { ...x, hex: normalizeHex(v) ?? v.toUpperCase() } : x)),
-    updateHsl: (id: string, ch: "h"|"s"|"l", v: number) => setColors((c) => c.map((x) => { if (x.id !== id) return x; const h = hexToHsl(x.hex); return { ...x, hex: hslToHex(ch==="h"?v:h.h, ch==="s"?v:h.s, ch==="l"?v:h.l) }; })),
-    updateRgb: (id: string, ch: "r"|"g"|"b", v: number) => setColors((c) => c.map((x) => { if (x.id !== id) return x; const h = hexToRgb(x.hex); return { ...x, hex: rgbToHex({ ...h, [ch]: v }) }; })),
-    updateAlpha: (id: string, a: number) => setColors((c) => c.map((x) => x.id === id ? { ...x, alpha: a } : x)),
-    toggleLock: (id: string) => setColors((c) => c.map((x) => x.id === id ? { ...x, locked: !x.locked } : x)),
-    setSize: (n: number) => setPalette(resizePalette(colors, n, mode), mode, `${n}`),
-    switchMode: (m: PaletteMode) => setPalette(generatePalette(colors, m, colors.length), m, `${m}`),
-  };
-}
-
-/* ═══════════════════════════════════════════════════════════
-   FULL-WIDTH SWATCHES (edge-to-edge)
-   ═══════════════════════════════════════════════════════════ */
-
-function FullSwatches({ palette: p }: { palette: ReturnType<typeof usePalette> }) {
-  return <div className="-mx-4 sm:-mx-6 lg:-mx-8 border-y border-[rgba(255,255,255,0.2)]">
-    <div className="flex flex-col">
-      {p.colors.map((color, idx) => {
-        const nh = normalizeHex(color.hex) ?? "#111827";
-        const hsl = hexToHsl(nh);
-        const rgb = hexToRgb(nh);
-        const tc = getReadableTextColor(nh);
-        return <div key={color.id} className="h-dvh flex flex-col justify-end p-8 sm:p-10 lg:p-12" style={{ backgroundColor: nh, color: tc }}>
-          {/* Top controls */}
-          <div className="flex items-center justify-between mb-4">
-            <span className="rounded-full bg-black/15 backdrop-blur px-3 py-1 text-xs font-semibold">{idx + 1}/{p.colors.length}</span>
-            <div className="flex gap-2">
-              <button className="rounded-full bg-black/15 backdrop-blur px-3 py-1 text-xs font-semibold hover:bg-black/30 transition" onClick={() => p.toggleLock(color.id)}>{color.locked ? "🔒" : "🔓"}</button>
-              <button className="rounded-full bg-black/15 backdrop-blur px-3 py-1 text-xs font-semibold hover:bg-black/30 transition" disabled={p.colors.length <= minPaletteSize} onClick={() => p.setPalette(p.colors.filter((c) => c.id !== color.id), p.mode, "Removed")}>✕</button>
-            </div>
-          </div>
-
-          {/* Bottom controls (pushed to bottom via justify-end) */}
-          <div className="space-y-2">
-            {/* Large hex label */}
-            <p className="font-mono text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight drop-shadow-sm">{nh}</p>
-            {/* Small HSL/RGB */}
-            <p className="text-xs opacity-70 font-mono">hsl({hsl.h}, {hsl.s}%, {hsl.l}%) · rgb({rgb.r}, {rgb.g}, {rgb.b})</p>
-
-            {/* Inline editable row */}
-            <div className="flex flex-wrap gap-2 items-center pt-1">
-              <input className="h-9 rounded-full border border-white/30 bg-white/20 px-3 py-1 font-mono text-sm font-semibold text-center uppercase outline-none focus:border-white w-28 backdrop-blur" value={color.hex} spellCheck={false} onChange={(e) => p.updateHex(color.id, e.target.value)} />
-              <input aria-label={`Color ${idx + 1}`} className="h-9 rounded-full border border-white/30 bg-transparent cursor-pointer w-12" type="color" value={nh} onChange={(e) => p.updateHex(color.id, e.target.value)} />
-              <label className="flex items-center gap-1.5 text-xs font-semibold opacity-80">
-                α {color.alpha}%
-                <input className="w-16" min={0} max={100} type="range" value={color.alpha} onChange={(e) => p.updateAlpha(color.id, Number(e.target.value))} />
-              </label>
-              <button className="rounded-full bg-black/15 backdrop-blur px-3 py-1 text-xs font-semibold hover:bg-black/30 transition" onClick={async () => { try { await navigator.clipboard.writeText(nh); p.announce("HEX copied"); } catch {} }}>Copy</button>
-            </div>
-          </div>
-        </div>;
-      })}
-    </div>
-  </div>;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   STUDIO — full palette editor + import
-   ═══════════════════════════════════════════════════════════ */
-
-function StudioSection() {
-  const palette = usePalette();
-  const [advanced, setAdvanced] = useState(false);
-  const [importText, setImportText] = useState("");
-  const [extractionCount, setExtractionCount] = useState(5);
-  const [extractionMode, setExtractionMode] = useState<ExtractionMode>("balanced");
-  const hints = useMemo(() => palette.paletteHex.map((h) => getContrastHint(h)), [palette.paletteHex]);
-
-  useEffect(() => { const fn = (e: KeyboardEvent) => { const t = e.target as HTMLElement; if (t?.tagName === "INPUT" || t?.tagName === "TEXTAREA") return; if (e.code === "Space") { e.preventDefault(); palette.generate(); } if (e.key.toLowerCase() === "u") { e.preventDefault(); palette.undo(); } }; window.addEventListener("keydown", fn); return () => window.removeEventListener("keydown", fn); });
-
-  async function extractFromImage(file: File | null) {
-    if (!file) return;
-    try { const bm = await createImageBitmap(file); const can = document.createElement("canvas"); const ctx = can.getContext("2d", { willReadFrequently: true }); if (!ctx) return;
-      const ms = 180, sc = Math.min(ms / bm.width, ms / bm.height, 1); can.width = Math.max(1, Math.round(bm.width * sc)); can.height = Math.max(1, Math.round(bm.height * sc)); ctx.drawImage(bm, 0, 0, can.width, can.height);
-      const ex = extractPaletteFromPixels(ctx.getImageData(0, 0, can.width, can.height).data, extractionCount, extractionMode);
-      if (ex.length >= minPaletteSize) palette.setPalette(createPalette(ex, ex.length), "Random", `Extracted ${ex.length}`); else palette.announce("No colors");
-    } catch { palette.announce("Extraction failed"); }
-  }
-
-  return <section>
-    {/* Studio controls — compact horizontal strip */}
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-3">
-      <div className="flex items-center gap-2">
-        <h1 className="text-lg font-black tracking-tight">Studio</h1>
-        <span className="text-xs text-[var(--text-muted)] opacity-60">{palette.notice}</span>
-      </div>
-      <div className="flex flex-wrap items-center gap-2">
-        <button className="rounded-full bg-white/20 backdrop-blur px-4 py-1.5 text-sm font-semibold text-white hover:bg-white/30 transition" onClick={palette.generate}>Generate (Space)</button>
-        <button className="rounded-full bg-white/20 backdrop-blur px-4 py-1.5 text-sm font-semibold text-white hover:bg-white/30 transition disabled:opacity-30" disabled={palette.undoStack.length === 0} onClick={palette.undo}>Undo (U)</button>
-        <button className="rounded-full bg-white/20 backdrop-blur px-4 py-1.5 text-sm font-semibold text-white hover:bg-white/30 transition" onClick={() => setAdvanced((o) => !o)}>{advanced ? "Hide" : "Channels"}</button>
-      </div>
-    </div>
-
-    {/* Mode strip — white bg like nav */}
-    <div className="bg-[#fff5fc] dark:bg-[#2d001e] border-b border-[rgba(26,0,26,0.08)] dark:border-[rgba(255,224,245,0.06)] px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap gap-1.5 items-center">
-      {paletteModes.map((m) => <button key={m} className={`rounded-full px-3 py-1 text-xs font-bold tracking-wider uppercase transition ${
-        palette.mode === m
-          ? "bg-[#ff66c4] text-[#1a001a] dark:bg-[#ff85d0] dark:text-[#1a0012] shadow-sm"
-          : "text-[#6b3a5a] dark:text-[#d4a0c0] hover:bg-[#f0d6e8] dark:hover:bg-[#3d0a28] hover:text-[#3a0d2b] dark:hover:text-[#ffe0f5]"
-      }`} onClick={() => palette.switchMode(m)}>{m}</button>)}
-      <label className="flex items-center gap-1.5 text-xs font-semibold text-[#6b3a5a] dark:text-[#d4a0c0] ml-2">Size {palette.colors.length}<input className="w-14" min={minPaletteSize} max={maxPaletteSize} type="range" value={palette.colors.length} onChange={(e) => palette.setSize(Number(e.target.value))} /></label>
-      <button className="rounded-full bg-[#f0d6e8] dark:bg-[#3d0a28] px-2 py-1 text-xs text-[#6b3a5a] dark:text-[#d4a0c0] hover:text-[#3a0d2b] dark:hover:text-[#ffe0f5] transition disabled:opacity-30" disabled={palette.colors.length <= minPaletteSize} onClick={() => palette.setSize(palette.colors.length - 1)}>−</button>
-      <button className="rounded-full bg-[#f0d6e8] dark:bg-[#3d0a28] px-2 py-1 text-xs text-[#6b3a5a] dark:text-[#d4a0c0] hover:text-[#3a0d2b] dark:hover:text-[#ffe0f5] transition disabled:opacity-30" disabled={palette.colors.length >= maxPaletteSize} onClick={() => palette.setSize(palette.colors.length + 1)}>+</button>
-    </div>
-
-    {/* Edge-to-edge swatches — tall hero */}
-    <FullSwatches palette={palette} />
-
-    {/* Advanced channels */}
-    {advanced && <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-        {palette.colors.map((color, idx) => {
-          const nh = normalizeHex(color.hex) ?? "#111827";
-          const hsl = hexToHsl(nh);
-          const rgb = hexToRgb(nh);
-          const hi = hints[idx];
-          return <div key={color.id} className="rounded-2xl p-4 bg-white/10 backdrop-blur space-y-2">
-            <p className="text-xs font-semibold text-white/60">#{idx + 1} · {hi.rating} {hi.ratio.toFixed(1)}:1</p>
-            <div className="grid grid-cols-3 gap-1">{(["h","s","l"] as const).map((ch) => <label key={ch} className="text-[10px] font-bold tracking-wider uppercase text-white/70 text-center">{ch}<input className="w-full rounded-full bg-white/15 px-2 py-1.5 text-xs font-semibold text-center text-white outline-none" max={ch==="h"?360:100} min={0} type="number" value={hsl[ch]} onChange={(e) => palette.updateHsl(color.id, ch, Number(e.target.value))} /></label>)}</div>
-            <div className="grid grid-cols-3 gap-1">{(["r","g","b"] as const).map((ch) => <label key={ch} className="text-[10px] font-bold tracking-wider uppercase text-white/70 text-center">{ch}<input className="w-full rounded-full bg-white/15 px-2 py-1.5 text-xs font-semibold text-center text-white outline-none" max={255} min={0} type="number" value={rgb[ch]} onChange={(e) => palette.updateRgb(color.id, ch, Number(e.target.value))} /></label>)}</div>
-          </div>;
-        })}
-      </div>
-    </div>}
-
-    {/* Import — below swatches */}
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-3">
-      <h3 className="text-xs font-bold tracking-wider uppercase text-white/60">Import</h3>
-      <div className="max-w-xl space-y-3">
-        <textarea className="w-full rounded-2xl bg-white/15 p-4 font-mono text-sm min-h-[80px] text-white outline-none placeholder:text-white/40" placeholder="Paste HEX, JSON, CSS variables..." value={importText} onChange={(e) => setImportText(e.target.value)} />
-        <div className="flex gap-2 items-center">
-          <button className="rounded-full bg-white text-[#1a001a] px-5 py-2 text-sm font-semibold hover:bg-white/90 transition" onClick={() => { const p = parsePaletteInput(importText); if (p.length >= minPaletteSize) palette.setPalette(createPalette(p, p.length), palette.mode, `Imported ${p.length}`); else palette.announce("Need 2+ colors"); }}>Import</button>
-          <div className="rounded-2xl px-4 py-2 bg-white/10 text-sm cursor-pointer">
-            <label className="cursor-pointer text-white/80"><span className="font-semibold text-white">Drop</span> or <span className="underline decoration-white/40">browse</span><input accept="image/*" className="hidden" type="file" onChange={(e) => extractFromImage(e.target.files?.item(0) ?? null)} /></label>
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <label className="flex items-center gap-2 text-xs font-semibold text-white/60">Colors {extractionCount}<input className="w-16" min={minPaletteSize} max={maxPaletteSize} type="range" value={extractionCount} onChange={(e) => setExtractionCount(Number(e.target.value))} /></label>
-          <label className="flex items-center gap-2 text-xs font-semibold text-white/60">Mode<select className="rounded-full bg-white/15 px-3 py-1 text-xs text-white outline-none" value={extractionMode} onChange={(e) => setExtractionMode(e.target.value as ExtractionMode)}><option>Balanced</option><option>Vibrant</option><option>Muted</option></select></label>
-        </div>
-      </div>
-    </div>
-  </section>;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -470,8 +309,22 @@ function ThemesSection() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   LIBRARY — compact strip + export + browser
+   LIBRARY — compact strip + export + browser + collections
    ═══════════════════════════════════════════════════════════ */
+
+const COLLECTIONS_KEY = "openpalette.collections.v1";
+const PROJECTS_KEY = "openpalette.projects.v1";
+
+interface Collection {
+  id: string;
+  name: string;
+}
+
+interface Project {
+  id: string;
+  name: string;
+  collectionId: string;
+}
 
 function LibrarySection() {
   const palette = usePalette();
@@ -479,6 +332,8 @@ function LibrarySection() {
   const [tagFilter, setTagFilter] = useState("");
   const [sort, setSort] = useState<LibrarySort>("recent");
   const [activeFormat, setActiveFormat] = useState<ExportFormat>("CSS");
+  const [activeCollection, setActiveCollection] = useState<string>("Default");
+  const [showCollections, setShowCollections] = useState(false);
   const exportSnippets = useMemo(() => createExportSnippets(palette.paletteHex, palette.paletteAlphas), [palette.paletteHex, palette.paletteAlphas]);
   const score = useMemo(() => getPaletteAccessibilityScore(palette.paletteHex), [palette.paletteHex]);
   const dq = useDeferredValue(query);
@@ -486,24 +341,39 @@ function LibrarySection() {
 
   const [library, setLibrary] = useState<PaletteRecord[]>(() => { try { const s = localStorage.getItem(libraryStorageKey); if (s) { const p = JSON.parse(s); if (Array.isArray(p)) return p; } } catch {} return []; });
   const [history, setHistory] = useState<PaletteRecord[]>(() => { try { const s = localStorage.getItem(historyStorageKey); if (s) { const p = JSON.parse(s); if (Array.isArray(p)) return p; } } catch {} return []; });
+  const [collections, setCollections] = useState<Collection[]>(() => { try { const s = localStorage.getItem(COLLECTIONS_KEY); if (s) { const p = JSON.parse(s); if (Array.isArray(p)) return p; } } catch {} return []; });
+  const [projects] = useState<Project[]>(() => { try { const s = localStorage.getItem(PROJECTS_KEY); if (s) { const p = JSON.parse(s); if (Array.isArray(p)) return p; } } catch {} return []; });
+
   useEffect(() => { localStorage.setItem(libraryStorageKey, JSON.stringify(library)); }, [library]);
   useEffect(() => { localStorage.setItem(historyStorageKey, JSON.stringify(history)); }, [history]);
+  useEffect(() => { localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(collections)); }, [collections]);
+  useEffect(() => { localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects)); }, [projects]);
 
   const filtered = useMemo(() => {
     const nq = dq.trim().toLowerCase(), nt = dt.trim().toLowerCase();
-    return sortPalettes(library, sort).filter((r) => { const h = [r.name, r.collection, r.mode, ...r.colors, ...r.tags].join(" ").toLowerCase(); return (!nq || h.includes(nq)) && (!nt || r.tags.some((t) => t.toLowerCase().includes(nt))); });
+    return sortPalettes(library, sort).filter((r) => {
+      const h = [r.name, r.collection, r.mode, ...r.colors, ...r.tags].join(" ").toLowerCase();
+      return (!nq || h.includes(nq)) && (!nt || r.tags.some((t) => t.toLowerCase().includes(nt)));
+    });
   }, [dq, dt, library, sort]);
 
   useEffect(() => { const fn = (e: KeyboardEvent) => { const t = e.target as HTMLElement; if (t?.tagName === "INPUT" || t?.tagName === "TEXTAREA") return; if (e.code === "Space") { e.preventDefault(); palette.generate(); } if (e.key.toLowerCase() === "s") { e.preventDefault(); save(); } }; window.addEventListener("keydown", fn); return () => window.removeEventListener("keydown", fn); });
 
-  function save() { const r = createRecord(palette.colors, palette.mode, `Palette ${library.length + 1}`, true); setLibrary((c) => [r, ...c.filter((i) => paletteSignature(i.colors) !== paletteSignature(r.colors))]); setHistory((h) => [r, ...h].slice(0, 40)); palette.announce("Saved"); }
+  function save() { const r = createRecord(palette.colors, palette.mode, `Palette ${library.length + 1}`, true, activeCollection); setLibrary((c) => [r, ...c.filter((i) => paletteSignature(i.colors) !== paletteSignature(r.colors))]); setHistory((h) => [r, ...h].slice(0, 40)); palette.announce("Saved"); }
   function load(r: PaletteRecord) { const c = createPalette(r.colors, r.colors.length).map((x, i) => ({ ...x, alpha: r.alphas[i] ?? 100 })); palette.setPalette(c, r.mode, `${r.name} loaded`); setLibrary((l) => l.map((x) => x.id === r.id ? { ...x, usedAt: new Date().toISOString() } : x)); }
   function upd(id: string, u: Partial<PaletteRecord>) { setLibrary((l) => l.map((r) => r.id === id ? { ...r, ...u, updatedAt: new Date().toISOString() } : r)); }
+
+  function addCollection() {
+    const name = prompt("Collection name:");
+    if (!name?.trim()) return;
+    setCollections((c) => [...c, { id: crypto.randomUUID(), name: name.trim() }]);
+  }
 
   return <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
     <div className="flex items-center justify-between gap-4">
       <div>
         <h2 className="text-xl font-black tracking-tight text-white">Library</h2>
+        <p className="text-xs text-white/40 mt-0.5">Collection: {activeCollection}</p>
       </div>
       <div className="flex items-center gap-2">
         <button className="rounded-full bg-white/20 backdrop-blur px-4 py-1.5 text-sm font-semibold text-white hover:bg-white/30 transition" onClick={palette.generate}>Generate (Space)</button>
@@ -517,6 +387,25 @@ function LibrarySection() {
     {/* Compact palette strip */}
     <div className="flex -mx-4 sm:-mx-6 lg:-mx-8">
       {palette.paletteHex.map((hex, i) => <button key={i} className="flex-1 h-14 hover:h-18 transition-all duration-200" style={{ backgroundColor: hex }} onClick={() => { const el = document.createElement("input"); el.type="color"; el.value=hex; el.oninput=()=>palette.updateHex(palette.colors[i].id, el.value); el.click(); }} />)}
+    </div>
+
+    {/* Collections bar */}
+    <div className="flex flex-wrap items-center gap-2">
+      <button className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/25 transition" onClick={() => setShowCollections(!showCollections)}>
+        {showCollections ? "Hide" : "Collections"} ({collections.length})
+      </button>
+      <button className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/25 transition" onClick={addCollection}>+ New</button>
+      {collections.map((c) => (
+        <button
+          key={c.id}
+          className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+            activeCollection === c.name ? "bg-white text-[#1a001a]" : "bg-white/15 text-white/70 hover:bg-white/25"
+          }`}
+          onClick={() => setActiveCollection(c.name)}
+        >
+          {c.name}
+        </button>
+      ))}
     </div>
 
     {/* Exports */}
@@ -551,6 +440,7 @@ function LibrarySection() {
                   <button className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white hover:bg-white/25 transition flex-1" onClick={() => upd(r.id, { favorite: !r.favorite })}>{r.favorite ? "★" : "☆"}</button>
                   <button className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/60 hover:bg-white/20 transition flex-1" onClick={() => setLibrary((c) => c.filter((x) => x.id !== r.id))}>Delete</button>
                 </div>
+                <p className="text-[10px] text-white/30">{r.collection}</p>
               </div>
             ))}
           </div>}
@@ -570,7 +460,7 @@ function LibrarySection() {
   </section>;
 }
 
-function createRecord(colors: PaletteColor[], mode: PaletteMode, name: string, favorite: boolean): PaletteRecord {
+function createRecord(colors: PaletteColor[], mode: PaletteMode, name: string, favorite: boolean, collection: string): PaletteRecord {
   const now = new Date().toISOString();
-  return { id: crypto.randomUUID(), name, colors: colors.map((c) => normalizeHex(c.hex) ?? "#111827"), alphas: colors.map((c) => c.alpha), mode, tags: [], collection: "Default", favorite, createdAt: now, updatedAt: now, usedAt: now };
+  return { id: crypto.randomUUID(), name, colors: colors.map((c) => normalizeHex(c.hex) ?? "#111827"), alphas: colors.map((c) => c.alpha), mode, tags: [], collection, favorite, createdAt: now, updatedAt: now, usedAt: now };
 }

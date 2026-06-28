@@ -8,3 +8,5 @@ export * from "./palette/import-engine";
 export * from "./palette/export-engine";
 export * from "./palette/library-engine";
 export * from "./palette/image-extraction-engine";
+export * from "./palette/color-conversions";
+export * from "./palette/color-info";

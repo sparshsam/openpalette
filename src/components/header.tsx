@@ -31,6 +31,7 @@ export function Header() {
         <button
           onClick={toggle}
           className="pill pill-secondary text-xs"
+          suppressHydrationWarning
           aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
         >
           {theme === "light" ? "☀️" : "🌙"}
