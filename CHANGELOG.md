@@ -2,6 +2,27 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
+## v0.7.0 - 2026-06-28
+
+### Studio redesign — Coolors generator parity, semantic theme, sidebars, modals
+
+This release consolidates 6 commits worth of feature work and polish:
+
+- **v0.7.0 architecture refactor** — Extracted usePalette() hook, useAutoSave() hook, ErrorBoundary, and Studio sub-components from the 1700-line openpalette-app.tsx monolith into focused modules.
+- **Studio as Coolors Generator parity page** — Drag-to-reorder swatches, quick-tune sliders (saturation/brightness/temperature), per-color editor with 6 color spaces (HEX/RGB/HSL/HSV/CMYK/Lab), color info panel with psychology/meaning/applications (32-color DB), similar colors finder, palette analysis, rendered color-blind simulation previews, auto-save/restore, copy share link, integrated tool links.
+- **Semantic theme system** — Replaced all hardcoded text-white/bg-white/border-white classes with theme-aware CSS utilities (.text-page, .text-secondary, .text-muted, .surface, .btn-primary, .btn-secondary, .input-surface, .border-default, .hover-bg-muted). Fixed Tailwind v4 arbitrary value escaping bug. Light mode: #f9f9f9 bg, #111111 text. Dark mode: #111111 bg, #f5f5f5 text.
+- **Editorial redesign** — Page background changed from #ff66c4 to #f9f9f9. Pink (#ff66c4) retained as accent color. Dark mode uses near-black (#111111) instead of deep maroon.
+- **Toolbar redesign** — Single horizontal icon bar with Generate, Import, +/-, Modes popover, Eye (color blindness sidebar), View (color details modal), Undo, Export modal. Quick-tune sliders in popover. Harmony modes in popover. Random is now the default mode.
+- **Swatches redesign** — Vertical columns with HEX + color name labels. Hover action rail (delete, copy, lock, move). Grab cursor with grip indicator. Add button at canvas edge. Drag-to-reorder with visual feedback.
+- **Color blindness sidebar** — Right sidebar showing Original row + 4 simulated rows (Protanopia, Deuteranopia, Tritanopia, Achromatopsia) with hex labels. Cancel/Apply actions.
+- **View modal** — Centered modal with palette strip selector, large swatch display, and 6 color spaces (HEX, HSB, HSL, RGB, CMYK, Lab).
+- **Export modal** — Coolors-style dialog with URL/Share/Embed/X/Pinterest icons, 7 code format copy buttons, PNG/PDF downloads, Coming Soon placeholders.
+- **Footer** — Tools grid moved into footer, then entire footer removed. Studio page ends at swatches.
+- **Palette generation** — Fresh random base hue each generate (no progressive darkening). 4 Random strategies (wide spread, complementary clusters, triadic spread, minimum-separation). Increased saturation/lightness variation for vibrant Coolors-like output.
+- **Achromatopsia support** — Added to simulateVision with grayscale luminance matrix.
+- **Collections manager** — Named collections in Library with create/switch.
+- **Error boundaries** — Wrapping all 6 tab sections.
+
 ## v0.6.0 - 2026-06-25
 
 ### design: full-screen swatches, independent tabs, per-page editors
