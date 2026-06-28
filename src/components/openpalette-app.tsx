@@ -29,6 +29,7 @@ import {
 } from "@/lib/palette";
 import { usePalette } from "@/components/use-palette";
 import { StudioSection } from "@/components/studio/studio-section";
+import { ExploreSection } from "@/components/explore/explore-section";
 import { ErrorBoundary } from "@/components/error-boundary";
 
 const libraryStorageKey = "openpalette.library.v1";
@@ -38,10 +39,11 @@ const sorts: { label: string; value: LibrarySort }[] = [
   { label: "Contrast", value: "contrast" }, { label: "Warm/cool", value: "temperature" }, { label: "Favorites", value: "favorites" },
 ];
 
-type Tab = "studio" | "gradient" | "visualizer" | "accessibility" | "themes" | "library";
+type Tab = "studio" | "explore" | "gradient" | "visualizer" | "accessibility" | "themes" | "library";
 const tabs: { id: Tab; label: string }[] = [
-  { id: "studio", label: "Studio" }, { id: "gradient", label: "Gradient" }, { id: "visualizer", label: "Visualizer" },
-  { id: "accessibility", label: "Accessibility" }, { id: "themes", label: "Themes" }, { id: "library", label: "Library" },
+  { id: "studio", label: "Studio" }, { id: "explore", label: "Explore" }, { id: "gradient", label: "Gradient" },
+  { id: "visualizer", label: "Visualizer" }, { id: "accessibility", label: "Accessibility" },
+  { id: "themes", label: "Themes" }, { id: "library", label: "Library" },
 ];
 
 /* ═══════════════════════════════════════════════════════════
@@ -50,8 +52,9 @@ const tabs: { id: Tab; label: string }[] = [
 
 export function OpenPaletteApp() {
   const [activeTab, setActiveTab] = useState<Tab>("studio");
+  const [loadPalette, setLoadPalette] = useState<{ colors: string[]; mode: string } | null>(null);
 
-  // Listen for tool navigation events from StudioLinks
+  // Listen for tool navigation events
   useEffect(() => {
     const handler = (e: Event) => {
       const detail = (e as CustomEvent).detail;
@@ -59,8 +62,19 @@ export function OpenPaletteApp() {
         setActiveTab(detail.tab as Tab);
       }
     };
+    const paletteHandler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.colors) {
+        setLoadPalette({ colors: detail.colors, mode: detail.mode ?? "Random" });
+        setActiveTab("studio");
+      }
+    };
     window.addEventListener("op-navigate", handler);
-    return () => window.removeEventListener("op-navigate", handler);
+    window.addEventListener("op-load-palette", paletteHandler);
+    return () => {
+      window.removeEventListener("op-navigate", handler);
+      window.removeEventListener("op-load-palette", paletteHandler);
+    };
   }, []);
 
   return <div>
@@ -75,7 +89,8 @@ export function OpenPaletteApp() {
         ))}
       </div>
     </nav>
-    {activeTab === "studio" && <ErrorBoundary name="Studio"><StudioSection /></ErrorBoundary>}
+    {activeTab === "studio" && <ErrorBoundary name="Studio"><StudioSection initialPalette={loadPalette} onConsumed={() => setLoadPalette(null)} /></ErrorBoundary>}
+    {activeTab === "explore" && <ErrorBoundary name="Explore"><ExploreSection /></ErrorBoundary>}
     {activeTab === "gradient" && <ErrorBoundary name="Gradient"><GradientSection /></ErrorBoundary>}
     {activeTab === "visualizer" && <ErrorBoundary name="Visualizer"><VisualizerSection /></ErrorBoundary>}
     {activeTab === "accessibility" && <ErrorBoundary name="Accessibility"><AccessibilitySection /></ErrorBoundary>}

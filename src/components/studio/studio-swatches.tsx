@@ -66,6 +66,8 @@ export function StudioSwatches({ palette, blindMode }: Props) {
           return (
             <div key={color.id} className="relative flex-1 flex flex-col min-w-0 select-none"
               style={{ backgroundColor: displayHex }}
+              onMouseEnter={() => setHoveredIdx(idx)}
+              onMouseLeave={() => setHoveredIdx(null)}
             >
               {/* Grab handle — full height */}
               <div
@@ -76,8 +78,6 @@ export function StudioSwatches({ palette, blindMode }: Props) {
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => handleDrop(e, idx)}
                 onDragEnd={() => setDragIdx(null)}
-                onMouseEnter={() => setHoveredIdx(idx)}
-                onMouseLeave={() => setHoveredIdx(null)}
               />
 
               {/* Grip dots */}

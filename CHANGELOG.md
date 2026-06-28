@@ -2,6 +2,21 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
+## v0.8.0 - 2026-06-28
+
+### feat: Explore tab — palette discovery hub with 75 curated palettes
+
+- **New Explore tab** — Added after Studio in the navigation. Full palette discovery workflow matching Coolors Trending Palettes.
+- **75 curated palettes** — Diverse dataset covering branding, nature, gaming, food, fashion, UI, travel, interior. Each with 5 hex colors, tags, style, topic, keywords, and descriptions.
+- **Search** — Free-text keyword/prompt search matching palette names, tags, keywords, descriptions. Type "modern fintech app" or "warm coffee shop" to find themed palettes.
+- **Filters** — Color (9 options), Style (8 options), Topic (8 options). Each as toggle chips. Order by Trending, Latest, Popular.
+- **Palette grid** — Responsive card grid (1-4 columns) with swatch strips showing hex values, palette name, style/topic badges, tags, and Open/Favorite actions.
+- **Load More** — Paginated loading in batches of 20.
+- **Palette detail modal** — Centered modal with: full swatch strip, color selector, HEX/value display, 6 color space conversions (HSL/RGB/HSV/CMYK/Lab), color psychology, accessibility score with contrast ratings, 4-mode color blindness preview, similar colors, and related palette suggestions.
+- **Quick actions** — Copy HEX List, Save (favorite), Open in Studio (loads palette into Studio tab with all colors preserved).
+- **Cross-tab integration** — "Open in Studio" navigates to the Studio tab and loads the selected palette via custom event system.
+- **All features free, local-first, no accounts** — Consistent with OpenPalette values.
+
 ## v0.7.1 - 2026-06-28
 
 ### polish: studio swatch controls and toolbar cleanup
