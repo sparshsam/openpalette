@@ -80,12 +80,14 @@ export function simulateVision(hex: string, mode: VisionMode) {
   }
 
   const { r, g, b } = hexToRgb(hex);
-  const matrices = {
+  const matrices: Record<string, number[]> = {
     protanopia: [0.567, 0.433, 0, 0.558, 0.442, 0, 0, 0.242, 0.758],
     deuteranopia: [0.625, 0.375, 0, 0.7, 0.3, 0, 0, 0.3, 0.7],
     tritanopia: [0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525],
-  } satisfies Record<Exclude<VisionMode, "none">, number[]>;
+    achromatopsia: [0.299, 0.587, 0.114, 0.299, 0.587, 0.114, 0.299, 0.587, 0.114],
+  };
   const matrix = matrices[mode];
+  if (!matrix) return normalizeHex(hex) ?? "#000000";
 
   return rgbToHex({
     r: clamp(Math.round(r * matrix[0] + g * matrix[1] + b * matrix[2]), 0, 255),

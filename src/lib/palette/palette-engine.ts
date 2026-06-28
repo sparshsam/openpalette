@@ -43,12 +43,14 @@ export function generatePalette(previous: PaletteColor[], mode: PaletteMode, siz
 export function generateFresh(mode: PaletteMode, size: number): string[] {
   if (mode === "Random") return generateRandomPalette(size);
   const baseHue = Math.floor(Math.random() * 360);
-  const baseSat = 55 + Math.floor(Math.random() * 35); // 55–90
-  const baseLit = 40 + Math.floor(Math.random() * 30); // 40–70
+  const baseSat = 55 + Math.floor(Math.random() * 35);
+  const baseLit = 35 + Math.floor(Math.random() * 35);
   const offsets = getHarmonyOffsets(mode, size);
   return offsets.map((hueOffset, i) => {
     const h = (baseHue + hueOffset + 360) % 360;
-    return hslToHex(h, varySat(baseSat, i, size, mode), varyLit(baseLit, i, size, mode));
+    const sat = varySat(baseSat, i, size, mode);
+    const lit = varyLit(baseLit, i, size, mode);
+    return hslToHex(h, sat, lit);
   });
 }
 
@@ -57,27 +59,41 @@ export function generateHarmony(baseHex: string, mode: PaletteMode, size: number
   const base = hexToHsl(normalizeHex(baseHex) ?? generateHex());
   const s = clamp(size, minPaletteSize, maxPaletteSize);
   const offsets = getHarmonyOffsets(mode, s);
-  return offsets.map((o, i) => hslToHex((base.h + o + 360) % 360, varySat(65, i, s, mode), varyLit(50, i, s, mode)));
+  return offsets.map((o, i) => hslToHex((base.h + o + 360) % 360, varySat(70, i, s, mode), varyLit(45, i, s, mode)));
 }
 
 function varySat(base: number, i: number, size: number, mode: PaletteMode): number {
-  if (mode === "Monochromatic") return clamp(base + (i - Math.floor(size / 2)) * 8, 20, 95);
-  return clamp(base + ((i % 3) - 1) * 12, 30, 95);
+  if (mode === "Monochromatic") return clamp(base + (i - Math.floor(size / 2)) * 12, 15, 95);
+  return clamp(base + ((i % 3) - 1) * 15 + (i % 2 === 0 ? 5 : -5), 25, 95);
 }
 
 function varyLit(base: number, i: number, size: number, mode: PaletteMode): number {
-  if (mode === "Monochromatic") return clamp(15 + (i / Math.max(size - 1, 1)) * 70, 8, 92);
-  return clamp(base + (i % 2 === 0 ? 8 : -6) + Math.floor(i / 3) * 2, 15, 88);
+  if (mode === "Monochromatic") return clamp(10 + (i / Math.max(size - 1, 1)) * 75, 5, 95);
+  return clamp(base + (i % 2 === 0 ? 12 : -8) + Math.floor(i / 3) * 4, 12, 90);
 }
 
-/** Generate a curated random palette: pick a random scheme and spread hues */
+/** Generate a curated random palette with strong hue separation */
 function generateRandomPalette(size: number): string[] {
-  const schemes = [
-    () => { const h = Math.random() * 360; return spreadHues(h, size, 30 + Math.random() * 30); },
-    () => spreadHues(Math.random() * 360, size, 60 + Math.random() * 60),
-    () => Array.from({ length: size }, () => Math.floor(Math.random() * 360)),
-  ];
-  const hues = schemes[Math.floor(Math.random() * schemes.length)]();
+  const strategy = Math.floor(Math.random() * 4);
+  let hues: number[];
+  switch (strategy) {
+    case 0: // Wide spread around a theme
+      { const h = Math.random() * 360; hues = spreadHues(h, size, 120 + Math.random() * 120); break; }
+    case 1: // Two complementary clusters
+      { const h1 = Math.random() * 360; const h2 = (h1 + 150 + Math.random() * 60) % 360;
+        hues = Array.from({ length: size }, (_, i) => i < Math.ceil(size / 2) ? h1 + Math.random() * 30 : h2 + Math.random() * 30); break; }
+    case 2: // Triadic spread
+      { const h = Math.random() * 360;
+        hues = Array.from({ length: size }, (_, i) => (h + i * (120 + Math.random() * 20)) % 360); break; }
+    default: // Fully random with minimum separation
+      hues = []; let attempts = 0;
+      while (hues.length < size && attempts < 100) {
+        const h = Math.random() * 360;
+        if (hues.every((e) => Math.abs(e - h) > 20 || Math.abs(e - h - 360) > 20)) hues.push(h);
+        attempts++;
+      }
+      while (hues.length < size) hues.push(Math.random() * 360);
+  }
   return hues.map((h) => {
     const sat = 50 + Math.floor(Math.random() * 40);
     const lit = 35 + Math.floor(Math.random() * 35);

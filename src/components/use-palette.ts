@@ -18,7 +18,7 @@ type CurrentState = { colors: PaletteColor[]; mode: PaletteMode };
 
 export function usePalette() {
   const [colors, setColors] = useState<PaletteColor[]>(() => createPalette());
-  const [mode, setMode] = useState<PaletteMode>("Analogous");
+  const [mode, setMode] = useState<PaletteMode>("Random");
   const [notice, setNotice] = useState("Ready");
   const [undoStack, setUndoStack] = useState<CurrentState[]>([]);
   const paletteHex = useMemo(() => colors.map((c) => normalizeHex(c.hex) ?? "#111827"), [colors]);

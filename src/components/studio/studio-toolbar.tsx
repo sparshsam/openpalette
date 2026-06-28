@@ -14,12 +14,11 @@ import type { PaletteAPI } from "@/components/use-palette";
 interface Props {
   palette: PaletteAPI;
   onOpenVision: () => void;
-  onOpenPreview: () => void;
   onOpenView: () => void;
   onOpenExport: () => void;
 }
 
-export function StudioToolbar({ palette, onOpenVision, onOpenPreview, onOpenView, onOpenExport }: Props) {
+export function StudioToolbar({ palette, onOpenVision, onOpenView, onOpenExport }: Props) {
   const [showQuickTune, setShowQuickTune] = useState(false);
   const [showModes, setShowModes] = useState(false);
 
@@ -54,17 +53,12 @@ export function StudioToolbar({ palette, onOpenVision, onOpenPreview, onOpenView
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5"/><path d="M8 2a6 6 0 010 12" fill="currentColor" opacity="0.3"/></svg>
         </ToolbarButton>
 
-        {/* Color vision sidebar */}
-        <ToolbarButton onClick={onOpenVision} label="Vision">
+        {/* Color blindness sidebar */}
+        <ToolbarButton onClick={onOpenVision} label="Eye">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3C4.5 3 1.5 5.5 1 8c.5 2.5 3.5 5 7 5s6.5-2.5 7-5c-.5-2.5-3.5-5-7-5z" stroke="currentColor" strokeWidth="1.5"/><circle cx="8" cy="8" r="2" fill="currentColor"/></svg>
         </ToolbarButton>
 
-        {/* Preview sidebar */}
-        <ToolbarButton onClick={onOpenPreview} label="Preview">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="12" rx="1" stroke="currentColor" strokeWidth="1.5"/><path d="M1 6h14" stroke="currentColor" strokeWidth="1"/></svg>
-        </ToolbarButton>
-
-        {/* View / Color details sidebar */}
+        {/* View / Color details modal */}
         <ToolbarButton onClick={onOpenView} label="View">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" fill="currentColor"/><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5"/></svg>
         </ToolbarButton>

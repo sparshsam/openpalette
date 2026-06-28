@@ -39,7 +39,7 @@ export type ContrastHint = {
 
 export type ExportFormat = "CSS" | "SCSS" | "Tailwind" | "JSON" | "Tokens" | "Style Dictionary" | "SVG";
 export type GradientKind = "linear" | "radial";
-export type VisionMode = "none" | "protanopia" | "deuteranopia" | "tritanopia";
+export type VisionMode = "none" | "protanopia" | "deuteranopia" | "tritanopia" | "achromatopsia";
 export type LibrarySort = "recent" | "brightness" | "contrast" | "temperature" | "favorites";
 
 export type DesignTokenSet = {

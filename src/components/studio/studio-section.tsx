@@ -6,13 +6,13 @@ import { useAutoSave } from "@/components/use-auto-save";
 import { StudioToolbar } from "./studio-toolbar";
 import { StudioSwatches } from "./studio-swatches";
 import { StudioSidebar } from "./studio-sidebar";
+import { ViewModal } from "./view-modal";
 import { ExportModal } from "./export-modal";
-
-type SidePanel = "vision" | "preview" | "view" | null;
 
 export function StudioSection() {
   const palette = usePalette();
-  const [sidePanel, setSidePanel] = useState<SidePanel>(null);
+  const [showVision, setShowVision] = useState(false);
+  const [showView, setShowView] = useState(false);
   const [showExport, setShowExport] = useState(false);
 
   // Auto-save / restore
@@ -42,20 +42,22 @@ export function StudioSection() {
     <section className="relative">
       <StudioToolbar
         palette={palette}
-        onOpenVision={() => setSidePanel("vision")}
-        onOpenPreview={() => setSidePanel("preview")}
-        onOpenView={() => setSidePanel("view")}
+        onOpenVision={() => setShowVision(true)}
+        onOpenView={() => setShowView(true)}
         onOpenExport={() => setShowExport(true)}
       />
       <StudioSwatches palette={palette} />
 
-      {/* Right sidebar */}
-      {sidePanel && (
+      {/* Color blindness sidebar */}
+      {showVision && (
         <>
-          <div className="fixed inset-0 z-40 bg-black/20" onClick={() => setSidePanel(null)} />
-          <StudioSidebar palette={palette} panel={sidePanel} onClose={() => setSidePanel(null)} />
+          <div className="fixed inset-0 z-40 bg-black/20" onClick={() => setShowVision(false)} />
+          <StudioSidebar palette={palette} onClose={() => setShowVision(false)} />
         </>
       )}
+
+      {/* View modal */}
+      {showView && <ViewModal palette={palette} onClose={() => setShowView(false)} />}
 
       {/* Export modal */}
       {showExport && <ExportModal palette={palette} onClose={() => setShowExport(false)} />}
