@@ -17,58 +17,78 @@ export function createPalette(colors?: string[], size = defaultPaletteSize): Pal
 
 export function resizePalette(colors: PaletteColor[], size: number, mode: PaletteMode) {
   const desiredSize = clamp(Math.round(size), minPaletteSize, maxPaletteSize);
-
-  if (desiredSize === colors.length) {
-    return colors;
-  }
-
-  if (desiredSize < colors.length) {
-    return colors.slice(0, desiredSize);
-  }
-
-  const generated = generatePalette(colors, mode, desiredSize);
-  return [...colors, ...generated.slice(colors.length)];
+  if (desiredSize === colors.length) return colors;
+  if (desiredSize < colors.length) return colors.slice(0, desiredSize);
+  const generated = generateFresh(mode, desiredSize);
+  return [...colors, ...generated.slice(colors.length).map((hex) => ({
+    id: createId("color"), hex, alpha: 100, locked: false,
+  }))];
 }
 
+/** Generate a completely fresh palette — does NOT build on previous colors */
 export function generatePalette(previous: PaletteColor[], mode: PaletteMode, size = previous.length) {
   const desiredSize = clamp(size, minPaletteSize, maxPaletteSize);
   const lockedByIndex = new Map(previous.map((color, index) => [index, color]));
-  const base = previous.find((color) => !color.locked)?.hex ?? previous[0]?.hex ?? generateHex();
-  const harmony = generateHarmony(base, mode, desiredSize);
+  const fresh = generateFresh(mode, desiredSize);
 
-  return harmony.map((hex, index) => {
-    const previousColor = lockedByIndex.get(index);
-
-    if (previousColor?.locked) {
-      return previousColor;
-    }
-
-    return {
-      id: previousColor?.id ?? createId("color"),
-      hex,
-      alpha: previousColor?.alpha ?? 100,
-      locked: false,
-    };
+  // Replace locked positions with their original colors
+  return fresh.map((hex, index) => {
+    const prev = lockedByIndex.get(index);
+    if (prev?.locked) return prev;
+    return { id: prev?.id ?? createId("color"), hex, alpha: prev?.alpha ?? 100, locked: false };
   });
 }
 
-export function generateHarmony(baseHex: string, mode: PaletteMode, size: number) {
+/** Generate a fresh palette from a random base hue */
+export function generateFresh(mode: PaletteMode, size: number): string[] {
+  if (mode === "Random") return generateRandomPalette(size);
+  const baseHue = Math.floor(Math.random() * 360);
+  const baseSat = 55 + Math.floor(Math.random() * 35); // 55–90
+  const baseLit = 40 + Math.floor(Math.random() * 30); // 40–70
+  const offsets = getHarmonyOffsets(mode, size);
+  return offsets.map((hueOffset, i) => {
+    const h = (baseHue + hueOffset + 360) % 360;
+    return hslToHex(h, varySat(baseSat, i, size, mode), varyLit(baseLit, i, size, mode));
+  });
+}
+
+/** Generate harmony from a specific base hex. Used by tests. */
+export function generateHarmony(baseHex: string, mode: PaletteMode, size: number): string[] {
   const base = hexToHsl(normalizeHex(baseHex) ?? generateHex());
-  const desiredSize = clamp(size, minPaletteSize, maxPaletteSize);
-  const hueOffsets = getHarmonyOffsets(mode, desiredSize);
+  const s = clamp(size, minPaletteSize, maxPaletteSize);
+  const offsets = getHarmonyOffsets(mode, s);
+  return offsets.map((o, i) => hslToHex((base.h + o + 360) % 360, varySat(65, i, s, mode), varyLit(50, i, s, mode)));
+}
 
-  return hueOffsets.map((offset, index) => {
-    const hueShift = (index % 3) - 1;
-    const saturation =
-      mode === "Monochromatic"
-        ? clamp(base.s + (index - Math.floor(desiredSize / 2)) * 10, 25, 95)
-        : clamp(base.s + hueShift * 12, 30, 95);
-    const lightness =
-      mode === "Monochromatic"
-        ? clamp(12 + (index / Math.max(desiredSize - 1, 1)) * 76, 8, 92)
-        : clamp(base.l + (Math.floor(index / 3) + 1) * (index % 2 === 0 ? 8 : -6), 15, 88);
+function varySat(base: number, i: number, size: number, mode: PaletteMode): number {
+  if (mode === "Monochromatic") return clamp(base + (i - Math.floor(size / 2)) * 8, 20, 95);
+  return clamp(base + ((i % 3) - 1) * 12, 30, 95);
+}
 
-    return hslToHex((base.h + offset + 360) % 360, saturation, lightness);
+function varyLit(base: number, i: number, size: number, mode: PaletteMode): number {
+  if (mode === "Monochromatic") return clamp(15 + (i / Math.max(size - 1, 1)) * 70, 8, 92);
+  return clamp(base + (i % 2 === 0 ? 8 : -6) + Math.floor(i / 3) * 2, 15, 88);
+}
+
+/** Generate a curated random palette: pick a random scheme and spread hues */
+function generateRandomPalette(size: number): string[] {
+  const schemes = [
+    () => { const h = Math.random() * 360; return spreadHues(h, size, 30 + Math.random() * 30); },
+    () => spreadHues(Math.random() * 360, size, 60 + Math.random() * 60),
+    () => Array.from({ length: size }, () => Math.floor(Math.random() * 360)),
+  ];
+  const hues = schemes[Math.floor(Math.random() * schemes.length)]();
+  return hues.map((h) => {
+    const sat = 50 + Math.floor(Math.random() * 40);
+    const lit = 35 + Math.floor(Math.random() * 35);
+    return hslToHex(Math.round(h), sat, lit);
+  });
+}
+
+function spreadHues(base: number, count: number, spread: number): number[] {
+  return Array.from({ length: count }, (_, i) => {
+    const step = count > 1 ? spread / (count - 1) : 0;
+    return (base + i * step + Math.random() * 20 - 10 + 360) % 360;
   });
 }
 
@@ -76,25 +96,18 @@ export function generateHex(seed = Math.random() * 360) {
   const hue = Math.floor(seed % 360);
   const saturation = 60 + Math.floor(Math.random() * 35);
   const lightness = 40 + Math.floor(Math.random() * 35);
-
   return hslToHex(hue, saturation, lightness);
 }
 
 function getHarmonyOffsets(mode: PaletteMode, size: number) {
-  if (mode === "Random") {
-    return Array.from({ length: size }, () => Math.floor(Math.random() * 360));
-  }
-
-  const bases = {
+  const bases: Record<string, number[]> = {
     Analogous: [-36, -18, 0, 18, 36],
     Monochromatic: [0],
     Complementary: [0, 180],
     Triadic: [0, 120, 240],
     "Split Complementary": [0, 150, 210],
     Tetradic: [0, 60, 180, 240],
-  } satisfies Record<Exclude<PaletteMode, "Random">, number[]>;
-  const base = bases[mode];
-
-  return Array.from({ length: size }, (_, index) => base[index % base.length] + Math.floor(index / base.length) * 8);
+  };
+  const base = bases[mode] ?? [0];
+  return Array.from({ length: size }, (_, i) => base[i % base.length] + Math.floor(i / base.length) * 8);
 }
-
