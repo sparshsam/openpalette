@@ -51,10 +51,19 @@ const tabs: { id: Tab; label: string }[] = [
    ═══════════════════════════════════════════════════════════ */
 
 export function OpenPaletteApp() {
-  const [activeTab, setActiveTab] = useState<Tab>("studio");
+  const [activeTab, setActiveTab] = useState<Tab>(() => {
+    if (typeof window === "undefined") return "studio";
+    const hash = window.location.hash.replace("#", "") as Tab;
+    return tabs.some((t) => t.id === hash) ? hash : "studio";
+  });
   const [loadPalette, setLoadPalette] = useState<{ colors: string[]; mode: string } | null>(null);
 
-  // Listen for tool navigation events
+  useEffect(() => {
+    const hash = activeTab === "studio" ? "" : activeTab;
+    window.history.replaceState(null, "", hash ? `/#${hash}` : "/");
+  }, [activeTab]);
+
+  // Listen for tool + palette navigation events
   useEffect(() => {
     const handler = (e: Event) => {
       const detail = (e as CustomEvent).detail;

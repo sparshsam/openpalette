@@ -2,6 +2,15 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
+## v0.8.2 - 2026-06-28
+
+### polish: Explore spacing, URL routing, theme toggle redesign
+
+- **Explore page spacing** — Increased vertical gap between palette entries (space-y-5). Removed "Search with AI" button. All text uses semantic theme tokens for correct light/dark rendering.
+- **URL hash routing** — Each tab now has its own URL hash (#studio, #explore, #gradient, etc.). Refreshing the page keeps you on the same tab. Hash updates on navigation without page reload. Share URLs still work.
+- **Theme toggle redesign** — Replaced emoji toggle with fixed top-right 44×44 pill button using Lucide-style SVG sun/moon icons. Toggle cycles dark↔light. Persists to localStorage('openpalette-theme').
+- **CSS variable restructure** — :root now holds dark defaults. [data-theme="light"] overrides for light mode. @media (prefers-color-scheme: light) provides system-default light mode for users who haven't toggled.
+
 ## v0.8.1 - 2026-06-28
 
 ### design: Explore page redesign — clean, open-canvas, Coolors-style layout

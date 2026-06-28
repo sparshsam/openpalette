@@ -105,9 +105,6 @@ export function ExploreSection() {
             onChange={(e) => { setSearch(e.target.value); setVisible(20); }}
           />
         </div>
-        <button className="rounded-full border border-default px-4 py-3 text-sm font-semibold text-secondary hover:bg-surface hover:text-page transition whitespace-nowrap">
-          Search with AI
-        </button>
         <button onClick={() => setShowFilters(!showFilters)}
           className={`rounded-full border px-4 py-3 text-sm font-semibold transition whitespace-nowrap ${showFilters || activeFilterCount > 0 ? "bg-[var(--accent)] text-white border-[var(--accent)]" : "border-default text-secondary hover:bg-surface hover:text-page"}`}>
           Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
@@ -143,9 +140,9 @@ export function ExploreSection() {
       {displayList.length === 0 ? (
         <p className="text-sm text-muted py-12 text-center">No palettes match. Try different keywords or filters.</p>
       ) : (
-        <div className="space-y-1">
+        <div className="space-y-5">
           {displayList.map((p) => (
-            <div key={p.id} className="group border-b border-default last:border-b-0">
+            <div key={p.id} className="group">
               {/* Swatch strip — clickable, seamless */}
               <button className="w-full flex h-16 sm:h-20 overflow-hidden rounded-lg sm:rounded-xl" onClick={() => setDetailPalette(p)}>
                 {p.colors.map((hex, i) => (

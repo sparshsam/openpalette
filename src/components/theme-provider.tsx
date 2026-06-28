@@ -6,9 +6,10 @@ type Theme = "light" | "dark";
 
 function getInitialTheme(): Theme {
   if (typeof window === "undefined") return "light";
-  const stored = localStorage.getItem("openpalette.theme") as Theme | null;
+  const stored = localStorage.getItem("openpalette-theme") as Theme | null;
   if (stored === "light" || stored === "dark") return stored;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  if (window.matchMedia("(prefers-color-scheme: light)").matches) return "light";
+  return "dark";
 }
 
 const ThemeCtx = createContext<{
@@ -32,7 +33,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setTheme((prev) => {
       const next = prev === "light" ? "dark" : "light";
       document.documentElement.setAttribute("data-theme", next);
-      localStorage.setItem("openpalette.theme", next);
+      localStorage.setItem("openpalette-theme", next);
       return next;
     });
   }, []);
