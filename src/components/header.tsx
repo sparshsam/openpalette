@@ -9,7 +9,7 @@ export function Header() {
   return (
     <>
       <header className="sticky top-0 z-50 bg-[var(--bg-surface)]/95 backdrop-blur-md border-b border-[var(--border-default)]">
-        <div className="mx-auto flex items-center justify-between max-w-7xl px-6 pr-16 h-14">
+        <div className="mx-auto flex items-center justify-between max-w-7xl px-6 pr-14 h-14">
           {/* Logo */}
           <Link
             href="/"
@@ -30,10 +30,10 @@ export function Header() {
         </div>
       </header>
 
-      {/* Theme toggle — fixed top-right, visually matched to header */}
+      {/* Theme toggle — fixed top-right, flush with header */}
       <button
         onClick={toggle}
-        className="fixed top-2.5 right-3 z-[60] size-11 flex items-center justify-center rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-muted)] shadow-sm transition-colors"
+        className="fixed top-3 right-3 z-[60] size-11 flex items-center justify-center rounded-full text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-muted)] transition-colors"
         suppressHydrationWarning
         aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
       >
