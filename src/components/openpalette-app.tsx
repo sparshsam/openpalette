@@ -93,7 +93,7 @@ export function OpenPaletteApp() {
           <button key={t.id} className={`rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap transition-all ${
             activeTab === t.id
               ? "bg-[var(--accent)] text-white shadow-sm"
-              : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-muted)]"
+              : "text-[var(--text-secondary)] hover:text-[var(--accent)]"
           }`} type="button" onClick={() => setActiveTab(t.id)}>{t.label}</button>
         ))}
       </div>

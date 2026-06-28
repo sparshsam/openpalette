@@ -96,7 +96,7 @@ function ToolbarButton({ children, onClick, label, title, disabled, active }: {
       title={title ?? label}
       aria-label={label}
       className={`flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors
-        ${active ? "bg-[var(--accent)] text-white" : "text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]"}
+        ${active ? "bg-[var(--accent)] text-white" : "text-[var(--text-secondary)] hover:text-[var(--accent)]"}
         ${disabled ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
     >
       {children}
@@ -112,7 +112,7 @@ function IconBtn({ children, onClick, disabled, title }: {
 }) {
   return (
     <button onClick={onClick} disabled={disabled} title={title}
-      className="size-7 flex items-center justify-center rounded-full text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+      className="size-7 flex items-center justify-center rounded-full text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
     >{children}</button>
   );
 }

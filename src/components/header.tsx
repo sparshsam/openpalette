@@ -22,7 +22,7 @@ export function Header() {
           <nav className="flex items-center gap-1" aria-label="Primary">
             <Link
               href="/about"
-              className="rounded-full px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--bg-surface-muted)] hover:text-[var(--text-primary)] transition-colors"
+              className="rounded-full px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
             >
               About
             </Link>
@@ -33,7 +33,7 @@ export function Header() {
       {/* Theme toggle — fixed top-right, flush with header */}
       <button
         onClick={toggle}
-        className="fixed top-3 right-3 z-[60] size-11 flex items-center justify-center rounded-full text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-muted)] transition-colors"
+        className="fixed top-[6px] right-3 z-[60] size-11 flex items-center justify-center rounded-full text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
         suppressHydrationWarning
         aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
       >

@@ -106,7 +106,7 @@ export function ExploreSection() {
           />
         </div>
         <button onClick={() => setShowFilters(!showFilters)}
-          className={`rounded-full border px-4 py-3 text-sm font-semibold transition whitespace-nowrap ${showFilters || activeFilterCount > 0 ? "bg-[var(--accent)] text-white border-[var(--accent)]" : "border-default text-secondary hover:bg-surface hover:text-page"}`}>
+          className={`rounded-full border px-4 py-3 text-sm font-semibold transition whitespace-nowrap ${showFilters || activeFilterCount > 0 ? "bg-[var(--accent)] text-white border-[var(--accent)]" : "border-default text-secondary hover:text-[var(--accent)]"}`}>
           Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
         </button>
       </div>
@@ -120,7 +120,7 @@ export function ExploreSection() {
           <div className="flex items-center gap-2 text-sm text-secondary pt-1">
             <span className="font-semibold">Order</span>
             {ORDER_OPTIONS.map((o) => (
-              <button key={o} className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider transition ${order === o ? "bg-[var(--accent)] text-white" : "border border-default text-secondary hover:bg-surface"}`} onClick={() => setOrder(o)}>{o}</button>
+              <button key={o} className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider transition ${order === o ? "bg-[var(--accent)] text-white" : "border border-default text-secondary hover:bg-[var(--bg-surface-muted)]"}`} onClick={() => setOrder(o)}>{o}</button>
             ))}
           </div>
         </div>
@@ -175,7 +175,7 @@ export function ExploreSection() {
       {/* Load More */}
       {hasMore && (
         <div className="flex justify-center pt-4">
-          <button className="rounded-full border border-default px-8 py-2.5 text-sm font-semibold text-secondary hover:bg-surface hover:text-page transition" onClick={() => setVisible((v) => v + 20)}>
+          <button className="rounded-full border border-default px-8 py-2.5 text-sm font-semibold text-secondary hover:text-[var(--accent)] transition" onClick={() => setVisible((v) => v + 20)}>
             Load More ({filtered.length - visible} remaining)
           </button>
         </div>
@@ -198,7 +198,7 @@ function FilterRow({ label, items, selected, onToggle }: {
       {items.map((item) => (
         <button key={item} onClick={() => onToggle(item)}
           className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
-            selected.includes(item) ? "bg-[var(--accent)] text-white" : "border border-default text-secondary hover:bg-surface hover:text-page"
+            selected.includes(item) ? "bg-[var(--accent)] text-white" : "border border-default text-secondary hover:text-[var(--accent)]"
           }`}
         >{item}</button>
       ))}
@@ -209,7 +209,7 @@ function FilterRow({ label, items, selected, onToggle }: {
 function IconBtn({ children, onClick, label }: { children: React.ReactNode; onClick: () => void; label: string }) {
   return (
     <button onClick={onClick} aria-label={label} title={label}
-      className="size-8 flex items-center justify-center rounded-full text-sm text-muted hover:text-page hover:bg-surface transition opacity-0 group-hover:opacity-100 focus:opacity-100"
+      className="size-8 flex items-center justify-center rounded-full text-sm text-muted hover:text-page hover:bg-[var(--bg-surface-muted)] transition opacity-0 group-hover:opacity-100 focus:opacity-100"
     >{children}</button>
   );
 }
