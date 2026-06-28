@@ -2,6 +2,20 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
+## v0.8.1 - 2026-06-28
+
+### design: Explore page redesign — clean, open-canvas, Coolors-style layout
+
+- **Editorial header** — Large "Explore Color Palettes" heading with subtitle. No card containers or pink buttons.
+- **Search bar row** — Full-width input with search icon, "Search with AI" placeholder button, and Filters toggle button showing active filter count.
+- **Filters in popover drawer** — Color, Style, Topic filter rows and Order toggle only visible when Filters button is active. Clean drawer, not cluttered on page.
+- **Seamless palette strips** — Each palette is a horizontal swatch bar (no gaps) with hover reveal for hex labels. No card backgrounds, no borders between content.
+- **Inline icon actions** — Favorite, View, Copy HEX, Open in Studio appear on group hover. Clean emoji icons, no buttons.
+- **Palette name row** — Name, style/topic/color count on the left. Icon actions on the right. No containers, just text.
+- **Load More** — Clean outline button.
+- **All existing functionality preserved** — Search, filters, detail modal, open in Studio, favorites, copy HEX. Responsive single-column on mobile.
+- **Dark mode compatible** — All colors use CSS variables.
+
 ## v0.8.0 - 2026-06-28
 
 ### feat: Explore tab — palette discovery hub with 75 curated palettes

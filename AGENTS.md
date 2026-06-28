@@ -12,7 +12,7 @@ This version has breaking changes. APIs, conventions, and file structure may dif
 
 - Visible name: **OpenPalette**
 - Repository slug: `openpalette`
-- Current release: `v0.8.0`
+- Current release: `v0.8.1`
 - Product type: local-first color studio / palette machine
 - Brand accent: `#ff66c4` (page background in light mode)
 - Light mode bg: `#ff66c4` (bright pink)

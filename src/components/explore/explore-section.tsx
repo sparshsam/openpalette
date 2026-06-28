@@ -37,13 +37,12 @@ export function ExploreSection() {
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [order, setOrder] = useState<Order>("trending");
   const [visible, setVisible] = useState(20);
+  const [showFilters, setShowFilters] = useState(false);
   const [detailPalette, setDetailPalette] = useState<ExplorePalette | null>(null);
 
   const filtered = useMemo(() => {
     let list = [...explorePalettes];
     const q = search.toLowerCase().trim();
-
-    // Keyword/prompt search
     if (q) {
       const keywords = q.split(/\s+/);
       list = list.filter((p) =>
@@ -52,92 +51,134 @@ export function ExploreSection() {
         )
       );
     }
-
-    // Color filter
     if (selectedColors.length > 0) {
-      list = list.filter((p) =>
-        selectedColors.some((c) => p.colors.some((hex) => matchColorTag(hex, c)))
-      );
+      list = list.filter((p) => selectedColors.some((c) => p.colors.some((hex) => matchColorTag(hex, c))));
     }
-
-    // Style filter
     if (selectedStyles.length > 0) {
       list = list.filter((p) => selectedStyles.includes(p.style));
     }
-
-    // Topic filter
     if (selectedTopics.length > 0) {
       list = list.filter((p) => selectedTopics.includes(p.topic));
     }
-
-    // Sort
     if (order === "latest") {
       list.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
     } else if (order === "popular") {
       list.sort((a, b) => b.colors.length - a.colors.length);
     }
-
     return list;
   }, [search, selectedColors, selectedStyles, selectedTopics, order]);
 
   const displayList = filtered.slice(0, visible);
   const hasMore = visible < filtered.length;
+  const activeFilterCount = selectedColors.length + selectedStyles.length + selectedTopics.length;
 
   function toggle(arr: string[], val: string): string[] {
     return arr.includes(val) ? arr.filter((v) => v !== val) : [...arr, val];
   }
 
   function loadIntoStudio(p: ExplorePalette) {
-    // Navigate to Studio tab and set palette
     const colors = createPalette(p.colors, p.colors.length);
     window.dispatchEvent(new CustomEvent("op-load-palette", { detail: { colors, mode: "Random" } }));
     window.dispatchEvent(new CustomEvent("op-navigate", { detail: { tab: "studio" } }));
   }
 
+  async function copyHexes(colors: string[]) {
+    try { await navigator.clipboard.writeText(colors.join(", ")); } catch {}
+  }
+
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-black tracking-tight text-page">Explore</h1>
-        <span className="text-xs text-muted">{filtered.length} palettes</span>
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
+      {/* Editorial header */}
+      <div className="space-y-2">
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-page">Explore Color Palettes</h1>
+        <p className="text-sm sm:text-base text-secondary">Get inspired by beautiful color schemes.</p>
       </div>
 
-      {/* Search */}
-      <input
-        className="w-full rounded-2xl surface p-4 font-mono text-sm text-page outline-none placeholder:text-muted"
-        placeholder='Search palettes — "modern fintech app", "warm coffee shop", or keywords...'
-        value={search}
-        onChange={(e) => { setSearch(e.target.value); setVisible(20); }}
-      />
-
-      {/* Filters */}
-      <div className="space-y-3">
-        <FilterRow label="Color" items={colorFilters} selected={selectedColors} onToggle={(v) => setSelectedColors(toggle(selectedColors, v))} />
-        <FilterRow label="Style" items={styleFilters} selected={selectedStyles} onToggle={(v) => setSelectedStyles(toggle(selectedStyles, v))} />
-        <FilterRow label="Topic" items={topicFilters} selected={selectedTopics} onToggle={(v) => setSelectedTopics(toggle(selectedTopics, v))} />
-        <div className="flex items-center gap-2 text-xs text-secondary">
-          <span className="font-bold uppercase tracking-wider">Order</span>
-          {ORDER_OPTIONS.map((o) => (
-            <button key={o} className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider transition ${order === o ? "bg-[var(--accent)] text-white" : "surface text-secondary hover-bg-muted"}`} onClick={() => setOrder(o)}>{o}</button>
-          ))}
+      {/* Search bar row */}
+      <div className="flex items-center gap-2">
+        <div className="flex-1 relative">
+          <svg className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><circle cx="7" cy="7" r="5"/><path d="M11 11l4 4"/></svg>
+          <input
+            className="w-full rounded-full border border-default bg-transparent pl-11 pr-4 py-3 text-sm text-page outline-none placeholder:text-muted focus:border-[var(--accent)] transition-colors"
+            placeholder='Search by colors, topics, styles, hex — "modern fintech"'
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setVisible(20); }}
+          />
         </div>
+        <button className="rounded-full border border-default px-4 py-3 text-sm font-semibold text-secondary hover:bg-surface hover:text-page transition whitespace-nowrap">
+          Search with AI
+        </button>
+        <button onClick={() => setShowFilters(!showFilters)}
+          className={`rounded-full border px-4 py-3 text-sm font-semibold transition whitespace-nowrap ${showFilters || activeFilterCount > 0 ? "bg-[var(--accent)] text-white border-[var(--accent)]" : "border-default text-secondary hover:bg-surface hover:text-page"}`}>
+          Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
+        </button>
       </div>
 
-      {/* Palette grid */}
+      {/* Filters drawer */}
+      {showFilters && (
+        <div className="rounded-2xl border border-default p-4 sm:p-5 space-y-4 bg-[var(--bg-base)]">
+          <FilterRow label="Color" items={colorFilters} selected={selectedColors} onToggle={(v) => { setSelectedColors(toggle(selectedColors, v)); setVisible(20); }} />
+          <FilterRow label="Style" items={styleFilters} selected={selectedStyles} onToggle={(v) => { setSelectedStyles(toggle(selectedStyles, v)); setVisible(20); }} />
+          <FilterRow label="Topic" items={topicFilters} selected={selectedTopics} onToggle={(v) => { setSelectedTopics(toggle(selectedTopics, v)); setVisible(20); }} />
+          <div className="flex items-center gap-2 text-sm text-secondary pt-1">
+            <span className="font-semibold">Order</span>
+            {ORDER_OPTIONS.map((o) => (
+              <button key={o} className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider transition ${order === o ? "bg-[var(--accent)] text-white" : "border border-default text-secondary hover:bg-surface"}`} onClick={() => setOrder(o)}>{o}</button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Active filter chips */}
+      {activeFilterCount > 0 && !showFilters && (
+        <div className="flex flex-wrap gap-1.5 -mt-4">
+          {[...selectedColors, ...selectedStyles, ...selectedTopics].map((f) => (
+            <span key={f} className="rounded-full bg-[var(--accent)]/10 text-[var(--accent)] px-2.5 py-0.5 text-xs font-semibold">{f}</span>
+          ))}
+          <button onClick={() => { setSelectedColors([]); setSelectedStyles([]); setSelectedTopics([]); }} className="text-xs text-muted hover:text-page px-2">Clear</button>
+        </div>
+      )}
+
+      {/* Palette list */}
       {displayList.length === 0 ? (
-        <p className="text-sm text-muted py-8 text-center">No palettes match your search. Try different keywords.</p>
+        <p className="text-sm text-muted py-12 text-center">No palettes match. Try different keywords or filters.</p>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="space-y-1">
           {displayList.map((p) => (
-            <ExploreCard key={p.id} palette={p} onOpen={setDetailPalette} onLoad={loadIntoStudio} />
+            <div key={p.id} className="group border-b border-default last:border-b-0">
+              {/* Swatch strip — clickable, seamless */}
+              <button className="w-full flex h-16 sm:h-20 overflow-hidden rounded-lg sm:rounded-xl" onClick={() => setDetailPalette(p)}>
+                {p.colors.map((hex, i) => (
+                  <span key={i} className="flex-1 relative hover:flex-[1.2] transition-all duration-200" style={{ backgroundColor: hex }}>
+                    <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[8px] sm:text-[10px] font-mono font-bold drop-shadow-sm opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: getReadableTextColor(hex) }}>{hex}</span>
+                  </span>
+                ))}
+              </button>
+
+              {/* Palette info row — no container bg, just text + icons */}
+              <div className="flex items-center justify-between py-2.5 px-0.5">
+                <div className="flex items-center gap-3 min-w-0">
+                  <button onClick={() => setDetailPalette(p)} className="text-left min-w-0">
+                    <p className="text-sm font-semibold text-page truncate">{p.name}</p>
+                    <p className="text-[11px] text-muted truncate capitalize">{p.style} · {p.topic} · {p.colors.length} colors</p>
+                  </button>
+                </div>
+                <div className="flex items-center gap-0.5 shrink-0">
+                  <IconBtn onClick={() => copyHexes(p.colors)} label="Copy HEX">📋</IconBtn>
+                  <IconBtn onClick={() => {}} label="Favorite">☆</IconBtn>
+                  <IconBtn onClick={() => setDetailPalette(p)} label="View">👁</IconBtn>
+                  <IconBtn onClick={() => loadIntoStudio(p)} label="Open in Studio">↗</IconBtn>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       )}
 
       {/* Load More */}
       {hasMore && (
-        <div className="flex justify-center pt-2">
-          <button className="rounded-full surface px-6 py-2 text-sm font-semibold text-page hover-bg-muted transition" onClick={() => setVisible((v) => v + 20)}>
+        <div className="flex justify-center pt-4">
+          <button className="rounded-full border border-default px-8 py-2.5 text-sm font-semibold text-secondary hover:bg-surface hover:text-page transition" onClick={() => setVisible((v) => v + 20)}>
             Load More ({filtered.length - visible} remaining)
           </button>
         </div>
@@ -155,12 +196,12 @@ function FilterRow({ label, items, selected, onToggle }: {
   label: string; items: string[]; selected: string[]; onToggle: (v: string) => void;
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-1.5 text-xs text-secondary">
-      <span className="font-bold uppercase tracking-wider w-12 shrink-0">{label}</span>
+    <div className="flex flex-wrap items-center gap-1.5 text-sm">
+      <span className="font-semibold text-secondary w-14 shrink-0">{label}</span>
       {items.map((item) => (
         <button key={item} onClick={() => onToggle(item)}
-          className={`rounded-full px-2.5 py-1 text-xs font-semibold transition ${
-            selected.includes(item) ? "bg-[var(--accent)] text-white" : "surface text-secondary hover-bg-muted"
+          className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+            selected.includes(item) ? "bg-[var(--accent)] text-white" : "border border-default text-secondary hover:bg-surface hover:text-page"
           }`}
         >{item}</button>
       ))}
@@ -168,41 +209,10 @@ function FilterRow({ label, items, selected, onToggle }: {
   );
 }
 
-function ExploreCard({ palette: p, onOpen, onLoad }: {
-  palette: ExplorePalette; onOpen: (p: ExplorePalette) => void; onLoad: (p: ExplorePalette) => void;
-}) {
+function IconBtn({ children, onClick, label }: { children: React.ReactNode; onClick: () => void; label: string }) {
   return (
-    <div className="rounded-2xl border border-default overflow-hidden hover:shadow-lg transition-shadow bg-[var(--bg-surface)]">
-      {/* Swatch strip */}
-      <button className="w-full flex h-20 overflow-hidden" onClick={() => onOpen(p)}>
-        {p.colors.map((hex, i) => (
-          <div key={i} className="flex-1 flex items-end justify-center pb-1" style={{ backgroundColor: hex }}>
-            <span className="text-[8px] font-mono font-bold drop-shadow-sm" style={{ color: getReadableTextColor(hex) }}>{hex}</span>
-          </div>
-        ))}
-      </button>
-
-      {/* Info */}
-      <div className="p-3 space-y-2">
-        <div className="flex items-start justify-between gap-2">
-          <div>
-            <p className="text-sm font-semibold text-page leading-tight">{p.name}</p>
-            <p className="text-[10px] text-muted mt-0.5 capitalize">{p.style} · {p.topic}</p>
-          </div>
-          <button onClick={() => onOpen(p)} className="size-7 flex items-center justify-center rounded-full hover:bg-[var(--bg-surface-muted)] text-secondary shrink-0">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" fill="currentColor"/><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5"/></svg>
-          </button>
-        </div>
-        <div className="flex flex-wrap gap-1">
-          {p.tags.slice(0, 3).map((t) => (
-            <span key={t} className="rounded-full bg-[var(--bg-surface-muted)] px-2 py-0.5 text-[10px] text-muted">{t}</span>
-          ))}
-        </div>
-        <div className="flex gap-2 pt-1">
-          <button onClick={() => onLoad(p)} className="flex-1 rounded-full bg-[var(--accent)] text-white px-3 py-1 text-xs font-semibold hover:bg-[var(--accent-hover)] transition">Open</button>
-          <button className="size-7 flex items-center justify-center rounded-full surface text-secondary hover-bg-muted transition" title="Favorite">☆</button>
-        </div>
-      </div>
-    </div>
+    <button onClick={onClick} aria-label={label} title={label}
+      className="size-8 flex items-center justify-center rounded-full text-sm text-muted hover:text-page hover:bg-surface transition opacity-0 group-hover:opacity-100 focus:opacity-100"
+    >{children}</button>
   );
 }
