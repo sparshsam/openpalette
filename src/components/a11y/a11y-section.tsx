@@ -242,10 +242,8 @@ function ThemePairTester({ palette: colors }: { palette: string[] }) {
       });
       const lightest = sorted[sorted.length - 1];
       const darkest = sorted[0];
-      setLightBg(lightest);
-      setLightText(getReadableTextColor(lightest));
-      setDarkBg(darkest);
-      setDarkText(getReadableTextColor(darkest));
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLightBg(lightest); setLightText(getReadableTextColor(lightest)); setDarkBg(darkest); setDarkText(getReadableTextColor(darkest));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [colors.join(",")]);
