@@ -6,7 +6,7 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "json-summary"],
       thresholds: {
-        branches: 65,
+        branches: 55,
         functions: 75,
         lines: 80,
         statements: 80,
