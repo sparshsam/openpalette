@@ -221,8 +221,8 @@ function ColorInput({ label, hex, nh, onChange }: {
 
 function Pass({ label, pass }: { label: string; pass: boolean }) {
   return (
-    <div className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold ${
-      pass ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"
+    <div className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold ${
+      pass ? "bg-green-600/10 text-page" : "bg-red-600/10 text-page"
     }`}>
       <span className="text-sm leading-none">{pass ? "✓" : "✗"}</span>
       {label}
