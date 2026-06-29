@@ -7,7 +7,7 @@ import { useTheme } from "./theme-provider";
 export function Header() {
   const { theme, toggle } = useTheme();
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => { setMounted(true); }, []); // eslint-disable-line react-hooks/set-state-in-effect
 
   return (
     <>
