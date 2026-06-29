@@ -97,10 +97,31 @@ export function OpenPaletteApp() {
     };
   }, []);
 
+  const navRef = useRef<HTMLDivElement>(null);
+
+  // Non-passive wheel listener — prevents page scroll when scrolling the nav
+  useEffect(() => {
+    const el = navRef.current;
+    if (!el) return;
+    const handler = (e: WheelEvent) => {
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
+    };
+    el.addEventListener("wheel", handler, { passive: false });
+    return () => el.removeEventListener("wheel", handler);
+  }, []);
+
+  const scrollNav = (dir: "left" | "right") => {
+    navRef.current?.scrollBy({ left: dir === "left" ? -180 : 180, behavior: "smooth" });
+  };
+
   return <div>
-    <nav className="flex justify-center py-3 px-2" aria-label="Tabs">
-      <div className="flex gap-0.5 p-1 rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-sm overflow-x-auto scroll-smooth no-scrollbar w-[26rem] sm:w-[28rem]"
-        onWheel={(e) => { e.currentTarget.scrollLeft += e.deltaY; }}>
+    <nav className="flex justify-center items-center gap-1 py-3 px-2" aria-label="Tabs">
+      <button type="button" onClick={() => scrollNav("left")}
+        className="shrink-0 size-7 flex items-center justify-center rounded-full text-sm text-secondary hover:text-[var(--accent)] hover:bg-[var(--surface)] transition disabled:opacity-20"
+        aria-label="Scroll tabs left">◀</button>
+      <div ref={navRef}
+        className="flex gap-0.5 p-1 rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-sm overflow-x-auto scroll-smooth no-scrollbar w-[26rem] sm:w-[28rem] max-w-[calc(100vw-7rem)]">
         {tabs.map((t) => (
           <button key={t.id} className={`rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap transition-all ${
             mounted && activeTab === t.id
@@ -109,6 +130,9 @@ export function OpenPaletteApp() {
           }`} type="button" onClick={() => setActiveTab(t.id)}>{t.label}</button>
         ))}
       </div>
+      <button type="button" onClick={() => scrollNav("right")}
+        className="shrink-0 size-7 flex items-center justify-center rounded-full text-sm text-secondary hover:text-[var(--accent)] hover:bg-[var(--surface)] transition disabled:opacity-20"
+        aria-label="Scroll tabs right">▶</button>
     </nav>
     {/* Conditional rendering — suppresses hydration mismatch at each wrapper */}
     {mounted && activeTab === "studio" && <div suppressHydrationWarning><ErrorBoundary name="Studio"><StudioSection initialPalette={loadPalette} onConsumed={() => setLoadPalette(null)} /></ErrorBoundary></div>}
