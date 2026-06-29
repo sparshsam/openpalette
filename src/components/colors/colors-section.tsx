@@ -142,11 +142,11 @@ export function ColorsSection() {
               <div key={hex} className="bounce-press group relative rounded-xl overflow-hidden border border-default hover:shadow-lg transition-shadow cursor-pointer"
                 style={{ backgroundColor: hex, aspectRatio: "3/2" }}
                 onClick={() => { navigator.clipboard.writeText(hex).catch(() => {}); showToast(`Copied ${hex}`); }}>
-                <div className="absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                   <p className="text-sm font-semibold text-white drop-shadow-sm">{info.name}</p>
                   <p className="text-xs font-mono text-white/80">{hex}</p>
                 </div>
-                <div className="absolute top-1.5 right-1.5 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute top-1.5 right-1.5 flex gap-0.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                   <button onClick={(e) => { e.stopPropagation(); showToast(`★ ${info.name} favorited`); }} className="size-6 flex items-center justify-center rounded-full bg-white/20 backdrop-blur text-xs text-white hover:bg-white/40">☆</button>
                   <button onClick={(e) => { e.stopPropagation(); openDetail(hex); }} className="size-6 flex items-center justify-center rounded-full bg-white/20 backdrop-blur text-xs text-white hover:bg-white/40">↗</button>
                 </div>
