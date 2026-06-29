@@ -132,5 +132,30 @@ npm run lint && npm run typecheck && npm run build && npm run test
 ## Release Hygiene
 
 - Update `CHANGELOG.md`, `AGENTS.md` version, `package.json` version
-- Bump semver appropriately (current: v0.8.9)
+- Bump semver appropriately (current: v0.8.10)
 - No direct pushes to `main` (branch protection via GitHub)
+
+## Milestone — v0.8.10 Complete
+
+All 11 tabs fully implemented with editorial design, semantic CSS, and Coolors-parity features:
+
+- **Studio** — drag-to-reorder swatches, hover action rail, auto-save
+- **Explore** — 75 curated palettes, search/filters, detail modal
+- **Extract** — 6 extraction modes, improved algorithm
+- **Contrast** — WCAG checker, 3-star rating, AA/AAA badges
+- **Visualizer** — 7 template gallery, category filters
+- **Colors** — 150-color library, 9-section detail page, opens in new tab
+- **Tokens** — 11-step scale generator, 6 exports, UI previews
+- **Gradient** — linear/radial/conic, 14 presets, stop editor, exports
+- **Accessibility** — scores, theme pair tester, contrast matrix, 5-mode blind sim, typography audit
+- **Themes** — 9 curated sets
+- **Library** — saved palettes, 7 exports, collections, history
+
+### Infrastructure
+- URL hash routing for all tabs (persists on refresh)
+- Global toast system (`showToast`)
+- bounce-press animation + hover-accent pink hover effect
+- Semantic CSS system (text-page, surface, border-default)
+- Light/dark mode with SVG sun/moon toggle
+- SSR hydration fixes (mounted guard)
+- Hosted at palette.kovina.org via Vercel + Cloudflare
