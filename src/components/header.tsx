@@ -8,7 +8,7 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-[var(--bg-surface)]/95 backdrop-blur-md border-b border-[var(--border-default)]">
+      <header className="sticky top-0 z-50 bg-[var(--bg-base)]/95 backdrop-blur-md">
         <div className="mx-auto flex items-center justify-between max-w-7xl px-6 pr-14 h-14">
           {/* Logo */}
           <Link

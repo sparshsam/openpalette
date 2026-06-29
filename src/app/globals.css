@@ -3,9 +3,9 @@
 /* ── Design tokens ─── */
 
 :root {
-  --bg-base: #111111;
-  --bg-surface: #1a1a1a;
-  --bg-surface-muted: #222222;
+  --bg-base: #0f0f0f;
+  --bg-surface: #181818;
+  --bg-surface-muted: #202020;
   --text-primary: #f5f5f5;
   --text-secondary: #aaaaaa;
   --text-muted: #777777;

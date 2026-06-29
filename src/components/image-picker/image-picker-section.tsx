@@ -118,10 +118,14 @@ export function ImagePickerSection() {
                 </div>
                 <div className="flex rounded-xl overflow-hidden h-12 border border-default">
                   {extracted.slice(0, size).map((hex, i) => (
-                    <div key={i} className="flex-1 relative group" style={{ backgroundColor: hex }}>
+                    <button key={i} className="flex-1 relative group cursor-pointer hover:opacity-90 transition-opacity" style={{ backgroundColor: hex }}
+                      onClick={() => {
+                        navigator.clipboard.writeText(hex).catch(() => {});
+                        window.dispatchEvent(new CustomEvent("op-toast", { detail: { msg: `Copied ${hex}` } }));
+                      }}>
                       <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[9px] font-mono font-bold drop-shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
                         style={{ color: getReadableTextColor(hex) }}>{hex}</span>
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -143,7 +147,9 @@ export function ImagePickerSection() {
                   Open in Studio
                 </button>
                 <button onClick={() => {
-                  navigator.clipboard.writeText(extracted.slice(0, size).join(", "));
+                  const txt = extracted.slice(0, size).join(", ");
+                  navigator.clipboard.writeText(txt).catch(() => {});
+                  window.dispatchEvent(new CustomEvent("op-toast", { detail: { msg: "Palette copied" } }));
                 }} className="rounded-full border border-default px-5 py-2 text-sm font-semibold text-secondary hover:text-[var(--accent)] transition">
                   Copy HEX
                 </button>

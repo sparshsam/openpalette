@@ -163,23 +163,26 @@ export function ContrastSection() {
 function ColorInput({ label, hex, nh, onChange }: {
   label: string; hex: string; nh: string; onChange: (v: string) => void;
 }) {
-  const inputRef = useRef<HTMLInputElement>(null);
   const colorRef = useRef<HTMLInputElement>(null);
+
+  function copyHex() {
+    navigator.clipboard.writeText(nh).catch(() => {});
+    window.dispatchEvent(new CustomEvent("op-toast", { detail: { msg: `Copied ${nh}` } }));
+  }
 
   return (
     <div className="space-y-1.5">
       <p className="text-xs font-bold uppercase tracking-wider text-muted">{label}</p>
       <div className="relative">
-        <input ref={inputRef} type="text" value={hex} onChange={(e) => onChange(e.target.value)}
-          className="w-full rounded-lg border border-default bg-[var(--bg-base)] pl-3 pr-10 py-2.5 text-sm font-mono text-page outline-none focus:border-[var(--accent)] transition-colors uppercase"
+        <input type="text" value={hex} onChange={(e) => onChange(e.target.value)}
+          className="w-full rounded-lg border border-default bg-[var(--bg-base)] pl-3 pr-20 py-2.5 text-sm font-mono text-page outline-none focus:border-[var(--accent)] transition-colors uppercase"
           placeholder="#000000" spellCheck={false} />
-        <button
-          onClick={() => colorRef.current?.click()}
-          className="absolute right-1.5 top-1/2 -translate-y-1/2 size-7 rounded border border-default cursor-pointer"
-          style={{ backgroundColor: nh }}
-          title="Pick color"
-          aria-label={`Pick ${label.toLowerCase()} color`}
-        />
+        <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+          <button onClick={copyHex} className="text-[10px] font-semibold text-muted hover:text-[var(--accent)] transition px-1" title="Copy HEX">📋</button>
+          <button onClick={() => colorRef.current?.click()}
+            className="size-7 rounded border border-default cursor-pointer" style={{ backgroundColor: nh }}
+            title="Pick color" aria-label={`Pick ${label.toLowerCase()} color`} />
+        </div>
         <input ref={colorRef} type="color" value={nh} onChange={(e) => onChange(e.target.value.toUpperCase())}
           className="sr-only" tabIndex={-1} />
       </div>

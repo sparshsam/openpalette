@@ -2,6 +2,47 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
+## v0.8.7 - 2026-06-28
+
+### feat: Design Tokens page — token scale generator, UI previews, developer exports
+
+- **New Tokens tab** — Generate complete 11-step design token scales (50–950) from any base color using HSL-based interpolation with perceptually smooth lightness ramps.
+- **Token display** — Large interactive swatch strip with hover shade labels, 11-column shade grid with copy-on-click.
+- **Live UI Preview** — 12 preview components rendered with the token scale: landing page hero, dashboard card, sidebar/navigation, buttons & controls, form elements, table, alerts (info/success/error), pricing card. Light/Dark preview toggle affects previews only.
+- **Developer exports** — 6 formats: CSS Variables, Tailwind Config, JSON, SCSS, Android XML, iOS Swift. Each copies to clipboard with toast confirmation.
+- **Bottom toolbar** — Token strip, shade count, Generate, Copy full scale, Export panel toggle.
+- **Shareable URLs** — `/tokens/2d518f` loads the token scale for that color.
+- **Spacebar support** — Generates a new random base color (with input guard).
+- **Tab navigation** — 11 tabs, scrollable nav with arrows.
+
+## v0.8.6 - 2026-06-28
+
+### feat: Colors library with 150 swatches + full Color Detail page
+
+- **New Colors tab** — Searchable color library with 150 curated colors, 12 category chips (Red through Black), large swatches with name/HEX reveal on hover, subtle Favorite/Open Detail actions. Spacebar randomizes view.
+- **Color Detail page** — Opens in new tab at `#/colors/HEX`. Sticky section nav: Overview, Conversion, About, Variations, Harmonies, Accessibility, Similar Colors, Libraries, Palettes.
+- **Overview** — Large color hero, 4 quick fields (HEX/RGB/HSL/CMYK), Copy HEX, Open in Studio, Favorite.
+- **Conversion** — 10 color spaces: HEX, RGB, CMYK, HSL, HSV, LAB, XYZ, LCH, LUV, HWB — all copyable.
+- **About** — Auto-generated description, psychology, meaning, branding, UI usage, applications.
+- **Variations** — 5 types: shades, tints, tones, hues, temperature — continuous swatch strips with hover HEX reveal.
+- **Harmonies** — 6 modes: Analogous, Complementary, Split Comp, Triadic, Tetradic, Square — each copyable.
+- **Accessibility** — 4 color-blind simulations, white/black contrast previews with WCAG ratings.
+- **Similar Colors** — 12 nearest matches with name, HEX, similarity score, copyable.
+- **Libraries** — Nearest CSS named color and Tailwind equivalent with approx labels.
+- **Palettes** — 5 auto-generated palettes using the color, each with Copy and Open in Studio.
+- **Every swatch copies to clipboard** — Uses global toast system ("Copied #HEX").
+
+## v0.8.5 - 2026-06-28
+
+### feat: Visualizer redesign — template gallery with category filters
+
+- **Palette Visualizer** — Complete redesign around a responsive gallery of 7 live preview templates: Website, Mobile, Dashboard, Brand, Typography, Poster, Social.
+- **Category filters** — All, Mobile/Web UI, Branding, Typography, Dashboard, Poster, Social — each filtering the gallery.
+- **3-column desktop gallery** — Each template card renders the real palette on a realistic mockup using existing VisualizerPreview components.
+- **Sticky bottom toolbar** — Palette strip, color count, Generate, Open in Studio, Copy HEX, Export modal access.
+- **Old single-preview layout removed** — Replaced by extracting VisualizerSection to its own file with clean architecture.
+- **Free, local-first, no accounts, full dark mode support.**
+
 ## v0.8.4 - 2026-06-28
 
 ### feat: Contrast page — WCAG contrast checker

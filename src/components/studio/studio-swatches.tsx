@@ -68,6 +68,10 @@ export function StudioSwatches({ palette, blindMode }: Props) {
               style={{ backgroundColor: displayHex }}
               onMouseEnter={() => setHoveredIdx(idx)}
               onMouseLeave={() => setHoveredIdx(null)}
+              onClick={() => {
+                navigator.clipboard.writeText(nh).catch(() => {});
+                window.dispatchEvent(new CustomEvent("op-toast", { detail: { msg: `Copied ${nh}` } }));
+              }}
             >
               {/* Grab handle — full height */}
               <div

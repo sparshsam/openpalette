@@ -1,7 +1,6 @@
 "use client";
 
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
-import { VisualizerPreview, visualizers, type Visualizer } from "@/components/studio/visualizers";
 import { createSimplePdf, drawSwatches, extensionFor } from "@/lib/browser-exports";
 import {
   createExportSnippets,
@@ -32,6 +31,9 @@ import { StudioSection } from "@/components/studio/studio-section";
 import { ExploreSection } from "@/components/explore/explore-section";
 import { ImagePickerSection } from "@/components/image-picker/image-picker-section";
 import { ContrastSection } from "@/components/contrast/contrast-section";
+import { VisualizerSection } from "@/components/visualizer/visualizer-section";
+import { ColorsSection } from "@/components/colors/colors-section";
+import { TokensSection } from "@/components/tokens/tokens-section";
 import { ErrorBoundary } from "@/components/error-boundary";
 
 const libraryStorageKey = "openpalette.library.v1";
@@ -41,11 +43,13 @@ const sorts: { label: string; value: LibrarySort }[] = [
   { label: "Contrast", value: "contrast" }, { label: "Warm/cool", value: "temperature" }, { label: "Favorites", value: "favorites" },
 ];
 
-type Tab = "studio" | "explore" | "image-picker" | "contrast" | "gradient" | "visualizer" | "accessibility" | "themes" | "library";
+type Tab = "studio" | "explore" | "image-picker" | "contrast" | "visualizer" | "colors" | "tokens" | "gradient" | "accessibility" | "themes" | "library";
 const tabs: { id: Tab; label: string }[] = [
   { id: "studio", label: "Studio" }, { id: "explore", label: "Explore" }, { id: "image-picker", label: "Extract" },
-  { id: "contrast", label: "Contrast" }, { id: "gradient", label: "Gradient" }, { id: "visualizer", label: "Visualizer" },
-  { id: "accessibility", label: "Accessibility" }, { id: "themes", label: "Themes" }, { id: "library", label: "Library" },
+  { id: "contrast", label: "Contrast" }, { id: "visualizer", label: "Visualizer" }, { id: "colors", label: "Colors" },
+  { id: "tokens", label: "Tokens" },
+  { id: "gradient", label: "Gradient" }, { id: "accessibility", label: "Accessibility" },
+  { id: "themes", label: "Themes" }, { id: "library", label: "Library" },
 ];
 
 /* ═══════════════════════════════════════════════════════════
@@ -55,10 +59,18 @@ const tabs: { id: Tab; label: string }[] = [
 export function OpenPaletteApp() {
   const [activeTab, setActiveTab] = useState<Tab>(() => {
     if (typeof window === "undefined") return "studio";
-    const hash = window.location.hash.replace("#", "") as Tab;
-    return tabs.some((t) => t.id === hash) ? hash : "studio";
+    const hash = window.location.hash.replace("#", "");
+    // Check for color detail route /colors/HEX
+    if (/^\/colors\/[0-9A-Fa-f]{6}$/.test(hash)) return "colors";
+    if (/^\/tokens\/[0-9A-Fa-f]{6}$/.test(hash)) return "tokens";
+    // Check for contrast route /contrast/hex1-hex2
+    if (/^\/contrast\//.test(hash)) return "contrast";
+    // Standard tab match
+    return tabs.some((t) => t.id === hash) ? (hash as Tab) : "studio";
   });
   const [loadPalette, setLoadPalette] = useState<{ colors: string[]; mode: string } | null>(null);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []); // eslint-disable-line react-hooks/set-state-in-effect
 
   useEffect(() => {
     const hash = activeTab === "studio" ? "" : activeTab;
@@ -108,7 +120,7 @@ export function OpenPaletteApp() {
       <div ref={navRef} className="inline-flex gap-0.5 p-1 rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-sm overflow-hidden">
         {tabs.slice(navPos, navPos + visibleCount).map((t) => (
           <button key={t.id} className={`rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap transition-all ${
-            activeTab === t.id
+            mounted && activeTab === t.id
               ? "bg-[var(--accent)] text-white shadow-sm"
               : "text-[var(--text-secondary)] hover:text-[var(--accent)]"
           }`} type="button" onClick={() => setActiveTab(t.id)}>{t.label}</button>
@@ -120,15 +132,19 @@ export function OpenPaletteApp() {
           aria-label="Next tabs">▶</button>
       )}
     </nav>
-    {activeTab === "studio" && <ErrorBoundary name="Studio"><StudioSection initialPalette={loadPalette} onConsumed={() => setLoadPalette(null)} /></ErrorBoundary>}
-    {activeTab === "explore" && <ErrorBoundary name="Explore"><ExploreSection /></ErrorBoundary>}
-    {activeTab === "image-picker" && <ErrorBoundary name="ImagePicker"><ImagePickerSection /></ErrorBoundary>}
-    {activeTab === "contrast" && <ErrorBoundary name="Contrast"><ContrastSection /></ErrorBoundary>}
-    {activeTab === "gradient" && <ErrorBoundary name="Gradient"><GradientSection /></ErrorBoundary>}
-    {activeTab === "visualizer" && <ErrorBoundary name="Visualizer"><VisualizerSection /></ErrorBoundary>}
-    {activeTab === "accessibility" && <ErrorBoundary name="Accessibility"><AccessibilitySection /></ErrorBoundary>}
-    {activeTab === "themes" && <ErrorBoundary name="Themes"><ThemesSection /></ErrorBoundary>}
-    {activeTab === "library" && <ErrorBoundary name="Library"><LibrarySection /></ErrorBoundary>}
+    {/* Conditional rendering — suppresses hydration mismatch at each wrapper */}
+    {mounted && activeTab === "studio" && <div suppressHydrationWarning><ErrorBoundary name="Studio"><StudioSection initialPalette={loadPalette} onConsumed={() => setLoadPalette(null)} /></ErrorBoundary></div>}
+    {mounted && activeTab === "explore" && <div suppressHydrationWarning><ErrorBoundary name="Explore"><ExploreSection /></ErrorBoundary></div>}
+    {mounted && activeTab === "image-picker" && <div suppressHydrationWarning><ErrorBoundary name="ImagePicker"><ImagePickerSection /></ErrorBoundary></div>}
+    {mounted && activeTab === "contrast" && <div suppressHydrationWarning><ErrorBoundary name="Contrast"><ContrastSection /></ErrorBoundary></div>}
+    {mounted && activeTab === "visualizer" && <div suppressHydrationWarning><ErrorBoundary name="Visualizer"><VisualizerSection /></ErrorBoundary></div>}
+    {mounted && activeTab === "colors" && <div suppressHydrationWarning><ErrorBoundary name="Colors"><ColorsSection /></ErrorBoundary></div>}
+    {mounted && activeTab === "tokens" && <div suppressHydrationWarning><ErrorBoundary name="Tokens"><TokensSection /></ErrorBoundary></div>}
+    {mounted && activeTab === "gradient" && <div suppressHydrationWarning><ErrorBoundary name="Gradient"><GradientSection /></ErrorBoundary></div>}
+    {activeTab === "accessibility" && <div suppressHydrationWarning><ErrorBoundary name="Accessibility"><AccessibilitySection /></ErrorBoundary></div>}
+    {activeTab === "themes" && <div suppressHydrationWarning><ErrorBoundary name="Themes"><ThemesSection /></ErrorBoundary></div>}
+    {activeTab === "library" && <div suppressHydrationWarning><ErrorBoundary name="Library"><LibrarySection /></ErrorBoundary></div>}
+    {!mounted && <div suppressHydrationWarning />}
   </div>;
 }
 
@@ -173,63 +189,6 @@ function GradientSection() {
       <button className="rounded-full surface px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={async () => { try { await navigator.clipboard.writeText(css); palette.announce("CSS copied"); } catch {} }}>Copy CSS</button>
       <button className="rounded-full surface px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={async () => { try { await navigator.clipboard.writeText(svg); palette.announce("SVG copied"); } catch {} }}>Copy SVG</button>
       <button className="rounded-full surface px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={() => { const can = document.createElement("canvas"); can.width=1200; can.height=420; const ctx=can.getContext("2d"); if(!ctx)return; drawGradient(ctx, can.width, can.height, palette.paletteHex, kind, angle); can.toBlob((b)=>{if(!b)return;const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download="gradient.png";a.click();URL.revokeObjectURL(u);palette.announce("PNG downloaded");}); }}>Download PNG</button>
-    </div>
-  </section>;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   VISUALIZER — compact strip + customization
-   ═══════════════════════════════════════════════════════════ */
-
-function VisualizerSection() {
-  const palette = usePalette();
-  const [activeVizz, setActiveVizz] = useState<Visualizer>("Website");
-  const [textColor, setTextColor] = useState("#ffffff");
-  const [customBg, setCustomBg] = useState("#333333");
-  const [bgMode, setBgMode] = useState<"auto"|"light"|"dark"|"custom">("auto");
-  const css = useMemo(() => createGradientCss(palette.paletteHex, "linear", 90), [palette.paletteHex]);
-  const appliedBg = bgMode === "auto" ? undefined : bgMode === "custom" ? customBg : bgMode === "light" ? "#ffffff" : "#000000";
-
-  useEffect(() => { const fn = (e: KeyboardEvent) => { if (!["INPUT","TEXTAREA"].includes((e.target as HTMLElement)?.tagName) && e.code === "Space") { e.preventDefault(); palette.generate(); } }; window.addEventListener("keydown", fn); return () => window.removeEventListener("keydown", fn); });
-
-  return <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-    <div className="flex items-center justify-between gap-4">
-      <h2 className="text-xl font-black tracking-tight text-page">Visualizer</h2>
-      <div className="flex items-center gap-2">
-        <button className="rounded-full surface backdrop-blur px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={palette.generate}>Generate (Space)</button>
-        <span className="text-xs text-muted">{palette.notice}</span>
-      </div>
-    </div>
-
-    {/* Compact palette strip */}
-    <div className="flex -mx-4 sm:-mx-6 lg:-mx-8">
-      {palette.paletteHex.map((hex, i) => <button key={i} className="flex-1 h-14 hover:h-18 transition-all duration-200" style={{ backgroundColor: hex }} onClick={() => { const el = document.createElement("input"); el.type="color"; el.value=hex; el.oninput=()=>palette.updateHex(palette.colors[i].id, el.value); el.click(); }} />)}
-    </div>
-
-    <div className="flex flex-wrap items-center gap-3">
-      {visualizers.map((v) => <button key={v} className={`rounded-full px-3 py-1 text-xs font-bold tracking-wider uppercase transition ${
-        activeVizz === v ? "bg-white text-[#1a001a]" : "surface text-secondary hover-bg-muted hover:text-page"
-      }`} onClick={() => setActiveVizz(v)}>{v}</button>)}
-    </div>
-
-    {/* Customization */}
-    <div className="flex flex-wrap items-center gap-4">
-      <label className="flex items-center gap-2 text-xs font-semibold text-secondary">
-        Text <input className="size-7 rounded-full cursor-pointer border border-default" type="color" value={textColor} onChange={(e) => setTextColor(e.target.value)} />
-      </label>
-      <div className="flex items-center gap-1 text-xs font-semibold text-secondary">
-        Bg {(["auto","light","dark","custom"] as const).map((o) => <button key={o} className={`rounded-full px-2.5 py-1 text-xs transition ${
-          bgMode === o ? "bg-white text-[#1a001a]" : "surface-muted text-secondary hover-bg-muted hover:text-page"
-        }`} onClick={() => setBgMode(o)}>{o}</button>)}
-      </div>
-      {bgMode === "custom" && <label className="flex items-center gap-2 text-xs font-semibold text-secondary">
-        <input className="size-7 rounded-full cursor-pointer border border-default" type="color" value={customBg} onChange={(e) => setCustomBg(e.target.value)} />
-        <span className="font-mono">{customBg}</span>
-      </label>}
-    </div>
-
-    <div className="rounded-2xl border border-default p-6 transition-colors" style={{ backgroundColor: appliedBg }}>
-      <VisualizerPreview active={activeVizz} colors={palette.paletteHex} gradient={css} textColor={textColor} />
     </div>
   </section>;
 }

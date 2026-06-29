@@ -17,8 +17,8 @@ export const paletteModes: PaletteMode[] = [
 export const exportFormats: ExportFormat[] = ["CSS", "SCSS", "Tailwind", "JSON", "Tokens", "Style Dictionary", "SVG"];
 
 export const seedPalettes = [
-  ["#0F172A", "#2563EB", "#38BDF8", "#F8FAFC", "#F97316"],
-  ["#101828", "#475467", "#98A2B3", "#EAECF0", "#FCFCFD"],
+  ["#2D518F", "#26A195", "#F5F5F5", "#FFE4B5", "#2D1B69"],
+  ["#2D518F", "#26A195", "#FFE4B5", "#F5F5F5", "#2D1B69"],
   ["#164E63", "#0891B2", "#67E8F9", "#ECFEFF", "#F59E0B"],
   ["#1F2937", "#7C3AED", "#C084FC", "#F5F3FF", "#10B981"],
   ["#2F1B12", "#8B5E34", "#D6A76C", "#F7E7CE", "#31572C"],

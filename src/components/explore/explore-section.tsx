@@ -83,7 +83,7 @@ export function ExploreSection() {
   }
 
   async function copyHexes(colors: string[]) {
-    try { await navigator.clipboard.writeText(colors.join(", ")); } catch {}
+    try { await navigator.clipboard.writeText(colors.join(", ")); window.dispatchEvent(new CustomEvent("op-toast", { detail: { msg: "Palette copied" } })); } catch {}
   }
 
   return (
@@ -147,7 +147,9 @@ export function ExploreSection() {
               <button className="w-full flex h-16 sm:h-20 overflow-hidden rounded-lg sm:rounded-xl" onClick={() => setDetailPalette(p)}>
                 {p.colors.map((hex, i) => (
                   <span key={i} className="flex-1 relative hover:flex-[1.2] transition-all duration-200" style={{ backgroundColor: hex }}>
-                    <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[8px] sm:text-[10px] font-mono font-bold drop-shadow-sm opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: getReadableTextColor(hex) }}>{hex}</span>
+                    <span onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(hex).catch(() => {}); window.dispatchEvent(new CustomEvent("op-toast", { detail: { msg: `Copied ${hex}` } })); }}
+                      className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[8px] sm:text-[10px] font-mono font-bold drop-shadow-sm opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:scale-110"
+                      style={{ color: getReadableTextColor(hex) }}>{hex}</span>
                   </span>
                 ))}
               </button>

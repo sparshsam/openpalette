@@ -67,12 +67,12 @@ function MobilePreview({ primary, secondary, accent, surface, textColor }: Previ
 
 function DashboardPreview({ primary, secondary, accent, surface, textColor }: PreviewProps) {
   return (
-    <div className="grid gap-3 rounded-xl p-4 md:grid-cols-[180px_1fr]" style={{ background: surface, color: withTextColor(surface, textColor) }}>
-      <aside className="rounded-lg p-3" style={{ background: primary, color: getReadableTextColor(primary) }}>Analytics</aside>
-      <div className="grid gap-3 sm:grid-cols-3">
-        {[primary, secondary, accent].map((color) => <div className="h-28 rounded-lg p-3 text-sm font-semibold" key={color} style={{ background: color, color: getReadableTextColor(color) }}>Metric</div>)}
-        <div className="h-32 rounded-lg sm:col-span-3" style={{ background: `linear-gradient(90deg, ${primary}, ${accent})` }} />
+    <div className="rounded-xl p-3 space-y-3" style={{ background: surface, color: withTextColor(surface, textColor) }}>
+      <div className="rounded-lg px-3 py-2 text-xs font-semibold" style={{ background: primary, color: getReadableTextColor(primary) }}>Analytics</div>
+      <div className="grid grid-cols-3 gap-2">
+        {[primary, secondary, accent].map((color) => <div className="h-16 rounded-lg p-2 text-[10px] font-semibold" key={color} style={{ background: color, color: getReadableTextColor(color) }}>Metric</div>)}
       </div>
+      <div className="h-12 rounded-lg" style={{ background: `linear-gradient(90deg, ${primary}, ${accent})` }} />
     </div>
   );
 }
@@ -123,8 +123,8 @@ function BrandPreview({ colors, primary, secondary, accent, surface, textColor }
           <p style={{ color: textColor ?? secondary }}>Logo, marks, token ramps, and accents.</p>
         </div>
       </div>
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
-        {colors.map((color) => <div className="h-24 rounded-lg p-2 font-mono text-xs" key={color} style={{ background: color, color: getReadableTextColor(color) }}>{color}</div>)}
+      <div className="mt-6 grid grid-cols-5 gap-2">
+        {colors.map((color) => <div className="aspect-square rounded-lg p-1 font-mono text-[10px] flex items-end" key={color} style={{ background: color, color: getReadableTextColor(color) }}>{color}</div>)}
       </div>
       <div className="mt-4 h-2 rounded-full" style={{ background: accent }} />
     </div>

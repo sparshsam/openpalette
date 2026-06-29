@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
+import { Toast } from "@/components/toast";
+import { StripFdid } from "@/components/strip-fdid";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -71,16 +73,14 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <head>
-        <script dangerouslySetInnerHTML={{
-          __html: `(function(){var a=document.querySelectorAll("[fdprocessedid]");for(var i=0;i<a.length;i++)a[i].removeAttribute("fdprocessedid")})();`,
-        }} />
-      </head>
+      <head />
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
           <Header />
-          <main className="flex-1 w-full">{children}</main>
+          <main className="flex-1 w-full" suppressHydrationWarning>{children}</main>
+          <Toast />
         </ThemeProvider>
+        <StripFdid />
       </body>
     </html>
   );
