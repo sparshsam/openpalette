@@ -97,37 +97,18 @@ export function OpenPaletteApp() {
     };
   }, []);
 
-  // Scrollable nav: show ~5 tabs, arrows to slide
-  const navRef = useRef<HTMLDivElement>(null);
-  const [navPos, setNavPos] = useState(0);
-  const visibleCount = 5;
-  const maxNavPos = Math.max(0, tabs.length - visibleCount);
-
-  function scrollNav(dir: number) {
-    setNavPos((p) => Math.max(0, Math.min(maxNavPos, p + dir)));
-  }
-
   return <div>
-    <nav className="flex justify-center items-center gap-1 py-3 px-2" aria-label="Tabs">
-      {maxNavPos > 0 && (
-        <button onClick={() => scrollNav(-1)} disabled={navPos === 0}
-          className="size-7 flex items-center justify-center rounded-full text-xs text-secondary hover:text-[var(--accent)] hover-accent bounce-press disabled:opacity-20 transition-colors shrink-0"
-          aria-label="Previous tabs">◀</button>
-      )}
-      <div ref={navRef} className="inline-flex gap-0.5 p-1 rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-sm overflow-hidden">
-        {tabs.slice(navPos, navPos + visibleCount).map((t) => (
-          <button key={t.id} className={`rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap transition-all ${
+    <nav className="flex justify-center py-3 px-2" aria-label="Tabs">
+      <div className="flex gap-0.5 p-1 rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-sm overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar"
+        onWheel={(e) => { e.currentTarget.scrollLeft += e.deltaY; }}>
+        {tabs.map((t) => (
+          <button key={t.id} className={`snap-start rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap transition-all ${
             mounted && activeTab === t.id
               ? "bg-[var(--accent)] text-white shadow-sm"
               : "text-[var(--text-secondary)] hover:text-[var(--accent)]"
           }`} type="button" onClick={() => setActiveTab(t.id)}>{t.label}</button>
         ))}
       </div>
-      {maxNavPos > 0 && (
-        <button onClick={() => scrollNav(1)} disabled={navPos >= maxNavPos}
-          className="size-7 flex items-center justify-center rounded-full text-xs text-secondary hover:text-[var(--accent)] hover-accent bounce-press disabled:opacity-20 transition-colors shrink-0"
-          aria-label="Next tabs">▶</button>
-      )}
     </nav>
     {/* Conditional rendering — suppresses hydration mismatch at each wrapper */}
     {mounted && activeTab === "studio" && <div suppressHydrationWarning><ErrorBoundary name="Studio"><StudioSection initialPalette={loadPalette} onConsumed={() => setLoadPalette(null)} /></ErrorBoundary></div>}
