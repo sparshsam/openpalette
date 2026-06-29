@@ -4,27 +4,22 @@ import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { createSimplePdf, drawSwatches, extensionFor } from "@/lib/browser-exports";
 import {
   createExportSnippets,
-  createGradientCss,
-  createGradientSvg,
   createPalette,
   exportFormats,
-  drawGradient,
-  getContrastHint,
-  getPairContrasts,
+  
+  
   getPaletteAccessibilityScore,
   getReadableTextColor,
   normalizeHex,
   paletteModes,
   paletteSignature,
   sortPalettes,
-  suggestAccessibleReplacement,
+  
   type ExportFormat,
-  type GradientKind,
   type LibrarySort,
   type PaletteColor,
   type PaletteMode,
   type PaletteRecord,
-  type VisionMode,
 } from "@/lib/palette";
 import { usePalette } from "@/components/use-palette";
 import { StudioSection } from "@/components/studio/studio-section";
@@ -34,6 +29,8 @@ import { ContrastSection } from "@/components/contrast/contrast-section";
 import { VisualizerSection } from "@/components/visualizer/visualizer-section";
 import { ColorsSection } from "@/components/colors/colors-section";
 import { TokensSection } from "@/components/tokens/tokens-section";
+import { GradientSection } from "@/components/gradient/gradient-section";
+import { AccessibilitySection } from "@/components/a11y/a11y-section";
 import { ErrorBoundary } from "@/components/error-boundary";
 
 const libraryStorageKey = "openpalette.library.v1";
@@ -114,7 +111,7 @@ export function OpenPaletteApp() {
     <nav className="flex justify-center items-center gap-1 py-3 px-2" aria-label="Tabs">
       {maxNavPos > 0 && (
         <button onClick={() => scrollNav(-1)} disabled={navPos === 0}
-          className="size-7 flex items-center justify-center rounded-full text-xs text-secondary hover:text-[var(--accent)] disabled:opacity-20 transition-colors shrink-0"
+          className="size-7 flex items-center justify-center rounded-full text-xs text-secondary hover:text-[var(--accent)] hover-accent bounce-press disabled:opacity-20 transition-colors shrink-0"
           aria-label="Previous tabs">◀</button>
       )}
       <div ref={navRef} className="inline-flex gap-0.5 p-1 rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-sm overflow-hidden">
@@ -128,7 +125,7 @@ export function OpenPaletteApp() {
       </div>
       {maxNavPos > 0 && (
         <button onClick={() => scrollNav(1)} disabled={navPos >= maxNavPos}
-          className="size-7 flex items-center justify-center rounded-full text-xs text-secondary hover:text-[var(--accent)] disabled:opacity-20 transition-colors shrink-0"
+          className="size-7 flex items-center justify-center rounded-full text-xs text-secondary hover:text-[var(--accent)] hover-accent bounce-press disabled:opacity-20 transition-colors shrink-0"
           aria-label="Next tabs">▶</button>
       )}
     </nav>
@@ -146,116 +143,6 @@ export function OpenPaletteApp() {
     {activeTab === "library" && <div suppressHydrationWarning><ErrorBoundary name="Library"><LibrarySection /></ErrorBoundary></div>}
     {!mounted && <div suppressHydrationWarning />}
   </div>;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   GRADIENT — compact palette strip + gradient builder
-   ═══════════════════════════════════════════════════════════ */
-
-function GradientSection() {
-  const palette = usePalette();
-  const [kind, setKind] = useState<GradientKind>("linear");
-  const [angle, setAngle] = useState(90);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const css = useMemo(() => createGradientCss(palette.paletteHex, kind, angle), [kind, angle, palette.paletteHex]);
-  const svg = useMemo(() => createGradientSvg(palette.paletteHex, kind, angle), [kind, angle, palette.paletteHex]);
-  useEffect(() => { const c = canvasRef.current, ctx = c?.getContext("2d"); if (c && ctx) drawGradient(ctx, c.width, c.height, palette.paletteHex, kind, angle); }, [kind, angle, palette.paletteHex]);
-  useEffect(() => { const fn = (e: KeyboardEvent) => { if (["INPUT","TEXTAREA"].includes((e.target as HTMLElement)?.tagName)) return; if (e.code === "Space") { e.preventDefault(); palette.generate(); } }; window.addEventListener("keydown", fn); return () => window.removeEventListener("keydown", fn); });
-
-  return <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-    <div className="flex items-center justify-between gap-4">
-      <h2 className="text-xl font-black tracking-tight text-page">Gradient</h2>
-      <div className="flex items-center gap-2">
-        <button className="rounded-full surface backdrop-blur px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={palette.generate}>Generate (Space)</button>
-        <span className="text-xs text-muted">{palette.notice}</span>
-      </div>
-    </div>
-
-    {/* Compact palette strip */}
-    <div className="flex -mx-4 sm:-mx-6 lg:-mx-8">
-      {palette.paletteHex.map((hex, i) => <button key={i} className="flex-1 h-16 hover:h-20 transition-all duration-200 relative group" style={{ backgroundColor: hex }} onClick={() => { const el = document.createElement("input"); el.type = "color"; el.value = hex; el.oninput = () => palette.updateHex(palette.colors[i].id, el.value); el.click(); }}>
-        <span className="absolute bottom-1 left-2 text-[10px] font-mono font-semibold opacity-0 group-hover:opacity-100 transition drop-shadow-sm" style={{ color: getReadableTextColor(hex) }}>{hex}</span>
-      </button>)}
-    </div>
-
-    <div className="flex flex-wrap items-center gap-3">
-      {(["linear", "radial"] as const).map((k) => <button key={k} className={`rounded-full px-3 py-1 text-xs font-bold tracking-wider uppercase transition ${
-        kind === k ? "bg-white text-[#1a001a]" : "surface text-secondary hover-bg-muted hover:text-page"
-      }`} onClick={() => setKind(k)}>{k}</button>)}
-      {kind === "linear" && <label className="flex items-center gap-2 text-xs font-semibold text-secondary">Angle {angle}°<input className="w-20" max={360} min={0} type="range" value={angle} onChange={(e) => setAngle(Number(e.target.value))} /></label>}
-    </div>
-    <canvas ref={canvasRef} className="w-full h-48 sm:h-64 rounded-2xl border border-default" width={1200} height={420} />
-    <div className="flex flex-wrap gap-2">
-      <button className="rounded-full surface px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={async () => { try { await navigator.clipboard.writeText(css); palette.announce("CSS copied"); } catch {} }}>Copy CSS</button>
-      <button className="rounded-full surface px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={async () => { try { await navigator.clipboard.writeText(svg); palette.announce("SVG copied"); } catch {} }}>Copy SVG</button>
-      <button className="rounded-full surface px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={() => { const can = document.createElement("canvas"); can.width=1200; can.height=420; const ctx=can.getContext("2d"); if(!ctx)return; drawGradient(ctx, can.width, can.height, palette.paletteHex, kind, angle); can.toBlob((b)=>{if(!b)return;const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download="gradient.png";a.click();URL.revokeObjectURL(u);palette.announce("PNG downloaded");}); }}>Download PNG</button>
-    </div>
-  </section>;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   ACCESSIBILITY — compact strip + contrast tools
-   ═══════════════════════════════════════════════════════════ */
-
-function AccessibilitySection() {
-  const palette = usePalette();
-  const [visionMode, setVisionMode] = useState<VisionMode>("none");
-  const pairContrasts = useMemo(() => getPairContrasts(palette.paletteHex), [palette.paletteHex]);
-  const score = useMemo(() => getPaletteAccessibilityScore(palette.paletteHex), [palette.paletteHex]);
-  const weakest = pairContrasts[0];
-  const replacement = weakest ? suggestAccessibleReplacement(weakest.foreground, weakest.background) : "#000";
-
-  useEffect(() => { const fn = (e: KeyboardEvent) => { if (!["INPUT","TEXTAREA"].includes((e.target as HTMLElement)?.tagName) && e.code === "Space") { e.preventDefault(); palette.generate(); } }; window.addEventListener("keydown", fn); return () => window.removeEventListener("keydown", fn); });
-
-  return <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-    <div className="flex items-center justify-between gap-4">
-      <div>
-        <h2 className="text-xl font-black tracking-tight text-page">Accessibility</h2>
-      </div>
-      <div className="flex items-center gap-2">
-        <button className="rounded-full surface backdrop-blur px-4 py-1.5 text-sm font-semibold text-page hover-bg-muted transition" onClick={palette.generate}>Generate (Space)</button>
-        <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-[#1a001a]">{score}/100</span>
-        <span className="text-xs text-muted">{palette.notice}</span>
-      </div>
-    </div>
-
-    {/* Compact palette strip */}
-    <div className="flex -mx-4 sm:-mx-6 lg:-mx-8">
-      {palette.paletteHex.map((hex, i) => <button key={i} className="flex-1 h-14 hover:h-18 transition-all duration-200" style={{ backgroundColor: hex }} onClick={() => { const el = document.createElement("input"); el.type="color"; el.value=hex; el.oninput=()=>palette.updateHex(palette.colors[i].id, el.value); el.click(); }} />)}
-    </div>
-
-    <div className="flex flex-wrap items-center gap-4">
-      <label className="flex items-center gap-2 text-xs font-semibold text-secondary">
-        Simulation<select className="rounded-full surface px-3 py-1.5 text-xs text-page outline-none" value={visionMode} onChange={(e) => setVisionMode(e.target.value as VisionMode)}>
-          <option value="none">None</option><option value="protanopia">Protanopia</option><option value="deuteranopia">Deuteranopia</option><option value="tritanopia">Tritanopia</option>
-        </select>
-      </label>
-    </div>
-    <div className="grid gap-4 sm:grid-cols-3">
-      {palette.paletteHex.slice(0, 3).map((hex) => {
-        const h = getContrastHint(hex);
-        return <div key={hex} className="rounded-2xl p-6 space-y-2 min-h-[120px]" style={{ backgroundColor: hex, color: getReadableTextColor(hex) }}>
-          <p className="text-sm font-semibold">Readable text</p>
-          <p className="text-xs opacity-70">{h.rating} · {h.ratio.toFixed(2)}:1</p>
-        </div>;
-      })}
-    </div>
-    {weakest && <div className="rounded-2xl border border-default p-4 text-sm text-secondary">
-      <p><span className="font-semibold text-page">Weakest pair:</span> <span className="font-mono">{weakest.foreground}</span> on <span className="font-mono">{weakest.background}</span> · {weakest.ratio.toFixed(2)}:1</p>
-      <p className="mt-1">Suggested: <span className="font-mono text-page">{replacement}</span></p>
-    </div>}
-    {palette.paletteHex.length >= 2 && <div className="border-t border-default pt-4">
-      <h3 className="text-xs font-bold tracking-wider uppercase text-secondary mb-2">Pair contrast matrix</h3>
-      <div className="grid gap-2 sm:grid-cols-2">
-        {pairContrasts.slice(0, 8).map((p, i) => <div key={i} className="flex items-center gap-2 text-sm py-1.5 border-b border-default">
-          <span className="size-4 rounded-full border border-default" style={{ backgroundColor: p.foreground }} />
-          <span className="text-[10px] opacity-50">on</span>
-          <span className="size-4 rounded-full border border-default" style={{ backgroundColor: p.background }} />
-          <span className="font-mono text-xs font-semibold text-page ml-auto">{p.ratio.toFixed(2)}:1</span>
-        </div>)}
-      </div>
-    </div>}
-  </section>;
 }
 
 /* ═══════════════════════════════════════════════════════════

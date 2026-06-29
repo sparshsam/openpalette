@@ -106,10 +106,10 @@ export function ContrastSection() {
           <ColorInput label="Background" hex={bg} nh={nhBg} onChange={setBg} />
 
           <div className="flex flex-wrap gap-x-3 gap-y-1.5 text-xs pt-1">
-            <button onClick={swap} className="font-semibold text-secondary hover:text-[var(--accent)] transition">⇄ Swap colors</button>
-            <button onClick={() => enhance("fg")} className="font-semibold text-secondary hover:text-[var(--accent)] transition">Adjust text color</button>
-            <button onClick={() => enhance("bg")} className="font-semibold text-secondary hover:text-[var(--accent)] transition">Adjust background color</button>
-            <button onClick={() => enhance("both")} className="font-semibold text-secondary hover:text-[var(--accent)] transition">Adjust both colors</button>
+            <button onClick={swap} className="font-semibold text-secondary hover:text-[var(--accent)] hover-accent bounce-press transition">⇄ Swap colors</button>
+            <button onClick={() => enhance("fg")} className="font-semibold text-secondary hover:text-[var(--accent)] hover-accent bounce-press transition">Adjust text color</button>
+            <button onClick={() => enhance("bg")} className="font-semibold text-secondary hover:text-[var(--accent)] hover-accent bounce-press transition">Adjust background color</button>
+            <button onClick={() => enhance("both")} className="font-semibold text-secondary hover:text-[var(--accent)] hover-accent bounce-press transition">Adjust both colors</button>
           </div>
 
           <div className="border-t border-default" />
@@ -156,6 +156,35 @@ export function ContrastSection() {
           </div>
         </div>
       </div>
+
+      {/* How it works */}
+      <div className="max-w-2xl space-y-3 text-sm text-secondary leading-relaxed">
+        <h2 className="text-lg font-black tracking-tight text-page">How does it work?</h2>
+        <p>
+          This tool follows the <strong className="text-page">Web Content Accessibility Guidelines (WCAG)</strong>, which are a series of
+          recommendations for making the web more accessible.
+        </p>
+        <p>
+          Regarding colors, the standard defines two levels of contrast ratio:{' '}
+          <strong className="text-page">AA</strong> (minimum contrast) and <strong className="text-page">AAA</strong> (enhanced contrast).
+        </p>
+        <p>
+          The level AA requires a contrast ratio of at least <strong className="text-page">4.5:1</strong> for normal text and{' '}
+          <strong className="text-page">3:1</strong> for large text (at least 18pt) or bold text.
+        </p>
+        <p>
+          The level AAA requires a contrast ratio of at least <strong className="text-page">7:1</strong> for normal text and{' '}
+          <strong className="text-page">4.5:1</strong> for large text or bold text.
+        </p>
+        <a
+          href="https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block text-sm font-semibold text-[var(--accent)] hover:underline"
+        >
+          Learn more →
+        </a>
+      </div>
     </section>
   );
 }
@@ -178,7 +207,7 @@ function ColorInput({ label, hex, nh, onChange }: {
           className="w-full rounded-lg border border-default bg-[var(--bg-base)] pl-3 pr-20 py-2.5 text-sm font-mono text-page outline-none focus:border-[var(--accent)] transition-colors uppercase"
           placeholder="#000000" spellCheck={false} />
         <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
-          <button onClick={copyHex} className="text-[10px] font-semibold text-muted hover:text-[var(--accent)] transition px-1" title="Copy HEX">📋</button>
+          <button onClick={copyHex} className="text-[10px] font-semibold text-muted hover:text-[var(--accent)] hover-accent bounce-press transition px-1" title="Copy HEX">📋</button>
           <button onClick={() => colorRef.current?.click()}
             className="size-7 rounded border border-default cursor-pointer" style={{ backgroundColor: nh }}
             title="Pick color" aria-label={`Pick ${label.toLowerCase()} color`} />

@@ -2,6 +2,21 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
+## v0.9.9 - 2026-06-29
+
+### feat: Accessibility Studio — complete redesign with theme tester, contrast matrix, 5-mode color blindness, typography previews
+
+- **Accessibility Studio** — Complete redesign from a utility page to a polished editorial experience. Large hero, spacious layout, semantic tokens.
+- **Overview scores** — 4 score cards: Overall (0–100), AA pairs, AAA pairs, Failing pairs. Color-coded (green/amber/red).
+- **Live previews** — 5 color preview cards showing sample text with contrast rating and AA/AAA status.
+- **Theme Pair Tester** — Side-by-side Light/Dark mode evaluator with independent bg/text color pickers, live preview, and AA/AAA ratio display.
+- **Contrast Matrix** — Sortable grid (Weakest/Strongest) showing all pair contrasts with ratio, AA/AAA badges, and copy-on-click for each hex.
+- **Color Blindness Studio** — 4 simulated vision modes (Protanopia, Deuteranopia, Tritanopia, Achromatopsia) shown as side-by-side swatch strips.
+- **Suggestions** — Weakest pair auto-detected with replacement suggestion and Copy button.
+- **Typography testing** — 6 type sizes (Heading through Disabled) showing AA/AAA pass/fail per size for each palette color on white.
+- **Audit checklist** — 5-item checklist (focus visibility, keyboard nav, semantic color, contrast compliance, interactive element visibility).
+- **Extracted to own file** — Old inline AccessibilitySection removed from openpalette-app.tsx.
+
 ## v0.8.7 - 2026-06-28
 
 ### feat: Design Tokens page — token scale generator, UI previews, developer exports

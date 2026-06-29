@@ -18,7 +18,9 @@ interface Props {
 
 export function StudioSwatches({ palette, blindMode }: Props) {
   const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const wasDragging = useRef(false);
   const dropRef = useRef<HTMLDivElement>(null);
 
   function handleDrop(e: DragEvent, targetIdx: number) {
@@ -64,11 +66,15 @@ export function StudioSwatches({ palette, blindMode }: Props) {
           const isDark = tc === "#F9FAFB";
 
           return (
-            <div key={color.id} className="relative flex-1 flex flex-col min-w-0 select-none"
+            <div key={color.id}
+              className={`bounce-press relative flex-1 flex flex-col min-w-0 select-none transition-all duration-200 ${
+                dragIdx === idx ? "scale-95 opacity-60 z-20 shadow-2xl" : ""
+              } ${dragOverIdx === idx && dragIdx !== null && dragIdx !== idx ? "border-r-2 border-l-2 border-[var(--accent)]" : ""}`}
               style={{ backgroundColor: displayHex }}
               onMouseEnter={() => setHoveredIdx(idx)}
               onMouseLeave={() => setHoveredIdx(null)}
               onClick={() => {
+                if (wasDragging.current) return;
                 navigator.clipboard.writeText(nh).catch(() => {});
                 window.dispatchEvent(new CustomEvent("op-toast", { detail: { msg: `Copied ${nh}` } }));
               }}
@@ -78,10 +84,11 @@ export function StudioSwatches({ palette, blindMode }: Props) {
                 className={`absolute inset-0 z-10 ${dragIdx === idx ? "opacity-50" : ""}`}
                 style={{ cursor: dragIdx !== null ? "grabbing" : hoveredIdx === idx ? "grab" : "default" }}
                 draggable
-                onDragStart={() => setDragIdx(idx)}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => handleDrop(e, idx)}
-                onDragEnd={() => setDragIdx(null)}
+                onDragStart={() => { setDragIdx(idx); wasDragging.current = true; setDragOverIdx(null); }}
+                onDragOver={(e) => { e.preventDefault(); setDragOverIdx(idx); }}
+                onDragLeave={() => setDragOverIdx(null)}
+                onDrop={(e) => { handleDrop(e, idx); setDragOverIdx(null); }}
+                onDragEnd={() => { setDragIdx(null); setDragOverIdx(null); setTimeout(() => { wasDragging.current = false; }, 50); }}
               />
 
               {/* Grip dots */}

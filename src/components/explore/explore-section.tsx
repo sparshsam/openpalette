@@ -106,7 +106,7 @@ export function ExploreSection() {
           />
         </div>
         <button onClick={() => setShowFilters(!showFilters)}
-          className={`rounded-full border px-4 py-3 text-sm font-semibold transition whitespace-nowrap ${showFilters || activeFilterCount > 0 ? "bg-[var(--accent)] text-white border-[var(--accent)]" : "border-default text-secondary hover:text-[var(--accent)]"}`}>
+          className={`rounded-full border px-4 py-3 text-sm font-semibold transition whitespace-nowrap ${showFilters || activeFilterCount > 0 ? "bg-[var(--accent)] text-white border-[var(--accent)]" : "border-default text-secondary hover:text-[var(--accent)] hover-accent bounce-press"}`}>
           Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
         </button>
       </div>
@@ -177,7 +177,7 @@ export function ExploreSection() {
       {/* Load More */}
       {hasMore && (
         <div className="flex justify-center pt-4">
-          <button className="rounded-full border border-default px-8 py-2.5 text-sm font-semibold text-secondary hover:text-[var(--accent)] transition" onClick={() => setVisible((v) => v + 20)}>
+          <button className="rounded-full border border-default px-8 py-2.5 text-sm font-semibold text-secondary hover:text-[var(--accent)] hover-accent bounce-press transition" onClick={() => setVisible((v) => v + 20)}>
             Load More ({filtered.length - visible} remaining)
           </button>
         </div>
@@ -200,7 +200,7 @@ function FilterRow({ label, items, selected, onToggle }: {
       {items.map((item) => (
         <button key={item} onClick={() => onToggle(item)}
           className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
-            selected.includes(item) ? "bg-[var(--accent)] text-white" : "border border-default text-secondary hover:text-[var(--accent)]"
+            selected.includes(item) ? "bg-[var(--accent)] text-white" : "border border-default text-secondary hover:text-[var(--accent)] hover-accent bounce-press"
           }`}
         >{item}</button>
       ))}

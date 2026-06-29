@@ -77,7 +77,7 @@ export function VisualizerSection() {
             className={`rounded-full px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider transition ${
               category === c
                 ? "bg-[var(--accent)] text-white"
-                : "border border-default text-secondary hover:text-[var(--accent)]"
+                : "border border-default text-secondary hover:text-[var(--accent)] hover-accent bounce-press"
             }`}
           >{c}</button>
         ))}
@@ -122,13 +122,13 @@ export function VisualizerSection() {
           <button onClick={palette.generate} className="rounded-full bg-[var(--accent)] text-white px-3.5 py-1.5 text-xs font-semibold hover:brightness-110 transition whitespace-nowrap shrink-0">
             Generate
           </button>
-          <button onClick={openInStudio} className="rounded-full border border-default px-3 py-1.5 text-xs font-semibold text-secondary hover:text-[var(--accent)] transition whitespace-nowrap shrink-0">
+          <button onClick={openInStudio} className="rounded-full border border-default px-3 py-1.5 text-xs font-semibold text-secondary hover:text-[var(--accent)] hover-accent bounce-press transition whitespace-nowrap shrink-0">
             Studio
           </button>
-          <button onClick={copyPalette} className="rounded-full border border-default px-3 py-1.5 text-xs font-semibold text-secondary hover:text-[var(--accent)] transition whitespace-nowrap shrink-0">
+          <button onClick={copyPalette} className="rounded-full border border-default px-3 py-1.5 text-xs font-semibold text-secondary hover:text-[var(--accent)] hover-accent bounce-press transition whitespace-nowrap shrink-0">
             Copy
           </button>
-          <button onClick={() => setShowExport(true)} className="rounded-full border border-default px-3 py-1.5 text-xs font-semibold text-secondary hover:text-[var(--accent)] transition whitespace-nowrap shrink-0">
+          <button onClick={() => setShowExport(true)} className="rounded-full border border-default px-3 py-1.5 text-xs font-semibold text-secondary hover:text-[var(--accent)] hover-accent bounce-press transition whitespace-nowrap shrink-0">
             Export
           </button>
         </div>

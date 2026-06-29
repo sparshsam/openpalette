@@ -126,7 +126,7 @@ export function ColorsSection() {
         {["All", ...CATEGORIES].map((c) => (
           <button key={c} onClick={() => setCategory(c)}
             className={`rounded-full px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider transition ${
-              category === c ? "bg-[var(--accent)] text-white" : "border border-default text-secondary hover:text-[var(--accent)]"
+              category === c ? "bg-[var(--accent)] text-white" : "border border-default text-secondary hover:text-[var(--accent)] hover-accent bounce-press"
             }`}
           >{c}</button>
         ))}
@@ -139,7 +139,7 @@ export function ColorsSection() {
           {displayColors.map((hex) => {
             const info = getColorInfo(hex);
             return (
-              <div key={hex} className="group relative rounded-xl overflow-hidden border border-default hover:shadow-lg transition-shadow cursor-pointer"
+              <div key={hex} className="bounce-press group relative rounded-xl overflow-hidden border border-default hover:shadow-lg transition-shadow cursor-pointer"
                 style={{ backgroundColor: hex, aspectRatio: "3/2" }}
                 onClick={() => { navigator.clipboard.writeText(hex).catch(() => {}); showToast(`Copied ${hex}`); }}>
                 <div className="absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">

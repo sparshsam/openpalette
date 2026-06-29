@@ -314,10 +314,10 @@ export function TokensSection() {
           <button onClick={() => {
             const all = scale.map((s) => s.hex).join(", ");
             copy(all, "Full token scale");
-          }} className="rounded-full border border-default px-3 py-1.5 text-xs font-semibold text-secondary hover:text-[var(--accent)] transition whitespace-nowrap shrink-0">
+          }} className="rounded-full border border-default px-3 py-1.5 text-xs font-semibold text-secondary hover:text-[var(--accent)] hover-accent bounce-press transition whitespace-nowrap shrink-0">
             Copy
           </button>
-          <button onClick={() => setShowExport(!showExport)} className="rounded-full border border-default px-3 py-1.5 text-xs font-semibold text-secondary hover:text-[var(--accent)] transition whitespace-nowrap shrink-0">
+          <button onClick={() => setShowExport(!showExport)} className="rounded-full border border-default px-3 py-1.5 text-xs font-semibold text-secondary hover:text-[var(--accent)] hover-accent bounce-press transition whitespace-nowrap shrink-0">
             Export
           </button>
         </div>

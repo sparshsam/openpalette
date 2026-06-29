@@ -110,10 +110,10 @@ export function ImagePickerSection() {
                   <p className="text-xs font-bold uppercase tracking-wider text-muted">Extracted Colors</p>
                   <div className="flex items-center gap-2">
                     <button onClick={() => handleSizeChange(size - 1)} disabled={size <= minPaletteSize}
-                      className="size-7 flex items-center justify-center rounded-full text-sm text-secondary hover:text-[var(--accent)] disabled:opacity-30">−</button>
+                      className="size-7 flex items-center justify-center rounded-full text-sm text-secondary hover:text-[var(--accent)] hover-accent bounce-press disabled:opacity-30">−</button>
                     <span className="text-sm font-semibold text-page tabular-nums w-5 text-center">{extracted.length}</span>
                     <button onClick={() => handleSizeChange(size + 1)} disabled={size >= maxPaletteSize}
-                      className="size-7 flex items-center justify-center rounded-full text-sm text-secondary hover:text-[var(--accent)] disabled:opacity-30">+</button>
+                      className="size-7 flex items-center justify-center rounded-full text-sm text-secondary hover:text-[var(--accent)] hover-accent bounce-press disabled:opacity-30">+</button>
                   </div>
                 </div>
                 <div className="flex rounded-xl overflow-hidden h-12 border border-default">
@@ -135,7 +135,7 @@ export function ImagePickerSection() {
                 <span className="text-xs font-bold uppercase tracking-wider text-muted">Mode</span>
                 {EXTRACTION_MODES.map((m) => (
                   <button key={m.id} onClick={() => { setMode(m.id as ExtractionMode); if (fileRef.current) extract(fileRef.current, size); }}
-                    className={`rounded-full px-2.5 py-1 text-xs font-semibold transition ${mode === m.id ? "bg-[var(--accent)] text-white" : "border border-default text-secondary hover:text-[var(--accent)]"}`}
+                    className={`rounded-full px-2.5 py-1 text-xs font-semibold transition ${mode === m.id ? "bg-[var(--accent)] text-white" : "border border-default text-secondary hover:text-[var(--accent)] hover-accent bounce-press"}`}
                   >{m.label}</button>
                 ))}
               </div>
@@ -150,7 +150,7 @@ export function ImagePickerSection() {
                   const txt = extracted.slice(0, size).join(", ");
                   navigator.clipboard.writeText(txt).catch(() => {});
                   window.dispatchEvent(new CustomEvent("op-toast", { detail: { msg: "Palette copied" } }));
-                }} className="rounded-full border border-default px-5 py-2 text-sm font-semibold text-secondary hover:text-[var(--accent)] transition">
+                }} className="rounded-full border border-default px-5 py-2 text-sm font-semibold text-secondary hover:text-[var(--accent)] hover-accent bounce-press transition">
                   Copy HEX
                 </button>
               </div>
