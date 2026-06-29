@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: "OpenPalette — Color Studio",
   description:
     "A local-first, open-source color studio for creating palettes, gradients, accessibility checks, exports, and design tokens — all in your browser.",
-  metadataBase: new URL("https://github.com/sparshsam/openpalette"),
+  metadataBase: new URL("https://palette.kovina.org"),
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     title: "OpenPalette — Color Studio",
     description:
       "Create palettes, gradients, tokens, accessible previews, and exports directly in your browser.",
-    url: "https://github.com/sparshsam/openpalette",
+    url: "https://palette.kovina.org",
     siteName: "OpenPalette",
     type: "website",
     images: [{ url: "/icons/openpalette-icon.png", width: 1024, height: 1024 }],

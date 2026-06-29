@@ -31,6 +31,7 @@ import { usePalette } from "@/components/use-palette";
 import { StudioSection } from "@/components/studio/studio-section";
 import { ExploreSection } from "@/components/explore/explore-section";
 import { ImagePickerSection } from "@/components/image-picker/image-picker-section";
+import { ContrastSection } from "@/components/contrast/contrast-section";
 import { ErrorBoundary } from "@/components/error-boundary";
 
 const libraryStorageKey = "openpalette.library.v1";
@@ -40,10 +41,10 @@ const sorts: { label: string; value: LibrarySort }[] = [
   { label: "Contrast", value: "contrast" }, { label: "Warm/cool", value: "temperature" }, { label: "Favorites", value: "favorites" },
 ];
 
-type Tab = "studio" | "explore" | "image-picker" | "gradient" | "visualizer" | "accessibility" | "themes" | "library";
+type Tab = "studio" | "explore" | "image-picker" | "contrast" | "gradient" | "visualizer" | "accessibility" | "themes" | "library";
 const tabs: { id: Tab; label: string }[] = [
   { id: "studio", label: "Studio" }, { id: "explore", label: "Explore" }, { id: "image-picker", label: "Extract" },
-  { id: "gradient", label: "Gradient" }, { id: "visualizer", label: "Visualizer" },
+  { id: "contrast", label: "Contrast" }, { id: "gradient", label: "Gradient" }, { id: "visualizer", label: "Visualizer" },
   { id: "accessibility", label: "Accessibility" }, { id: "themes", label: "Themes" }, { id: "library", label: "Library" },
 ];
 
@@ -122,6 +123,7 @@ export function OpenPaletteApp() {
     {activeTab === "studio" && <ErrorBoundary name="Studio"><StudioSection initialPalette={loadPalette} onConsumed={() => setLoadPalette(null)} /></ErrorBoundary>}
     {activeTab === "explore" && <ErrorBoundary name="Explore"><ExploreSection /></ErrorBoundary>}
     {activeTab === "image-picker" && <ErrorBoundary name="ImagePicker"><ImagePickerSection /></ErrorBoundary>}
+    {activeTab === "contrast" && <ErrorBoundary name="Contrast"><ContrastSection /></ErrorBoundary>}
     {activeTab === "gradient" && <ErrorBoundary name="Gradient"><GradientSection /></ErrorBoundary>}
     {activeTab === "visualizer" && <ErrorBoundary name="Visualizer"><VisualizerSection /></ErrorBoundary>}
     {activeTab === "accessibility" && <ErrorBoundary name="Accessibility"><AccessibilitySection /></ErrorBoundary>}

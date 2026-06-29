@@ -2,6 +2,19 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
+## v0.8.4 - 2026-06-28
+
+### feat: Contrast page — WCAG contrast checker
+
+- **New Contrast tab** — Added after Extract. Route: `#/contrast`.
+- **Two-column layout** — Left: color inputs + contrast results. Right: live preview card with sample text.
+- **Color controls** — Text and Background color pickers with HEX inputs, ⇄ Swap button, ✨ Enhance button.
+- **Contrast results** — Ratio display with color-coded rating pill, 4 WCAG pass/badge indicators (AA/AAA small/large text), and contextual explanation text.
+- **Live preview** — Sample heading, body text, and button rendered in selected colors.
+- **Shareable URL** — Color pair preserved in URL hash (`#/contrast/hex1-hex2`).
+- **Uses existing accessibility engine** — `getContrastRatio`, `getReadableTextColor`.
+- **Free, local-first, no accounts.**
+
 ## v0.8.3 - 2026-06-28
 
 ### feat: Image Picker tab + scrollable tab nav
