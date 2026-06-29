@@ -42,6 +42,9 @@ export function OpenPaletteApp() {
   useEffect(() => { setMounted(true); }, []); // eslint-disable-line react-hooks/set-state-in-effect
 
   useEffect(() => {
+    // Preserve sub-hashes for color detail, token detail, and contrast routes
+    const cur = window.location.hash.replace("#", "");
+    if (/^\/(colors|tokens)\/[0-9A-Fa-f]{6}/.test(cur) || /^\/contrast\//.test(cur)) return;
     const hash = activeTab === "studio" ? "" : activeTab;
     window.history.replaceState(null, "", hash ? `/#${hash}` : "/");
   }, [activeTab]);

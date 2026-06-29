@@ -7,22 +7,39 @@ import { ColorDetailPage } from "./color-detail-page";
 import { showToast } from "@/components/toast";
 
 const ALL_COLORS = [
-  "#FF0000","#DC143C","#B22222","#8B0000","#FF4500","#FF6347","#FF7F50","#FF8C00","#FFA500","#FFD700",
-  "#FFFF00","#ADFF2F","#7FFF00","#32CD32","#00FF00","#228B22","#008000","#006400","#00FF7F","#00FA9A",
-  "#00CED1","#20B2AA","#008B8B","#008080","#0000FF","#0000CD","#00008B","#000080","#4B0082","#8A2BE2",
-  "#9400D3","#9932CC","#BA55D3","#DA70D6","#FF00FF","#FF1493","#FF69B4","#FFB6C1","#FFC0CB","#FFDAB9",
-  "#FFE4B5","#F5DEB3","#DEB887","#D2B48C","#BC8F8F","#A0522D","#8B4513","#6B3E23","#3E1F0F","#2F1B12",
-  "#FFFFFF","#F5F5F5","#DCDCDC","#C0C0C0","#A9A9A9","#808080","#696969","#505050","#383838","#1A1A1A",
-  "#000000","#0A0A0A","#1E1E1E","#2D2D2D","#3D3D3D","#4D4D4D","#5D5D5D","#6D6D6D","#7D7D7D","#8D8D8D",
-  "#9D9D9D","#ADADAD","#BDBDBD","#CDCDCD","#DDDDDD","#EDEDED","#FAFAFA","#F0F8FF","#E6E6FA","#D8BFD8",
-  "#FFE4E1","#FFF0F5","#FFF5EE","#F5FFFA","#F0FFF0","#F5F5DC","#FDF5E6","#FFFAF0","#FFFFF0","#FAF0E6",
-  "#E0FFFF","#F0FFFF","#E0F7FA","#FFFDE7","#FCE4EC","#F3E5F5","#FFF3E0","#EFEBE9","#ECEFF1","#F9FBE7",
-  "#E1F5FE","#FBE9E7","#F1F8E9",
-  "#1A237E","#283593","#3949AB","#5C6BC0","#7986CB","#9FA8DA","#B39DDB","#7E57C2","#5E35B1","#512DA8",
-  "#D32F2F","#E53935","#F44336","#EF5350","#E57373","#EF9A9A","#FFCDD2","#C62828","#B71C1C","#880E4F",
-  "#4A148C","#6A1B9A","#7B1FA2","#9C27B0","#AB47BC","#CE93D8","#1B5E20","#2E7D32","#388E3C","#43A047",
-  "#4CAF50","#66BB6A","#81C784","#A5D6A7","#C8E6C9","#E8F5E9","#00695C","#00796B","#00897B","#009688",
-  "#26A69A","#4DB6AC","#80CBC4","#B2DFDB","#E0F2F1","#01579B","#0277BD","#0288D1","#039BE5","#03A9F4",
+  // Reds & Pinks — one per distinct hue
+  "#FF0000","#DC143C","#B22222","#8B0000","#FF4500","#FF6347","#FF7F50",
+  "#FF1493","#FF69B4","#FFB6C1","#FFC0CB",
+  // Oranges & Yellows
+  "#FF8C00","#FFA500","#FFD700","#FFFF00","#ADFF2F","#7FFF00","#32CD32",
+  // Greens
+  "#00FF00","#228B22","#008000","#006400","#00FF7F","#00FA9A",
+  // Turquoises & Teals
+  "#00CED1","#20B2AA","#008B8B","#008080",
+  // Blues
+  "#0000FF","#0000CD","#00008B","#000080","#1A237E","#3949AB","#5C6BC0","#6495ED","#87CEEB",
+  // Purples & Violets
+  "#4B0082","#8A2BE2","#9400D3","#9932CC","#BA55D3","#DA70D6","#9370DB","#E6E6FA",
+  // Pinks
+  "#FF00FF","#FFDAB9",
+  // Browns & Tans
+  "#FFE4B5","#F5DEB3","#DEB887","#D2B48C","#BC8F8F","#A0522D","#8B4513","#6B3E23",
+  // Whites & Lights
+  "#FFFFFF","#F5F5F5","#DCDCDC","#F0F8FF","#FFF5EE","#F5FFFA","#F0FFF0",
+  // Grays
+  "#C0C0C0","#A9A9A9","#808080","#696969","#505050","#383838","#1A1A1A",
+  // Black
+  "#000000","#0A0A0A",
+  // Pastels & Tints
+  "#E0FFFF","#FFE4E1","#FFF0F5","#FFFDE7","#FCE4EC","#F3E5F5","#FFF3E0",
+  // Selected Material Design distincts
+  "#D32F2F","#E57373","#FFCDD2","#C62828","#B71C1C","#880E4F",
+  "#4A148C","#7B1FA2","#9C27B0","#CE93D8",
+  "#1B5E20","#2E7D32","#4CAF50","#81C784","#C8E6C9",
+  "#00695C","#009688","#26A69A","#80CBC4",
+  "#01579B","#0277BD","#0288D1","#039BE5","#03A9F4",
+  "#F44336","#9FA8DA","#B39DDB","#7E57C2","#5E35B1",
+  "#EF5350","#AB47BC","#66BB6A","#A5D6A7","#4DB6AC",
 ];
 
 const CATEGORIES = ["Red","Orange","Yellow","Green","Turquoise","Blue","Violet","Pink","Brown","White","Gray","Black"];
