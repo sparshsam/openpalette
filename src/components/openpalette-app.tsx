@@ -99,10 +99,10 @@ export function OpenPaletteApp() {
 
   return <div>
     <nav className="flex justify-center py-3 px-2" aria-label="Tabs">
-      <div className="flex gap-0.5 p-1 rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-sm overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar max-w-[36rem]"
+      <div className="flex gap-0.5 p-1 rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-sm overflow-x-auto scroll-smooth no-scrollbar w-[26rem] sm:w-[28rem]"
         onWheel={(e) => { e.currentTarget.scrollLeft += e.deltaY; }}>
         {tabs.map((t) => (
-          <button key={t.id} className={`snap-start rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap transition-all ${
+          <button key={t.id} className={`rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap transition-all ${
             mounted && activeTab === t.id
               ? "bg-[var(--accent)] text-white shadow-sm"
               : "text-[var(--text-secondary)] hover:text-[var(--accent)]"
