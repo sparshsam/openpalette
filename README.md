@@ -55,7 +55,7 @@
 
 ## Quick Links
 
-- [Live demo](https://openpalette-delta.vercel.app)
+- [Live demo](https://palette.kovina.org)
 - [Architecture](docs/architecture.md)
 - [Design System](docs/design-system.md)
 - [Product Spec](docs/product-spec.md)
@@ -152,7 +152,7 @@ assets/demos/
 | Language | [TypeScript](https://www.typescriptlang.org) (strict mode) |
 | Styling | [Tailwind CSS v4](https://tailwindcss.com) |
 | State | React client-state + localStorage |
-| Deployment | [Vercel](https://vercel.com) (automatic from `main`) |
+| Deployment | [Vercel](https://vercel.com) + [Cloudflare](https://cloudflare.com) → [palette.kovina.org](https://palette.kovina.org) |
 | Runtime | Node.js >= 22 |
 
 ## Getting Started
