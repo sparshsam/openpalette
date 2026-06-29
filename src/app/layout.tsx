@@ -30,8 +30,8 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
+      { url: "/icons/openpalette-icon.png", sizes: "1024x1024", type: "image/png" },
       { url: "/icons/openpalette-icon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "any" },
     ],
     apple: [
       { url: "/icons/openpalette-icon.png", sizes: "1024x1024", type: "image/png" },
