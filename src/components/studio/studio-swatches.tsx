@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, type DragEvent } from "react";
+import { createId } from "@/lib/palette/color";
 import {
   getReadableTextColor,
   normalizeHex,
@@ -45,7 +46,7 @@ export function StudioSwatches({ palette, blindMode }: Props) {
     const insertAt = Math.min(idx + 1, palette.colors.length);
     palette.setColors([
       ...palette.colors.slice(0, insertAt),
-      { id: crypto.randomUUID(), hex, alpha: 100, locked: false },
+      { id: createId("swatch"), hex, alpha: 100, locked: false },
       ...palette.colors.slice(insertAt),
     ]);
   }

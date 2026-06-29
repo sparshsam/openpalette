@@ -77,7 +77,7 @@ export function StudioToolbar({ palette, onOpenVision, onOpenView, onOpenExport 
 
         <Divider />
 
-        <span className="text-xs text-[var(--text-muted)] whitespace-nowrap hidden sm:inline ml-auto">{palette.notice}</span>
+        <span className="text-xs text-[var(--text-muted)] whitespace-nowrap  ml-auto">{palette.notice}</span>
       </div>
 
       {showQuickTune && <QuickTunePanel palette={palette} onClose={() => setShowQuickTune(false)} />}
@@ -100,7 +100,7 @@ function ToolbarButton({ children, onClick, label, title, disabled, active }: {
         ${disabled ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
     >
       {children}
-      <span className="hidden sm:inline">{label}</span>
+      <span>{label}</span>
     </button>
   );
 }

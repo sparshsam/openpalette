@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getReadableTextColor, hslToHex } from "@/lib/palette";
+import { createId } from "@/lib/palette/color";
 import { showToast } from "@/components/toast";
 
 type GradientKind = "linear" | "radial" | "conic";
@@ -45,7 +46,7 @@ export function GradientSection() {
   const [stops, setStops] = useState<Stop[]>(() => {
     const p = randomPreset();
     return p.colors.map((hex, i) => ({
-      id: crypto.randomUUID(), hex,
+      id: createId("stop"), hex,
       position: Math.round((i / (p.colors.length - 1)) * 100),
       alpha: 100,
     }));
@@ -73,7 +74,7 @@ export function GradientSection() {
     setKind(p.kind);
     setAngle(p.angle);
     setStops(p.colors.map((hex, i) => ({
-      id: crypto.randomUUID(), hex,
+      id: createId("stop"), hex,
       position: Math.round((i / Math.max(p.colors.length - 1, 1)) * 100),
       alpha: 100,
     })));
@@ -82,7 +83,7 @@ export function GradientSection() {
   function addStop() {
     if (stops.length >= 8) return;
     const pos = Math.min(100, Math.max(...stops.map((s) => s.position)) + 8);
-    setStops([...stops, { id: crypto.randomUUID(), hex: hslToHex(Math.floor(Math.random() * 360), 70, 50), position: pos, alpha: 100 }]);
+    setStops([...stops, { id: createId("stop"), hex: hslToHex(Math.floor(Math.random() * 360), 70, 50), position: pos, alpha: 100 }]);
   }
 
   function removeStop(id: string) {
@@ -146,7 +147,7 @@ export function GradientSection() {
         <div className="rounded-2xl border border-default p-4 bg-surface">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
             {PRESETS.map((p) => (
-              <button key={p.name} onClick={() => { setKind(p.kind); setAngle(p.angle); setStops(p.colors.map((hex, i) => ({ id: crypto.randomUUID(), hex, position: Math.round((i / Math.max(p.colors.length - 1, 1)) * 100), alpha: 100 }))); setShowPresets(false); }}
+              <button key={p.name} onClick={() => { setKind(p.kind); setAngle(p.angle); setStops(p.colors.map((hex, i) => ({ id: createId("stop"), hex, position: Math.round((i / Math.max(p.colors.length - 1, 1)) * 100), alpha: 100 }))); setShowPresets(false); }}
                 className="rounded-xl overflow-hidden border border-default hover:shadow-md transition-shadow text-left">
                 <div className="h-10" style={{ background: gradientCss(p.colors, p.kind, p.angle) }} />
                 <div className="p-2"><p className="text-xs font-semibold text-page">{p.name}</p><p className="text-[10px] text-muted capitalize">{p.kind}</p></div>
