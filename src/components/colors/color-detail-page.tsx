@@ -122,7 +122,7 @@ export function ColorDetailPage({ hex, onBack }: Props) {
       <div className="flex items-center gap-3">
         <button onClick={onBack} className="text-sm text-secondary hover:text-[var(--accent)] transition">← Colors</button>
         <span className="text-muted">/</span>
-        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-page">{info.name}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-page">{info.name}</h1>
       </div>
 
       {/* Sticky section nav */}
@@ -140,7 +140,7 @@ export function ColorDetailPage({ hex, onBack }: Props) {
       <Section id="Overview" setRef={(el) => { sectionRefs.current["Overview"] = el; }}>
         <div className="grid gap-8 md:grid-cols-2">
           <div className="h-64 md:h-80 rounded-2xl border border-default flex flex-col justify-end p-6" style={{ backgroundColor: nh }}>
-            <p className="font-mono text-3xl sm:text-4xl font-black drop-shadow-sm" style={{ color: getReadableTextColor(nh) }}>{nh}</p>
+            <p className="font-mono text-3xl sm:text-4xl font-bold drop-shadow-sm" style={{ color: getReadableTextColor(nh) }}>{nh}</p>
             <p className="text-lg font-semibold mt-1 drop-shadow-sm" style={{ color: getReadableTextColor(nh) }}>{info.name}</p>
           </div>
           <div className="space-y-4">
@@ -161,7 +161,7 @@ export function ColorDetailPage({ hex, onBack }: Props) {
 
       {/* Conversion */}
       <Section id="Conversion" setRef={(el) => { sectionRefs.current["Conversion"] = el; }}>
-        <h2 className="text-xl font-black tracking-tight text-page mb-4">Conversion</h2>
+        <h2 className="text-xl font-bold tracking-tight text-page mb-4">Conversion</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           <CopyField label="HEX" value={nh} onCopy={() => copy(nh)} />
           <CopyField label="RGB" value={`${rgb.r}, ${rgb.g}, ${rgb.b}`} onCopy={() => copy(`rgb(${rgb.r},${rgb.g},${rgb.b})`, "RGB")} />
@@ -178,7 +178,7 @@ export function ColorDetailPage({ hex, onBack }: Props) {
 
       {/* About */}
       <Section id="About" setRef={(el) => { sectionRefs.current["About"] = el; }}>
-        <h2 className="text-xl font-black tracking-tight text-page mb-4">About {info.name}</h2>
+        <h2 className="text-xl font-bold tracking-tight text-page mb-4">About {info.name}</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <AboutCard label="Description" value={`${info.name} (${nh}) is a ${hsl.l > 60 ? "light" : hsl.l > 35 ? "medium" : "dark"} ${hsl.s > 60 ? "vibrant" : hsl.s > 25 ? "moderate" : "muted"} color with a hue of ${Math.round(hsl.h)}°. It has a ${getReadableTextColor(nh) === "#F9FAFB" ? "dark" : "light"} reading contrast.`} />
           <AboutCard label="Psychology" value={info.psychology} />
@@ -191,7 +191,7 @@ export function ColorDetailPage({ hex, onBack }: Props) {
 
       {/* Variations */}
       <Section id="Variations" setRef={(el) => { sectionRefs.current["Variations"] = el; }}>
-        <h2 className="text-xl font-black tracking-tight text-page mb-4">Variations</h2>
+        <h2 className="text-xl font-bold tracking-tight text-page mb-4">Variations</h2>
         <div className="space-y-6">
           {(["shades","tints","tones","hues","temperature"] as const).map((type) => (
             <div key={type} className="space-y-2">
@@ -212,13 +212,13 @@ export function ColorDetailPage({ hex, onBack }: Props) {
 
       {/* Harmonies */}
       <Section id="Harmonies" setRef={(el) => { sectionRefs.current["Harmonies"] = el; }}>
-        <h2 className="text-xl font-black tracking-tight text-page mb-4">Harmonies</h2>
+        <h2 className="text-xl font-bold tracking-tight text-page mb-4">Harmonies</h2>
         <HarmonySection baseHex={nh} onCopy={copy} />
       </Section>
 
       {/* Accessibility */}
       <Section id="Accessibility" setRef={(el) => { sectionRefs.current["Accessibility"] = el; }}>
-        <h2 className="text-xl font-black tracking-tight text-page mb-4">Accessibility</h2>
+        <h2 className="text-xl font-bold tracking-tight text-page mb-4">Accessibility</h2>
         <div className="space-y-4">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {(["protanopia","deuteranopia","tritanopia","achromatopsia"] as const).map((mode) => (
@@ -237,7 +237,7 @@ export function ColorDetailPage({ hex, onBack }: Props) {
 
       {/* Similar Colors */}
       <Section id="Similar Colors" setRef={(el) => { sectionRefs.current["Similar Colors"] = el; }}>
-        <h2 className="text-xl font-black tracking-tight text-page mb-4">Similar Colors</h2>
+        <h2 className="text-xl font-bold tracking-tight text-page mb-4">Similar Colors</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {similar.map((s) => (
             <button key={s.hex} onClick={() => copy(s.hex, s.hex)}
@@ -254,7 +254,7 @@ export function ColorDetailPage({ hex, onBack }: Props) {
 
       {/* Libraries */}
       <Section id="Libraries" setRef={(el) => { sectionRefs.current["Libraries"] = el; }}>
-        <h2 className="text-xl font-black tracking-tight text-page mb-4">Color Libraries</h2>
+        <h2 className="text-xl font-bold tracking-tight text-page mb-4">Color Libraries</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           {libraryMatches.map((m) => (
             <button key={m.name} onClick={() => copy(m.hex, `${m.name} (${m.hex})`)}
@@ -271,7 +271,7 @@ export function ColorDetailPage({ hex, onBack }: Props) {
 
       {/* Palettes */}
       <Section id="Palettes" setRef={(el) => { sectionRefs.current["Palettes"] = el; }}>
-        <h2 className="text-xl font-black tracking-tight text-page mb-4">Palettes with {info.name}</h2>
+        <h2 className="text-xl font-bold tracking-tight text-page mb-4">Palettes with {info.name}</h2>
         <PalettesSection baseHex={nh} onCopy={copy} />
       </Section>
     </div>
@@ -307,7 +307,7 @@ function ContrastCard({ bg, fg }: { bg: string; fg: string }) {
   return (
     <div className="rounded-xl border border-default overflow-hidden">
       <div className="h-16 flex items-center justify-center" style={{ backgroundColor: bg }}>
-        <span className="text-lg font-black" style={{ color: fg }}>Aa</span>
+        <span className="text-lg font-bold" style={{ color: fg }}>Aa</span>
       </div>
       <div className="p-2 space-y-0.5 text-xs">
         <p className="font-semibold text-page">On {bg === "#FFFFFF" ? "white" : "black"}</p>

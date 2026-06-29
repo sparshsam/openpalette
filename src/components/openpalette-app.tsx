@@ -150,7 +150,7 @@ function ThemesSection() {
   return <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
     <div className="flex items-center justify-between gap-4">
       <div>
-        <h2 className="text-xl font-black tracking-tight text-page">Themes</h2>
+        <h2 className="text-xl font-bold tracking-tight text-page">Themes</h2>
         <p className="text-sm text-secondary">Click to load, then edit your palette below.</p>
       </div>
       <div className="flex items-center gap-2">
@@ -247,7 +247,7 @@ function LibrarySection() {
   return <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
     <div className="flex items-center justify-between gap-4">
       <div>
-        <h2 className="text-xl font-black tracking-tight text-page">Library</h2>
+        <h2 className="text-xl font-bold tracking-tight text-page">Library</h2>
         <p className="text-xs text-muted mt-0.5">Collection: {activeCollection}</p>
       </div>
       <div className="flex items-center gap-2">

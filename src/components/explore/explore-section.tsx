@@ -90,7 +90,7 @@ export function ExploreSection() {
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
       {/* Editorial header */}
       <div className="space-y-2">
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-page">Explore Color Palettes</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-page">Explore Color Palettes</h1>
         <p className="text-sm sm:text-base text-secondary">Get inspired by beautiful color schemes.</p>
       </div>
 

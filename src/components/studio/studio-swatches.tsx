@@ -103,7 +103,7 @@ export function StudioSwatches({ palette, blindMode }: Props) {
 
               {/* HEX + color name */}
               <div className="absolute bottom-5 left-0 right-0 text-center px-2 z-20 pointer-events-none">
-                <p className="font-mono text-lg sm:text-xl lg:text-2xl font-black tracking-tight drop-shadow-sm" style={{ color: tc }}>{nh}</p>
+                <p className="font-mono text-lg sm:text-xl lg:text-2xl font-bold tracking-tight drop-shadow-sm" style={{ color: tc }}>{nh}</p>
                 <p className="text-[10px] sm:text-xs font-semibold mt-0.5 drop-shadow-sm" style={{ color: tc, opacity: 0.8 }}>{colorInfo.name}</p>
               </div>
 

@@ -114,7 +114,7 @@ export function ColorsSection() {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
       <div className="space-y-2">
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-page">Colors</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-page">Colors</h1>
         <p className="text-sm sm:text-base text-secondary">Browse, search, and explore every color.</p>
       </div>
 

@@ -95,7 +95,7 @@ export function ContrastSection() {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 space-y-12">
       <div className="space-y-3">
-        <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-page">Color Contrast Checker</h1>
+        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-page">Color Contrast Checker</h1>
         <p className="text-base sm:text-lg text-secondary">Calculate the contrast ratio of text and background colors.</p>
       </div>
 
@@ -116,7 +116,7 @@ export function ContrastSection() {
 
           <div className="space-y-4">
             <div className="flex items-baseline gap-3">
-              <span className="text-5xl sm:text-6xl font-black tracking-tight text-page">{ratio.toFixed(2)}</span>
+              <span className="text-5xl sm:text-6xl font-bold tracking-tight text-page">{ratio.toFixed(2)}</span>
               <span className="text-xl font-semibold text-muted">:1</span>
               <span className="ml-auto text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full text-white" style={{ backgroundColor: ratingColor }}>{rating}</span>
             </div>
@@ -159,7 +159,7 @@ export function ContrastSection() {
 
       {/* How it works */}
       <div className="max-w-2xl space-y-3 text-sm text-secondary leading-relaxed">
-        <h2 className="text-lg font-black tracking-tight text-page">How does it work?</h2>
+        <h2 className="text-lg font-bold tracking-tight text-page">How does it work?</h2>
         <p>
           This tool follows the <strong className="text-page">Web Content Accessibility Guidelines (WCAG)</strong>, which are a series of
           recommendations for making the web more accessible.

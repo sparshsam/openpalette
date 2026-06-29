@@ -104,7 +104,7 @@ export function TokensSection() {
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
       {/* Hero */}
       <div className="space-y-2">
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-page">Design Tokens</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-page">Design Tokens</h1>
         <p className="text-sm sm:text-base text-secondary">Generate complete design token scales from a single color.</p>
       </div>
 
@@ -159,7 +159,7 @@ export function TokensSection() {
               <span className="font-bold">Brand</span>
               <span className="text-sm opacity-70">About · Products · Contact</span>
             </div>
-            <h2 className="text-3xl font-black max-w-md">Design tokens that scale with your team.</h2>
+            <h2 className="text-3xl font-bold max-w-md">Design tokens that scale with your team.</h2>
             <p className="mt-2 text-sm opacity-80 max-w-sm">Generate complete color systems from a single hue.</p>
             <button className="mt-4 rounded-full px-5 py-2 text-sm font-semibold" style={{ background: scale[3]?.hex ?? "#888", color: "#fff" }}>Get started →</button>
           </div>
@@ -172,7 +172,7 @@ export function TokensSection() {
               <div className="flex items-center gap-2 text-xs font-semibold" style={{ color: t.muted }}>
                 <span className="size-2 rounded-full" style={{ background: scale[4]?.hex }} /> Revenue
               </div>
-              <p className="text-2xl font-black">$48,250</p>
+              <p className="text-2xl font-bold">$48,250</p>
               <div className="flex gap-1.5">
                 <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{ background: scale[1]?.hex, color: scale[8]?.hex }}>+12.5%</span>
                 <span className="text-xs" style={{ color: t.muted }}>vs last month</span>
@@ -272,7 +272,7 @@ export function TokensSection() {
         <PreviewCard style={{ background: t.surface, borderColor: t.border }}>
           <div className="p-4 text-center space-y-3">
             <p className="text-xs font-bold uppercase tracking-wider" style={{ color: t.muted }}>Pro Plan</p>
-            <p className="text-3xl font-black" style={{ color: scale[7]?.hex }}>$29<span className="text-sm font-normal" style={{ color: t.muted }}>/mo</span></p>
+            <p className="text-3xl font-bold" style={{ color: scale[7]?.hex }}>$29<span className="text-sm font-normal" style={{ color: t.muted }}>/mo</span></p>
             <ul className="text-xs space-y-1.5" style={{ color: t.text }}>
               {["Unlimited projects", "Team collaboration", "Priority support"].map((f) => (
                 <li key={f}>✓ {f}</li>

@@ -60,7 +60,7 @@ export function AccessibilitySection() {
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
       {/* Hero */}
       <div className="space-y-2">
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-page">Accessibility Studio</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-page">Accessibility Studio</h1>
         <p className="text-sm sm:text-base text-secondary">Comprehensive accessibility analysis for your color palette.</p>
       </div>
       {/* Palette strip */}
@@ -222,7 +222,7 @@ function ScoreCard({ label, value, color }: { label: string; value: string; colo
   return (
     <div className="rounded-2xl border border-default p-4 space-y-1">
       <p className="text-xs font-bold uppercase tracking-wider text-muted">{label}</p>
-      <p className="text-2xl font-black" style={{ color }}>{value}</p>
+      <p className="text-2xl font-bold" style={{ color }}>{value}</p>
     </div>
   );
 }
@@ -261,7 +261,7 @@ function ThemePairTester({ palette: colors }: { palette: string[] }) {
             <span className={`text-xs font-bold px-2 py-0.5 rounded ${lightRatio >= 7 ? "bg-green-600 text-white" : lightRatio >= 4.5 ? "bg-amber-600 text-white" : "bg-red-600 text-white"}`}>{lightRatio >= 7 ? "AAA" : lightRatio >= 4.5 ? "AA" : "Fail"}</span>
           </div>
           <div className="p-5 sm:p-6 min-h-[120px] flex flex-col justify-center" style={{ backgroundColor: lightBg, color: lightText }}>
-            <p className="text-base sm:text-lg font-black tracking-tight">Heading</p>
+            <p className="text-base sm:text-lg font-bold tracking-tight">Heading</p>
             <p className="text-xs sm:text-sm leading-relaxed mt-1 opacity-85">Body text sample. The quick brown fox jumps over the lazy dog. Reading comfort depends on sufficient contrast.</p>
           </div>
         </div>
@@ -275,7 +275,7 @@ function ThemePairTester({ palette: colors }: { palette: string[] }) {
             <span className={`text-xs font-bold px-2 py-0.5 rounded ${darkRatio >= 7 ? "bg-green-600 text-white" : darkRatio >= 4.5 ? "bg-amber-600 text-white" : "bg-red-600 text-white"}`}>{darkRatio >= 7 ? "AAA" : darkRatio >= 4.5 ? "AA" : "Fail"}</span>
           </div>
           <div className="p-5 sm:p-6 min-h-[120px] flex flex-col justify-center" style={{ backgroundColor: darkBg, color: darkText }}>
-            <p className="text-base sm:text-lg font-black tracking-tight">Heading</p>
+            <p className="text-base sm:text-lg font-bold tracking-tight">Heading</p>
             <p className="text-xs sm:text-sm leading-relaxed mt-1 opacity-85">Body text sample. The quick brown fox jumps over the lazy dog. Reading comfort depends on sufficient contrast.</p>
           </div>
         </div>

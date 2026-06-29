@@ -44,7 +44,7 @@ export function PaletteDetailModal({ palette, onClose, onLoad }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-default sticky top-0 bg-[var(--bg-base)] z-10">
           <div>
-            <h2 className="text-lg font-black tracking-tight text-page">{palette.name}</h2>
+            <h2 className="text-lg font-bold tracking-tight text-page">{palette.name}</h2>
             <p className="text-xs text-muted capitalize">{palette.style} · {palette.topic} · {palette.colors.length} colors</p>
           </div>
           <button onClick={onClose} className="size-8 flex items-center justify-center rounded-full hover:bg-surface text-secondary">✕</button>
@@ -71,7 +71,7 @@ export function PaletteDetailModal({ palette, onClose, onLoad }: Props) {
           <div className="rounded-2xl border border-default overflow-hidden">
             <div className="h-20 flex items-end p-3" style={{ backgroundColor: nh }}>
               <div>
-                <p className="font-mono text-lg font-black drop-shadow-sm" style={{ color: getReadableTextColor(nh) }}>{nh}</p>
+                <p className="font-mono text-lg font-bold drop-shadow-sm" style={{ color: getReadableTextColor(nh) }}>{nh}</p>
                 <p className="text-xs font-semibold drop-shadow-sm" style={{ color: getReadableTextColor(nh) }}>{info.name}</p>
               </div>
             </div>
