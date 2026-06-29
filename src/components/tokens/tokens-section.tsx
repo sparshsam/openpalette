@@ -133,7 +133,7 @@ export function TokensSection() {
       </div>
 
       {/* Shade grid */}
-      <div className="grid grid-cols-11 gap-1.5">
+      <div className="grid grid-cols-6 sm:grid-cols-9 lg:grid-cols-11 gap-1.5">
         {scale.map((s) => (
           <button key={s.shade} onClick={() => copy(s.hex, `${s.shade}`)}
             className="rounded-lg aspect-square flex flex-col items-center justify-center text-[9px] font-mono font-bold hover:scale-105 transition-transform"
@@ -299,7 +299,7 @@ export function TokensSection() {
 
       {/* Bottom toolbar */}
       <div className="sticky bottom-0 z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 bg-[var(--bg-base)]/95 backdrop-blur-md border-t border-[var(--border-default)]">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 overflow-x-auto">
           <div className="flex rounded-lg overflow-hidden h-8 flex-1 max-w-xs border border-default">
             {scale.map((s) => (
               <button key={s.shade} className="flex-1 hover:opacity-80 transition-opacity cursor-pointer" style={{ backgroundColor: s.hex }}

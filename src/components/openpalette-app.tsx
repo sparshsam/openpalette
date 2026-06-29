@@ -90,7 +90,7 @@ export function OpenPaletteApp() {
   return <div>
     <nav className="flex justify-center items-center gap-1 py-3 px-2" aria-label="Tabs">
       <button type="button" onClick={() => scrollNav("left")}
-        className="shrink-0 size-7 flex items-center justify-center rounded-full text-sm text-secondary hover:text-[var(--accent)] hover:bg-[var(--surface)] transition disabled:opacity-20"
+        className="shrink-0 size-10 sm:size-7 flex items-center justify-center rounded-full text-sm text-secondary hover:text-[var(--accent)] hover:bg-[var(--surface)] transition disabled:opacity-20"
         aria-label="Scroll tabs left">◀</button>
       <div ref={navRef}
         className="flex gap-0.5 p-1 rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-sm overflow-x-auto scroll-smooth no-scrollbar w-[26rem] sm:w-[28rem] max-w-[calc(100vw-7rem)]">
@@ -103,7 +103,7 @@ export function OpenPaletteApp() {
         ))}
       </div>
       <button type="button" onClick={() => scrollNav("right")}
-        className="shrink-0 size-7 flex items-center justify-center rounded-full text-sm text-secondary hover:text-[var(--accent)] hover:bg-[var(--surface)] transition disabled:opacity-20"
+        className="shrink-0 size-10 sm:size-7 flex items-center justify-center rounded-full text-sm text-secondary hover:text-[var(--accent)] hover:bg-[var(--surface)] transition disabled:opacity-20"
         aria-label="Scroll tabs right">▶</button>
     </nav>
     {/* Conditional rendering — suppresses hydration mismatch at each wrapper */}

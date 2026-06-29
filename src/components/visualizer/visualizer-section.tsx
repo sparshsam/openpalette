@@ -108,7 +108,7 @@ export function VisualizerSection() {
 
       {/* Sticky bottom toolbar — edge-to-edge */}
       <div className="sticky bottom-0 z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 bg-[var(--bg-base)]/95 backdrop-blur-md border-t border-[var(--border-default)]">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 overflow-x-auto">
           {/* Palette strip — clickable swatches */}
           <div className="flex rounded-lg overflow-hidden h-8 flex-1 max-w-xs border border-default">
             {palette.paletteHex.map((hex, i) => (

@@ -221,7 +221,7 @@ export function GradientSection() {
 
       {/* Bottom toolbar */}
       <div className="sticky bottom-0 z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 bg-[var(--bg-base)]/95 backdrop-blur-md border-t border-[var(--border-default)]">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 overflow-x-auto">
           <div className="flex rounded-lg overflow-hidden h-8 flex-1 max-w-xs border border-default" style={{ background: css }}>
             {sorted.map((s) => <div key={s.id} className="flex-1" style={{ backgroundColor: s.hex }} />)}
           </div>

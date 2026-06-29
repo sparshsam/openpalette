@@ -67,7 +67,7 @@ export function StudioSwatches({ palette, blindMode }: Props) {
 
           return (
             <div key={color.id}
-              className={`bounce-press relative flex-1 flex flex-col min-w-0 select-none transition-all duration-200 ${
+              className={`bounce-press relative flex-1 min-w-[44px] flex flex-col min-w-0 select-none transition-all duration-200 ${
                 dragIdx === idx ? "scale-95 opacity-60 z-20 shadow-2xl" : ""
               } ${dragOverIdx === idx && dragIdx !== null && dragIdx !== idx ? "border-r-2 border-l-2 border-[var(--accent)]" : ""}`}
               style={{ backgroundColor: displayHex }}

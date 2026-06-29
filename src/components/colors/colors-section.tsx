@@ -135,7 +135,7 @@ export function ColorsSection() {
       {displayColors.length === 0 ? (
         <p className="text-sm text-muted py-12 text-center">No colors match your filter or search.</p>
       ) : (
-        <div className="grid gap-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {displayColors.map((hex) => {
             const info = getColorInfo(hex);
             return (
