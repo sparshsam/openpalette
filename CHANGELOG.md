@@ -2,7 +2,7 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
-## v0.9.9 - 2026-06-29
+## v0.8.9 - 2026-06-29
 
 ### feat: Accessibility Studio — complete redesign with theme tester, contrast matrix, 5-mode color blindness, typography previews
 
