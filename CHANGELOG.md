@@ -2,6 +2,107 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
+## v0.9.4 — Release Candidate Hardening
+
+### QA & Polish
+- Complete end-to-end audit of all 10 pages
+- Removed dead code and unused imports
+- Added focus ring styles (`:focus-visible`) across all interactive elements
+- Redesigned error boundary with friendly recovery UI
+- Added skeleton shimmer animation for loading states
+- Added `keywords` metadata for SEO
+- Fixed all ESLint warnings (0 errors, 0 warnings)
+- Full build/tests passing clean
+
+## v0.9.3 — Production Polish
+
+### Settings & Shortcuts
+- New **Settings** page (tab): theme toggle, default color count, default export format, import/export settings, reset, About
+- New **Keyboard Shortcuts** reference modal (accessible via `?` key or Settings)
+
+### Polish
+- Consistent focus rings on all interactive controls
+- Skeleton loading animation CSS
+- Improved error boundary with friendly copy and recovery
+- Enhanced SEO metadata with keywords
+
+## v0.9.2 — Design System & Export Intelligence
+
+### Token System
+- Semantic token generation: primary, secondary, accent, success, warning, error, info, background, surface, border, text, muted
+- 7 naming presets: Tailwind, Material, Bootstrap, Fluent, Apple, OpenPalette, Custom
+
+### Export Expansion
+- W3C Design Tokens, Style Dictionary, Figma Variables, Flutter, React Native
+- CSS Variables, SCSS, Tailwind v4, Android XML, iOS Swift, JSON
+- 5 export presets: Web, Mobile, Design System, Figma, Developer Bundle
+- Export Preview modal with copy/download, search, category filters, favorites, recent formats
+- Token group selection for targeted exports
+
+### Design System Preview
+- Visual component gallery: buttons, cards, forms, alerts, badges, navigation, typography, color swatches
+- All rendered using generated semantic tokens
+
+### Import
+- Paste W3C/JSON token files to load into workspace
+
+## v0.9.1 — Workspace Intelligence
+
+### Palette Health
+- 8-dimension health score (0-100): harmony, accessibility, contrast, vibrancy, balance, diversity, UI readiness, gradient quality
+- SVG gauge, breakdown bars, visual analytics tabs
+
+### Recommendations
+- Automatic suggestions with Apply buttons: improve accessibility, vibrancy, saturation, dark/light mode, balance, accent, harmony
+- Hue distribution, saturation/lightness buckets, warm/cool balance, contrast heatmap
+
+### Compare Mode
+- 4 preset palettes, side-by-side preview, similarity %, health comparison
+
+### Snapshots
+- Save/restore/rename/delete workspace snapshots from toolbar
+
+### Expanded Command Palette
+- Quick actions: Generate Harmony, Improve Palette, Export Tokens, Open Visualizer/Accessibility/Gradient, Share URL, Save
+
+## v0.9.0 — Workspace Foundation
+
+### Architecture
+- `WorkspaceProvider` / `useWorkspace()` — global shared palette state replacing per-section `usePalette()`
+- All 9 sections read from the same palette; changes propagate instantly
+- Undo/redo stacks (50 deep) + redo support
+- Persists to localStorage
+
+### Unified Toolbar
+- Shared bottom toolbar replaces 4 per-section toolbars
+- Palette preview strip, Generate, Copy, Save, Share, Undo/Redo, inspector
+
+### Keyboard Workflow
+- Space=generate, Ctrl+Z=undo, Ctrl+Shift+Z=redo, C=copy, /=command palette
+- Global handler — no input interference
+
+## v0.8.10 — Mobile UX Polish
+
+### Responsive Fixes
+- Bottom toolbars: overflow-x-auto on Visualizer, Tokens, Gradient, A11y
+- Tokens shade grid: responsive columns (6/9/11)
+- Colors grid: 2 columns at mobile
+- Studio toolbar notice hidden on mobile
+- Nav scroll arrows: 40px touch targets at mobile
+- Swatch min-width: 44px touch targets
+
+### Color Improvements
+- Color detail new tab routing fixed (preserves hash)
+- Color DB expanded: 32 → 57 entries (added Turquoise, Tomato, Sky Blue, etc.)
+- Curated swatches: ~131 → 97 distinct colors
+
+### Android Fixes
+- Replaced `crypto.randomUUID()` with `createId()` (fails on non-HTTPS)
+- Generate labels always visible on mobile toolbar
+
+### Archive
+- Themes and Library tabs removed (preserved in git)
+
 ## v0.8.9 - 2026-06-29
 
 ### feat: Accessibility Studio — complete redesign with theme tester, contrast matrix, 5-mode color blindness, typography previews

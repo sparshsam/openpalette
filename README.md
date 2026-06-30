@@ -15,7 +15,7 @@
   </p>
 
   <p>
-    <strong>Maturity:</strong> Maintained. Releases, changelog, and issue tracking are active.
+    <strong>Version:</strong> v0.9.4 (Release Candidate) · <a href="https://palette.kovina.org"><strong>palette.kovina.org</strong></a>
   </p>
 
   <p>
@@ -77,35 +77,35 @@ It is also intentionally original. OpenPalette does not copy Coolors branding, a
 
 | Feature | Status |
 |---|---|
+| Shared global workspace — all tools use one palette | Shipped |
 | 2-10 color palette generator | Shipped |
-| Harmony modes: analogous, monochromatic, complementary, triadic, split complementary, tetradic, random | Shipped |
-| Spacebar generation | Shipped |
-| Lock and unlock individual colors | Shipped |
-| HEX, RGB, HSL, alpha, and visual color editing | Shipped |
-| Copy HEX, RGB, HSL, and Tailwind-ready variables | Shipped |
-| Copy full palette | Shipped |
-| Gradient generator with linear, radial, angle, CSS, SVG, and PNG | Shipped |
-| Import HEX lists, JSON, Tailwind snippets, CSS variables, and URL state | Shipped |
-| Download JSON, SVG, CSS, SCSS, Tailwind config, PNG, PDF sheet, and design token JSON | Shipped |
-| Shareable URL state without a backend | Shipped |
-| Website, mobile, dashboard, poster, social, typography, and brand previews | Shipped |
-| WCAG AA/AAA contrast validation and accessibility score | Shipped |
-| Protanopia, deuteranopia, and tritanopia simulation | Shipped |
-| Suggested accessible replacement colors | Shipped |
-| Collections-ready local library with tags, search, favorites, history, duplicate detection, and sorting | Shipped |
-| Client-side image color extraction with vibrant/muted modes | Shipped |
-| Command palette and keyboard-first workflow | Shipped |
-| CSS variables export | Shipped |
-| Tailwind config export | Shipped |
-| JSON export | Shipped |
-| SVG swatches export | Shipped |
-| Copy export snippets | Shipped |
-| Contrast hints | Shipped |
-| Undo generated palettes | Shipped |
-| Keyboard shortcuts panel | Shipped |
-| Light and dark mode | Shipped |
-| Saved palettes in localStorage | Shipped |
-| Responsive layout | Shipped |
+| Harmony modes: analogous, monochromatic, complementary, triadic, split, tetradic, random | Shipped |
+| Undo/redo (50 deep) | Shipped |
+| HEX, RGB, HSL, alpha editing | Shipped |
+| 75 curated explore palettes | Shipped |
+| Image color extraction (6 modes) | Shipped |
+| WCAG contrast checker (AA/AAA) | Shipped |
+| Accessibility studio with 5-mode color blindness sim | Shipped |
+| Palette health score (0-100) with recommendations | Shipped |
+| Visual analytics: hue/saturation/lightness distributions | Shipped |
+| Palette compare mode | Shipped |
+| Workspace snapshots (save/restore/rename/delete) | Shipped |
+| Gradient studio (linear/radial/conic) | Shipped |
+| Design token scale generator | Shipped |
+| Design system preview (buttons, cards, forms, alerts, etc.) | Shipped |
+| Semantic token export (12 UI roles) | Shipped |
+| Export formats: CSS, SCSS, Tailwind v4, JSON, W3C Design Tokens, Style Dictionary, Figma Variables, Flutter, React Native, Android XML, iOS Swift | Shipped |
+| 7 naming presets: Tailwind, Material, Bootstrap, Fluent, Apple, OpenPalette, Custom | Shipped |
+| Import design token JSON | Shipped |
+| 150-color reference library with rich names | Shipped |
+| 7 visualizer templates (website, mobile, dashboard, brand, etc.) | Shipped |
+| Command palette with quick actions | Shipped |
+| Keyboard shortcuts panel (`?` key) | Shipped |
+| Settings page with import/export preferences | Shipped |
+| Light/dark mode | Shipped |
+| localStorage persistence | Shipped |
+| Shareable URL state (no backend) | Shipped |
+| Responsive: mobile through ultrawide | Shipped |
 | PWA metadata | Shipped |
 | GitHub Actions CI | Shipped |
 

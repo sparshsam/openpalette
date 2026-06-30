@@ -31,12 +31,16 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       if (this.props.fallback) return this.props.fallback;
       return (
-        <div className="p-8 text-center">
-          <p className="text-sm font-semibold text-white/80">
-            {this.props.name ?? "Section"} encountered an error.
+        <div className="p-10 text-center space-y-3">
+          <span className="text-2xl">⚠️</span>
+          <p className="text-sm font-semibold text-page">
+            {this.props.name ?? "This section"} encountered an error.
+          </p>
+          <p className="text-xs text-secondary max-w-xs mx-auto">
+            Something went wrong while rendering. This is likely a temporary issue.
           </p>
           <button
-            className="mt-3 rounded-full bg-white/20 px-4 py-1.5 text-sm font-semibold text-white hover:bg-white/30 transition"
+            className="rounded-full bg-[var(--accent)] text-white px-5 py-2 text-xs font-semibold hover:brightness-110 transition bounce-press"
             onClick={() => this.setState({ hasError: false, error: undefined })}
           >
             Try again

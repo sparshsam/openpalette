@@ -219,18 +219,6 @@ export function GradientSection() {
           <button onClick={exportPNG} className="bounce-press rounded-full bg-[var(--bg-surface)] border border-default px-4 py-1.5 text-xs font-semibold text-secondary hover:text-[var(--accent)] hover:bg-[var(--accent)]/10 transition cursor-pointer">PNG</button>
         </div>
       </div>
-
-      {/* Bottom toolbar */}
-      <div className="sticky bottom-0 z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 bg-[var(--bg-base)]/95 backdrop-blur-md border-t border-[var(--border-default)]">
-        <div className="flex items-center gap-3 overflow-x-auto">
-          <div className="flex rounded-lg overflow-hidden h-8 flex-1 max-w-xs border border-default" style={{ background: css }}>
-            {sorted.map((s) => <div key={s.id} className="flex-1" style={{ backgroundColor: s.hex }} />)}
-          </div>
-          <span className="text-xs text-muted font-semibold tabular-nums shrink-0">{stops.length}</span>
-          <button onClick={randomize} className="bounce-press rounded-full bg-[var(--accent)] text-white px-3.5 py-1.5 text-xs font-semibold hover:brightness-110 transition whitespace-nowrap shrink-0">Generate</button>
-          <button onClick={() => copy(css, "CSS")} className="bounce-press rounded-full border border-default px-3 py-1.5 text-xs font-semibold text-secondary hover:text-[var(--accent)] hover:bg-[var(--accent)]/10 transition whitespace-nowrap shrink-0">Copy CSS</button>
-        </div>
-      </div>
     </section>
   );
 }

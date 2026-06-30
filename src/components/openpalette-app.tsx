@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { CommandPalette } from "@/components/command-palette";
+import { WorkspaceToolbar } from "@/components/workspace-toolbar";
+import { useWorkspace } from "@/components/workspace-context";
 import { StudioSection } from "@/components/studio/studio-section";
 import { ExploreSection } from "@/components/explore/explore-section";
 import { ImagePickerSection } from "@/components/image-picker/image-picker-section";
@@ -10,15 +13,17 @@ import { ColorsSection } from "@/components/colors/colors-section";
 import { TokensSection } from "@/components/tokens/tokens-section";
 import { GradientSection } from "@/components/gradient/gradient-section";
 import { AccessibilitySection } from "@/components/a11y/a11y-section";
+import { SettingsSection } from "@/components/settings-section";
+import { KeyboardShortcuts } from "@/components/keyboard-shortcuts";
 import { ErrorBoundary } from "@/components/error-boundary";
 
 
-type Tab = "studio" | "explore" | "image-picker" | "contrast" | "visualizer" | "colors" | "tokens" | "gradient" | "accessibility";
+type Tab = "studio" | "explore" | "image-picker" | "contrast" | "visualizer" | "colors" | "tokens" | "gradient" | "accessibility" | "settings";
 const tabs: { id: Tab; label: string }[] = [
   { id: "studio", label: "Studio" }, { id: "explore", label: "Explore" }, { id: "image-picker", label: "Extract" },
   { id: "contrast", label: "Contrast" }, { id: "visualizer", label: "Visualizer" }, { id: "colors", label: "Colors" },
   { id: "tokens", label: "Tokens" },
-  { id: "gradient", label: "Gradient" }, { id: "accessibility", label: "Accessibility" },
+  { id: "gradient", label: "Gradient" }, { id: "accessibility", label: "Accessibility" }, { id: "settings", label: "Settings" },
 ];
 
 /* ═══════════════════════════════════════════════════════════
@@ -37,9 +42,13 @@ export function OpenPaletteApp() {
     // Standard tab match
     return tabs.some((t) => t.id === hash) ? (hash as Tab) : "studio";
   });
-  const [loadPalette, setLoadPalette] = useState<{ colors: string[]; mode: string } | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [showCommand, setShowCommand] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
   useEffect(() => { setMounted(true); }, []); // eslint-disable-line react-hooks/set-state-in-effect
+
+  const navRef = useRef<HTMLDivElement>(null);
+  const ws = useWorkspace();
 
   useEffect(() => {
     // Preserve sub-hashes for color detail, token detail, and contrast routes
@@ -60,7 +69,7 @@ export function OpenPaletteApp() {
     const paletteHandler = (e: Event) => {
       const detail = (e as CustomEvent).detail;
       if (detail?.colors) {
-        setLoadPalette({ colors: detail.colors, mode: detail.mode ?? "Random" });
+        ws.loadPalette(detail.colors, detail.mode ?? "Random", "Palette loaded");
         setActiveTab("studio");
       }
     };
@@ -70,9 +79,7 @@ export function OpenPaletteApp() {
       window.removeEventListener("op-navigate", handler);
       window.removeEventListener("op-load-palette", paletteHandler);
     };
-  }, []);
-
-  const navRef = useRef<HTMLDivElement>(null);
+  }, [ws]);
 
   // Non-passive wheel listener — prevents page scroll when scrolling the nav
   useEffect(() => {
@@ -89,6 +96,41 @@ export function OpenPaletteApp() {
   const scrollNav = (dir: "left" | "right") => {
     navRef.current?.scrollBy({ left: dir === "left" ? -180 : 180, behavior: "smooth" });
   };
+
+  // Global keyboard shortcuts
+  useEffect(() => {
+    const fn = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      const isInput = tag === "INPUT" || tag === "TEXTAREA" || (e.target as HTMLElement)?.isContentEditable === true;
+      const mod = e.metaKey || e.ctrlKey;
+
+      if (isInput) return;
+
+      switch (e.code) {
+        case "Space":
+          e.preventDefault();
+          ws.generate();
+          break;
+        case "KeyZ":
+          if (mod && e.shiftKey) { e.preventDefault(); ws.redo(); }
+          else if (mod) { e.preventDefault(); ws.undo(); }
+          break;
+        case "KeyC":
+          if (!mod) { e.preventDefault(); ws.copyPalette(); }
+          break;
+        case "Slash":
+          e.preventDefault();
+          setShowCommand(true);
+          break;
+        case "Question":
+          e.preventDefault();
+          setShowShortcuts(true);
+          break;
+      }
+    };
+    window.addEventListener("keydown", fn);
+    return () => window.removeEventListener("keydown", fn);
+  }, [ws]);
 
   return <div>
     <nav className="flex justify-center items-center gap-1 py-3 px-2" aria-label="Tabs">
@@ -110,7 +152,7 @@ export function OpenPaletteApp() {
         aria-label="Scroll tabs right">▶</button>
     </nav>
     {/* Conditional rendering — suppresses hydration mismatch at each wrapper */}
-    {mounted && activeTab === "studio" && <div suppressHydrationWarning><ErrorBoundary name="Studio"><StudioSection initialPalette={loadPalette} onConsumed={() => setLoadPalette(null)} /></ErrorBoundary></div>}
+    {mounted && activeTab === "studio" && <div suppressHydrationWarning><ErrorBoundary name="Studio"><StudioSection /></ErrorBoundary></div>}
     {mounted && activeTab === "explore" && <div suppressHydrationWarning><ErrorBoundary name="Explore"><ExploreSection /></ErrorBoundary></div>}
     {mounted && activeTab === "image-picker" && <div suppressHydrationWarning><ErrorBoundary name="ImagePicker"><ImagePickerSection /></ErrorBoundary></div>}
     {mounted && activeTab === "contrast" && <div suppressHydrationWarning><ErrorBoundary name="Contrast"><ContrastSection /></ErrorBoundary></div>}
@@ -119,7 +161,11 @@ export function OpenPaletteApp() {
     {mounted && activeTab === "tokens" && <div suppressHydrationWarning><ErrorBoundary name="Tokens"><TokensSection /></ErrorBoundary></div>}
     {mounted && activeTab === "gradient" && <div suppressHydrationWarning><ErrorBoundary name="Gradient"><GradientSection /></ErrorBoundary></div>}
     {activeTab === "accessibility" && <div suppressHydrationWarning><ErrorBoundary name="Accessibility"><AccessibilitySection /></ErrorBoundary></div>}
+    {activeTab === "settings" && <div suppressHydrationWarning><SettingsSection /></div>}
     {!mounted && <div suppressHydrationWarning />}
+    {mounted && <WorkspaceToolbar />}
+    {showCommand && <CommandPalette onClose={() => setShowCommand(false)} />}
+    {showShortcuts && <KeyboardShortcuts onClose={() => setShowShortcuts(false)} />}
   </div>;
 }
 

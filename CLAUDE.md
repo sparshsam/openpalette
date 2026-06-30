@@ -132,7 +132,7 @@ npm run lint && npm run typecheck && npm run build && npm run test
 ## Release Hygiene
 
 - Update `CHANGELOG.md`, `AGENTS.md` version, `package.json` version
-- Bump semver appropriately (current: v0.8.10)
+- Bump semver appropriately (current: v0.9.4)
 - No direct pushes to `main` (branch protection via GitHub)
 
 ## Milestone — v0.8.10 Complete

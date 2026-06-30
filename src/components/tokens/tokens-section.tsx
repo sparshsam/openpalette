@@ -64,7 +64,6 @@ export function TokensSection() {
     return m ? "#" + m[1].toUpperCase() : "#2D518F";
   });
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [showExport, setShowExport] = useState(false);
 
   const nh = normalizeHex(baseHex) ?? "#2D518F";
   const scale = useMemo(() => generateScale(nh), [nh]);
@@ -295,52 +294,7 @@ export function TokensSection() {
             </button>
           ))}
         </div>
-      </div>
-
-      {/* Bottom toolbar */}
-      <div className="sticky bottom-0 z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 bg-[var(--bg-base)]/95 backdrop-blur-md border-t border-[var(--border-default)]">
-        <div className="flex items-center gap-3 overflow-x-auto">
-          <div className="flex rounded-lg overflow-hidden h-8 flex-1 max-w-xs border border-default">
-            {scale.map((s) => (
-              <button key={s.shade} className="flex-1 hover:opacity-80 transition-opacity cursor-pointer" style={{ backgroundColor: s.hex }}
-                onClick={() => copy(s.hex, `${s.shade}`)} title={s.hex} />
-            ))}
-          </div>
-          <span className="text-xs text-muted font-semibold tabular-nums shrink-0">{scale.length}</span>
-          <button onClick={() => { const h = Math.floor(Math.random() * 360); const s = 40 + Math.floor(Math.random() * 50); const l = 35 + Math.floor(Math.random() * 25); setBaseHex(hslToHex(h, s, l)); }}
-            className="rounded-full bg-[var(--accent)] text-white px-3.5 py-1.5 text-xs font-semibold hover:brightness-110 transition whitespace-nowrap shrink-0">
-            Generate
-          </button>
-          <button onClick={() => {
-            const all = scale.map((s) => s.hex).join(", ");
-            copy(all, "Full token scale");
-          }} className="rounded-full border border-default px-3 py-1.5 text-xs font-semibold text-secondary hover:text-[var(--accent)] hover-accent bounce-press transition whitespace-nowrap shrink-0">
-            Copy
-          </button>
-          <button onClick={() => setShowExport(!showExport)} className="rounded-full border border-default px-3 py-1.5 text-xs font-semibold text-secondary hover:text-[var(--accent)] hover-accent bounce-press transition whitespace-nowrap shrink-0">
-            Export
-          </button>
         </div>
-      </div>
-
-      {/* Export panel */}
-      {showExport && (
-        <div className="rounded-2xl border border-default p-4 sm:p-5 space-y-3 bg-surface">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-bold uppercase tracking-wider text-muted">Export Code</p>
-            <button onClick={() => setShowExport(false)} className="text-xs text-muted hover:text-page">✕</button>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {EXPORT_FORMATS.map((fmt) => (
-              <button key={fmt.id} onClick={() => copy(formatExport(fmt.id, scale, nh), fmt.label)}
-                className="rounded-xl border border-default p-3 text-left hover:bg-surface-muted transition text-xs">
-                <p className="font-semibold text-page">{fmt.label}</p>
-                <p className="text-muted mt-0.5">.{fmt.ext}</p>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
     </section>
   );
 }

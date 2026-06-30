@@ -12,7 +12,7 @@ This version has breaking changes. APIs, conventions, and file structure may dif
 
 - **Visible name:** OpenPalette
 - **Repository slug:** `openpalette`
-- **Current release:** `v0.8.10`
+- **Current release:** `v0.9.4`
 - **Product type:** local-first color studio / palette machine
 - **Live URL:** https://palette.kovina.org
 - **Brand accent:** `#ff66c4` (light), `#ff85d0` (dark)

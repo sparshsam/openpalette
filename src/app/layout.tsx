@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { WorkspaceProvider } from "@/components/workspace-context";
 import { Header } from "@/components/header";
 import { Toast } from "@/components/toast";
 import { StripFdid } from "@/components/strip-fdid";
@@ -21,6 +22,7 @@ export const metadata: Metadata = {
   title: "OpenPalette — Color Studio",
   description:
     "A local-first, open-source color studio for creating palettes, gradients, accessibility checks, exports, and design tokens — all in your browser.",
+  keywords: ["color palette", "palette generator", "color studio", "design tokens", "WCAG accessibility", "gradient maker", "open source", "design system"],
   metadataBase: new URL("https://palette.kovina.org"),
   manifest: "/manifest.webmanifest",
   appleWebApp: {
@@ -76,9 +78,11 @@ export default function RootLayout({
       <head />
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
-          <Header />
-          <main className="flex-1 w-full" suppressHydrationWarning>{children}</main>
-          <Toast />
+          <WorkspaceProvider>
+            <Header />
+            <main className="flex-1 w-full" suppressHydrationWarning>{children}</main>
+            <Toast />
+          </WorkspaceProvider>
         </ThemeProvider>
         <StripFdid />
       </body>

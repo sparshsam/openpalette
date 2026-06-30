@@ -11,7 +11,7 @@ import {
   suggestAccessibleReplacement,
   type VisionMode,
 } from "@/lib/palette";
-import { usePalette } from "@/components/use-palette";
+import { useWorkspace } from "@/components/workspace-context";
 import { showToast } from "@/components/toast";
 const VISION_MODES: { id: VisionMode; label: string }[] = [
   { id: "none", label: "Normal" },
@@ -29,24 +29,14 @@ const TYPOGRAPHY_SIZES = [
   { label: "Disabled", size: "text-sm opacity-50", pts: 14 },
 ];
 export function AccessibilitySection() {
-  const palette = usePalette();
-  const pairContrasts = useMemo(() => getPairContrasts(palette.paletteHex), [palette.paletteHex]);
-  const score = useMemo(() => getPaletteAccessibilityScore(palette.paletteHex), [palette.paletteHex]);
+  const ws = useWorkspace();
+  const pairContrasts = useMemo(() => getPairContrasts(ws.paletteHex), [ws.paletteHex]);
+  const score = useMemo(() => getPaletteAccessibilityScore(ws.paletteHex), [ws.paletteHex]);
   const weakest = pairContrasts[0];
   const replacement = weakest ? suggestAccessibleReplacement(weakest.foreground, weakest.background) : "#000";
   const aaPairs = pairContrasts.filter((p) => p.aa).length;
   const aaaPairs = pairContrasts.filter((p) => p.aaa).length;
   const failPairs = pairContrasts.filter((p) => !p.aa && !p.aaa).length;
-  // Spacebar
-  useEffect(() => {
-    const fn = (e: KeyboardEvent) => {
-      const t = e.target as HTMLElement;
-      if (t?.tagName === "INPUT" || t?.tagName === "TEXTAREA") return;
-      if (e.code === "Space") { e.preventDefault(); palette.generate(); }
-    };
-    window.addEventListener("keydown", fn);
-    return () => window.removeEventListener("keydown", fn);
-  }, [palette]);
   const copy = async (v: string, label?: string) => {
     try { await navigator.clipboard.writeText(v); showToast(label ?? "Copied"); } catch {}
   };
@@ -65,7 +55,7 @@ export function AccessibilitySection() {
       </div>
       {/* Palette strip */}
       <div className="flex rounded-xl overflow-hidden h-10 border border-default">
-        {palette.paletteHex.map((hex, i) => (
+        {ws.paletteHex.map((hex, i) => (
           <div key={i} className="flex-1 relative group cursor-pointer" style={{ backgroundColor: hex }}
             onClick={() => copy(hex, hex)}>
             <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[8px] font-mono font-bold drop-shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
@@ -84,7 +74,7 @@ export function AccessibilitySection() {
       <div className="space-y-3">
         <p className="text-xs font-bold uppercase tracking-wider text-muted">Live Previews</p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {palette.paletteHex.slice(0, 5).map((hex, i) => {
+          {ws.paletteHex.slice(0, 5).map((hex, i) => {
             const h = getContrastHint(hex);
             return (
               <div key={i} className="rounded-2xl p-4 space-y-2 min-h-[100px] flex flex-col justify-between border border-default"
@@ -103,7 +93,7 @@ export function AccessibilitySection() {
         </div>
       </div>
       {/* Theme Pair Tester */}
-      <ThemePairTester palette={palette.paletteHex} />
+      <ThemePairTester palette={ws.paletteHex} />
       {/* Contrast Matrix */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
@@ -132,7 +122,7 @@ export function AccessibilitySection() {
           {VISION_MODES.filter((m) => m.id !== "none").map((mode) => (
             <div key={mode.id} className="rounded-2xl border border-default overflow-hidden">
               <div className="flex h-10">
-                {palette.paletteHex.map((hex, i) => {
+                {ws.paletteHex.map((hex, i) => {
                   const sim = simulateVision(hex, mode.id);
                   return <div key={i} className="flex-1 flex items-center justify-center" style={{ backgroundColor: sim }} />;
                 })}
@@ -164,7 +154,7 @@ export function AccessibilitySection() {
       <div className="space-y-3">
         <p className="text-xs font-bold uppercase tracking-wider text-muted">Typography Contrast</p>
         <div className="grid gap-3 sm:grid-cols-2">
-          {palette.paletteHex.slice(0, 3).map((fg) => (
+          {ws.paletteHex.slice(0, 3).map((fg) => (
             <div key={fg} className="rounded-2xl border border-default p-4 space-y-2" style={{ backgroundColor: "#FFFFFF" }}>
               <p className="text-[10px] font-mono font-semibold text-muted">{fg} on white</p>
               {TYPOGRAPHY_SIZES.map((t) => {
@@ -200,20 +190,6 @@ export function AccessibilitySection() {
             <span className={item.pass ? "text-page" : "text-muted"}>{item.label}</span>
           </div>
         ))}
-      </div>
-      {/* Bottom toolbar */}
-      <div className="sticky bottom-0 z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 bg-[var(--bg-base)]/95 backdrop-blur-md border-t border-[var(--border-default)]">
-        <div className="flex items-center gap-3 overflow-x-auto">
-          <div className="flex rounded-lg overflow-hidden h-8 flex-1 max-w-xs border border-default">
-            {palette.paletteHex.map((hex, i) => (
-              <button key={i} className="flex-1 hover:opacity-80 transition-opacity" style={{ backgroundColor: hex }}
-                onClick={() => copy(hex, hex)} />
-            ))}
-          </div>
-          <span className="rounded-full bg-[var(--accent)] text-white px-2.5 py-0.5 text-xs font-bold">{score}</span>
-          <button onClick={palette.generate} className="rounded-full bg-[var(--accent)] text-white px-3.5 py-1.5 text-xs font-semibold hover:brightness-110 transition whitespace-nowrap shrink-0">Generate</button>
-          <button onClick={() => copy(palette.paletteHex.join(", "), "Palette")} className="rounded-full border border-default px-3 py-1.5 text-xs font-semibold text-secondary hover:text-[var(--accent)] transition whitespace-nowrap shrink-0">Copy</button>
-        </div>
       </div>
     </section>
   );
