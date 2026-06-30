@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { hexToHsl } from "@/lib/palette";
 import { getColorInfo } from "@/lib/palette/color-info";
-import { ColorDetailPage } from "./color-detail-page";
+import dynamic from "next/dynamic";
+import { useDebounce } from "@/lib/palette/use-debounce";
 import { showToast } from "@/components/toast";
+
+const ColorDetailPage = dynamic(() => import("./color-detail-page").then((m) => ({ default: m.ColorDetailPage })));
 
 const ALL_COLORS = [
   // Reds & Pinks — one per distinct hue
@@ -44,21 +47,28 @@ const ALL_COLORS = [
 
 const CATEGORIES = ["Red","Orange","Yellow","Green","Turquoise","Blue","Violet","Pink","Brown","White","Gray","Black"];
 
+const categorizeCache = new Map<string, string>();
 function categorize(hex: string): string {
+  const cached = categorizeCache.get(hex);
+  if (cached) return cached;
   const h = hexToHsl(hex).h, l = hexToHsl(hex).l;
-  if (l < 8) return "Black";
-  if (l > 92) return "White";
-  if (h >= 340 || h < 10) return "Red";
-  if (h >= 10 && h < 45) return "Orange";
-  if (h >= 45 && h < 70) return "Yellow";
-  if (h >= 70 && h < 160) return "Green";
-  if (h >= 160 && h < 200) return "Turquoise";
-  if (h >= 200 && h < 265) return "Blue";
-  if (h >= 265 && h < 320) return "Violet";
-  if (h >= 320 && h < 340) return "Pink";
-  const s = hexToHsl(hex).s;
-  if (s < 20 && l < 70) return "Gray";
-  return "Brown";
+  let result: string;
+  if (l < 8) result = "Black";
+  else if (l > 92) result = "White";
+  else if (h >= 340 || h < 10) result = "Red";
+  else if (h >= 10 && h < 45) result = "Orange";
+  else if (h >= 45 && h < 70) result = "Yellow";
+  else if (h >= 70 && h < 160) result = "Green";
+  else if (h >= 160 && h < 200) result = "Turquoise";
+  else if (h >= 200 && h < 265) result = "Blue";
+  else if (h >= 265 && h < 320) result = "Violet";
+  else if (h >= 320 && h < 340) result = "Pink";
+  else {
+    const s = hexToHsl(hex).s;
+    result = (s < 20 && l < 70) ? "Gray" : "Brown";
+  }
+  categorizeCache.set(hex, result);
+  return result;
 }
 
 function shuffle(arr: string[]): string[] {
@@ -72,6 +82,7 @@ function shuffle(arr: string[]): string[] {
 
 export function ColorsSection() {
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 200);
   const [category, setCategory] = useState("All");
   const [shuffled, setShuffled] = useState(() => ALL_COLORS.slice()); // deterministic on server
   const [detailHex, setDetailHex] = useState<string | null>(() => {
@@ -108,20 +119,20 @@ export function ColorsSection() {
     // Start from shuffled, filter by category and search
     let list = [...shuffled];
     if (category !== "All") list = list.filter((h) => categorize(h) === category);
-    if (search.trim()) {
-      const q = search.toLowerCase().trim();
+    if (debouncedSearch.trim()) {
+      const q = debouncedSearch.toLowerCase().trim();
       list = list.filter((h) => {
         const info = getColorInfo(h);
         return info.name.toLowerCase().includes(q) || h.toLowerCase().includes(q);
       });
     }
     return list;
-  }, [search, category, shuffled]);
+  }, [debouncedSearch, category, shuffled]);
 
-  function openDetail(hex: string) {
+  const openDetail = useCallback((hex: string) => {
     const url = `${window.location.origin}${window.location.pathname}#/colors/${hex.replace("#", "")}`;
     window.open(url, "_blank");
-  }
+  }, []);
 
   // Detail page mode
   if (detailHex) {

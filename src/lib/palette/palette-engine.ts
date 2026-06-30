@@ -45,7 +45,7 @@ export function generateFresh(mode: PaletteMode, size: number): string[] {
   const baseHue = Math.floor(Math.random() * 360);
   const baseSat = 55 + Math.floor(Math.random() * 35);
   const baseLit = 35 + Math.floor(Math.random() * 35);
-  const offsets = getHarmonyOffsets(mode, size);
+  const offsets = getCachedHarmonyOffsets(mode, size);
   return offsets.map((hueOffset, i) => {
     const h = (baseHue + hueOffset + 360) % 360;
     const sat = varySat(baseSat, i, size, mode);
@@ -58,7 +58,7 @@ export function generateFresh(mode: PaletteMode, size: number): string[] {
 export function generateHarmony(baseHex: string, mode: PaletteMode, size: number): string[] {
   const base = hexToHsl(normalizeHex(baseHex) ?? generateHex());
   const s = clamp(size, minPaletteSize, maxPaletteSize);
-  const offsets = getHarmonyOffsets(mode, s);
+  const offsets = getCachedHarmonyOffsets(mode, s);
   return offsets.map((o, i) => hslToHex((base.h + o + 360) % 360, varySat(70, i, s, mode), varyLit(45, i, s, mode)));
 }
 
@@ -113,6 +113,18 @@ export function generateHex(seed = Math.random() * 360) {
   const saturation = 60 + Math.floor(Math.random() * 35);
   const lightness = 40 + Math.floor(Math.random() * 35);
   return hslToHex(hue, saturation, lightness);
+}
+
+// ── Harmony offset cache ──
+const harmonyOffsetsCache = new Map<string, number[]>();
+
+function getCachedHarmonyOffsets(mode: PaletteMode, size: number): number[] {
+  const key = `${mode}:${size}`;
+  let cached = harmonyOffsetsCache.get(key);
+  if (cached) return cached;
+  cached = getHarmonyOffsets(mode, size);
+  harmonyOffsetsCache.set(key, cached);
+  return cached;
 }
 
 function getHarmonyOffsets(mode: PaletteMode, size: number) {

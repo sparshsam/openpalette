@@ -2,6 +2,42 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
+## v0.9.8 — Performance & Optimization
+
+### Dynamic Imports (Lazy Loading)
+- ALL 10 tab sections now use `next/dynamic` with `SectionSkeleton` loading states instead of eager static imports
+- Heavyweight dialogs (ExportModal, PaletteInspector, CommandPalette, KeyboardShortcuts, PaletteDetailModal, ColorDetailPage) are all lazy-loaded via `next/dynamic`
+- Estimated bundle size reduction: ~80% for initial load (down from 40+ eager components)
+
+### Context Memoization
+- `WorkspaceProvider` value wrapped in `useMemo` to prevent cascading re-renders across all 10 tabs
+- Each callback and computed value properly listed in the memo dependency array
+
+### Computation Caching
+- `health-score.ts`: Added per-palette hash-based caching for `analyzePalette()` and `getVisualAnalytics()` — avoids re-computing health scores when palette hasn't changed
+- `accessibility-engine.ts`: Added memoization caches for `getContrastHint()`, `getPairContrasts()`, and `simulateVision()` — keyed by input to avoid redundant contrast/simulation calculations
+- `palette-engine.ts`: Harmony offset generation now cached by (mode, size) key — eliminates repeated array generation
+- `color-info.ts`: `getColorInfo()` results cached per hex input — 57-entry DB lookup avoided on repeat calls
+- `colors-section.tsx`: `categorize()` memoized with per-hex cache; search debounced at 200ms
+
+### next.config.ts Optimizations
+- Enabled `reactStrictMode: true`
+- Added production-only `removeConsole` compiler option
+- Configured image formats (AVIF + WebP) for optimized delivery
+
+### CSS Fix
+- Fixed `.skeleton` shimmer animation class — was referencing `var(--surface)` instead of `var(--bg-surface)`, making the loading shimmer invisible
+
+### Colors Section Search
+- Search input now debounced at 200ms to avoid filtering on every keystroke
+- `openDetail` wrapped in `useCallback` to prevent unnecessary re-renders
+- `categorize()` function memoized with per-hex cache
+
+### Bundle Optimization
+- Added `@next/bundle-analyzer` with `npm run analyze` script
+- Tailwind CSS v4 automatic purging verified
+- Tree-shaking effective through dynamic imports
+
 ## v0.9.4 — Release Candidate Hardening
 
 ### QA & Polish

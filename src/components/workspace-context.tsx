@@ -281,7 +281,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     setSnapshots((s) => s.filter((x) => x.id !== id));
   }, []);
 
-  const value: WorkspaceAPI = {
+  const value: WorkspaceAPI = useMemo(() => ({
     colors, setColors, mode, setMode, notice,
     paletteHex, paletteAlphas,
     undoStack, redoStack,
@@ -292,7 +292,19 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     copyPalette, savePalette, shareUrl,
     loadPalette,
     snapshots, saveSnapshot, restoreSnapshot, renameSnapshot, deleteSnapshot,
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), [
+    colors, mode, notice,
+    paletteHex, paletteAlphas,
+    undoStack, redoStack,
+    recentlyGenerated, recentlyCopied, recentlyOpened,
+    snapshots,
+    generate, undo, redo, setPalette,
+    communicate, toggleLock, setSize, switchMode,
+    copyPalette, savePalette, shareUrl,
+    loadPalette,
+    saveSnapshot, restoreSnapshot, renameSnapshot, deleteSnapshot,
+  ]);
 
   return <WorkspaceCtx.Provider value={value}>{children}</WorkspaceCtx.Provider>;
 }

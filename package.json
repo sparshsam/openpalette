@@ -1,6 +1,6 @@
 {
   "name": "openpalette",
-  "version": "0.9.4",
+  "version": "0.9.8",
   "description": "A local-first, open-source design color platform built with Next.js, TypeScript, and Tailwind CSS.",
   "private": true,
   "license": "MIT",
@@ -37,7 +37,8 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
     "next": "^16.2.9",
