@@ -5,7 +5,7 @@ import { useTheme } from "./theme-provider";
 import { showToast } from "./toast";
 import { KeyboardShortcuts } from "./keyboard-shortcuts";
 
-const APP_VERSION = "0.9.3";
+const APP_VERSION = "0.9.4";
 
 export function SettingsSection() {
   const { theme, toggle } = useTheme();
@@ -178,7 +178,7 @@ export function SettingsSection() {
         <p className="text-xs font-bold uppercase tracking-wider text-muted">About</p>
         <div className="rounded-2xl border border-default p-4 space-y-2 text-sm">
           <div className="flex justify-between"><span className="text-secondary">Version</span><span className="font-semibold text-page">{APP_VERSION}</span></div>
-          <div className="flex justify-between"><span className="text-secondary">Author</span><span className="font-semibold text-page">Sparsh Sam</span></div>
+          <div className="flex justify-between"><span className="text-secondary">Author</span><a href="https://www.kovina.org" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--accent)] hover:underline">Sparsh Sam</a></div>
           <div className="flex justify-between"><span className="text-secondary">License</span><span className="font-semibold text-page">MIT</span></div>
           <div className="flex justify-between"><span className="text-secondary">Repository</span><a href="https://github.com/sparshsam/openpalette" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--accent)] hover:underline">GitHub</a></div>
           <div className="flex justify-between"><span className="text-secondary">Live</span><a href="https://palette.kovina.org" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--accent)] hover:underline">palette.kovina.org</a></div>

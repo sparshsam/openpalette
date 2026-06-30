@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms — OpenPalette",
-  description: "Terms of use for OpenPalette.",
+  title: "Terms of Use — OpenPalette",
+  description: "Terms of use for OpenPalette — a local-first, open-source color studio.",
 };
 
 export default function TermsPage() {

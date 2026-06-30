@@ -6,6 +6,7 @@ import { StudioLinks } from "@/components/studio/studio-links";
 const links = [
   { href: "/about", label: "About" },
   { href: "/terms", label: "Terms" },
+  { href: "/terms-of-service", label: "Terms of Service" },
   { href: "/privacy", label: "Privacy" },
 ];
 

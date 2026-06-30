@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy — OpenPalette",
-  description: "Privacy policy for OpenPalette.",
+  title: "Privacy Policy — OpenPalette",
+  description: "Privacy policy for OpenPalette — a local-first color studio with no tracking, no accounts, and no data collection.",
 };
 
 export default function PrivacyPage() {

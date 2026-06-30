@@ -12,7 +12,7 @@ This version has breaking changes. APIs, conventions, and file structure may dif
 
 - **Visible name:** OpenPalette
 - **Repository slug:** `openpalette`
-- **Current release:** `v0.9.4`
+- **Current release:** `v0.9.6`
 - **Product type:** local-first color studio / palette machine
 - **Live URL:** https://palette.kovina.org
 - **Brand accent:** `#ff66c4` (light), `#ff85d0` (dark)
@@ -21,43 +21,56 @@ This version has breaking changes. APIs, conventions, and file structure may dif
 - **License:** MIT
 - **Dev server port:** `1997`
 
-## Design Standard
+## Architecture (IMPORTANT — Changed in v0.9.0)
 
-Editorial layout: spacing > borders, typography weight > containers. All buttons are pills. Hover is always the accent pink (`var(--accent)`). Dark mode is designed intentionally (not auto-inverted).
+All sections share a **single global palette** via `WorkspaceProvider` + `useWorkspace()` from `@/components/workspace-context`.
+Do NOT use `usePalette()` from `@/components/use-palette` — it is legacy. The workspace provides: colors, mode, undoStack, redoStack, generate, undo, redo, setPalette, loadPalette, copyPalette, savePalette, shareUrl, snapshots, recentlyGenerated, recentlyCopied, recentlyOpened.
 
-## Tabs (11 total)
+## Tabs (10 active)
 
-Scrollable pill nav with ◀▶ arrows (5 visible at a time). URL hash routing preserves tab on refresh.
+Scrollable pill nav with ◀▶ arrows. URL hash routing preserves tab on refresh. Settings tab was added in v0.9.3.
 
 | Tab | Route | Description |
 |-----|-------|-------------|
-| Studio | `/` | Palette editor — drag-to-reorder swatches, hover action rail, quick-tune, harmonies, auto-save |
-| Explore | `#explore` | 75 curated palettes, search/filters, detail modal, open in Studio |
-| Extract | `#extract` | Image extraction — upload, 6 modes, palette strip |
-| Contrast | `#/contrast/hex-hex` | WCAG checker — ratio, stars, AA/AAA, live preview, shareable URL |
-| Visualizer | `#visualizer` | 7 template gallery, category filters, sticky toolbar |
-| Colors | `#colors` | 150-color library, categories, detail page (9 sections), opens in new tab |
-| Tokens | `#/tokens/hex` | Token scale generator, 12 UI previews, 6 exports, shareable URL |
-| Gradient | `#gradient` | Gradient studio, 14 presets, stop editor, exports |
-| Accessibility | `#accessibility` | Scores, theme tester, contrast matrix, blind sim, typography, audit |
-| Themes | `#themes` | 9 curated theme sets |
-| Library | `#library` | Saved palettes, 7 export formats, collections, history |
+| Studio | `/` | Palette editor — drag-to-reorder swatches, hover action rail, quick-tune, harmonies |
+| Explore | `#explore` | 75 curated palettes, search/filters, detail modal |
+| Extract | `#extract` | Image extraction — upload, 6 modes |
+| Contrast | `#/contrast/hex-hex` | WCAG checker — ratio, AA/AAA, live preview |
+| Visualizer | `#visualizer` | 7 template gallery, category filters |
+| Colors | `#colors` | 150-color library, categories, detail page (new tab) |
+| Tokens | `#/tokens/hex` | Token scale generator, UI previews, 6 exports |
+| Gradient | `#gradient` | Gradient studio, 14 presets, stop editor |
+| Accessibility | `#accessibility` | Scores, theme tester, blind sim, typography, audit |
+| Settings | `#settings` | Theme, defaults, import/export, reset, About |
+
+Themes and Library tabs were archived in v0.8.10 (preserved in git history).
+
+## Shared Features
+
+- **Workspace Toolbar** (`WorkspaceToolbar`): Edge-to-edge bottom bar with palette strip, Generate, Copy, Save, Share, Export, Undo/Redo, Inspector, History, Snapshots
+- **Palette Inspector** (`PaletteInspector`): 6 tabs — Info (naming + tags + summary), Scores (health + recommendations), Analytics (visual), Quality (8 dimensions), Compare, Variations
+- **Command Palette** (`CommandPalette`): Opens with `/` key — search pages, palettes, colors, quick actions
+- **Keyboard Shortcuts** (`KeyboardShortcuts`): Opens with `?` key
+- **Export Modal** (`ExportModal`): 11 export formats, 7 naming presets, token groups, import, design system preview
+- **Global shortcuts**: Space=generate, Ctrl+Z=undo, Ctrl+Shift+Z=redo, C=copy, /=command, ?=shortcuts
 
 ## Key Architecture
 
-- All tabs rendered conditionally after `mounted` flag to prevent SSR hydration errors
-- Each section creates its own palette via `usePalette()` hook
+- All sections wrapped in `WorkspaceProvider` via root layout
+- Each section uses `useWorkspace()` to read/write shared palette
 - Global toast: `showToast("msg")` from `@/components/toast`
 - Error boundaries wrap every section
-- Hash routing: `tab` in URL hash determines active tab
-- Color detail, contrast, and token routes use extended hash patterns
+- Hash routing preserved on refresh
+- Color detail, contrast, and token routes use extended hash patterns (preserved by hash effect)
 
 ## Semantic CSS (globals.css)
 
-`.text-page`, `.text-secondary`, `.text-muted` — theme-aware text
-`.surface`, `.surface-muted`, `.border-default` — theme-aware surfaces
-`.hover-accent:hover` — pink accent hover (color + 10% bg)
-`.bounce-press:active` — scale(0.96) press animation
+- `text-page`, `text-secondary`, `text-muted` — theme-aware text
+- `surface`, `surface-muted`, `border-default` — theme-aware surfaces
+- `hover-accent:hover` — pink accent hover (color + 10% bg)
+- `bounce-press:active` — scale(0.96) press animation
+- `skeleton` — shimmer loading animation
+- `:focus-visible` — accent-colored focus ring on all interactive elements
 
 ## Commands
 
@@ -67,8 +80,13 @@ npm run lint         # ESLint
 npm run typecheck    # tsc --noEmit
 npm run build        # Next.js production build
 npm run test         # Vitest (13 tests)
-npm run test:coverage # With V8 coverage
 ```
+
+## Intelligence Engine
+
+- `src/lib/palette/palette-intelligence.ts` — Auto-naming, classification tags, design summary, quality report, palette variations
+- `src/lib/palette/health-score.ts` — 8-dimension health engine, visual analytics
+- All computations memoized via `useMemo` in the inspector
 
 ## Do Not Add
 

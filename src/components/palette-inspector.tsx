@@ -1,51 +1,166 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useWorkspace } from "./workspace-context";
 import { analyzePalette, getVisualAnalytics } from "@/lib/palette/health-score";
 import { hslToHex } from "@/lib/palette/color";
 import { PaletteCompare } from "./palette-compare";
+import { generatePaletteNames, classifyPalette, summarizePalette, analyzeQuality, generateVariations } from "@/lib/palette/palette-intelligence";
+import { showToast } from "./toast";
 
 export function PaletteInspector() {
   const ws = useWorkspace();
-  const [tab, setTab] = useState<"health" | "analytics" | "compare">("health");
+  const [tab, setTab] = useState<"health" | "analytics" | "compare" | "names" | "quality" | "variations">("names");
 
   const report = useMemo(() => analyzePalette(ws.paletteHex, ws.mode), [ws.paletteHex, ws.mode]);
   const analytics = useMemo(() => getVisualAnalytics(ws.paletteHex), [ws.paletteHex]);
+  const naming = useMemo(() => generatePaletteNames(ws.paletteHex), [ws.paletteHex]);
+  const tags = useMemo(() => classifyPalette(ws.paletteHex), [ws.paletteHex]);
+  const summary = useMemo(() => summarizePalette(ws.paletteHex), [ws.paletteHex]);
+  const qualityReport = useMemo(() => analyzeQuality(ws.paletteHex), [ws.paletteHex]);
+  const variations = useMemo(() => generateVariations(ws.paletteHex), [ws.paletteHex]);
+  const [customName, setCustomName] = useState("");
+
+  const displayName = customName || naming.primary;
 
   return (
     <div className="w-[340px] sm:w-[420px] max-h-[80vh] overflow-y-auto">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-3">
-        <div className="relative size-12 shrink-0">
-          <svg viewBox="0 0 36 36" className="size-12 -rotate-90">
-            <circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--border-default)" strokeWidth="3" />
-            <circle cx="18" cy="18" r="15.5" fill="none" stroke={scoreColor(report.overall)} strokeWidth="3"
-              strokeDasharray={`${report.overall} ${100 - report.overall}`} strokeLinecap="round" />
-          </svg>
-          <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-page">{report.overall}</span>
+      {/* Name header */}
+      <div className="mb-3 space-y-1.5">
+        <div className="flex items-center gap-2">
+          <input value={displayName} onChange={(e) => setCustomName(e.target.value)}
+            className="flex-1 text-sm font-bold text-page bg-transparent outline-none border-b border-transparent hover:border-default focus:border-[var(--accent)] transition-colors"
+            placeholder="Palette name…" spellCheck={false} />
         </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted">Palette Health</p>
-          <p className="text-xs text-secondary mt-0.5">
-            {report.overall >= 80 ? "Excellent" : report.overall >= 60 ? "Good" : report.overall >= 40 ? "Fair" : "Needs work"}
-          </p>
+        <div className="flex flex-wrap gap-1">
+          {tags.map((t) => (
+            <span key={t} className="rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider"
+              style={{ backgroundColor: `${scoreColor(50)}15`, color: scoreColor(50) }}>{t}</span>
+          ))}
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-3">
-        {(["health", "analytics", "compare"] as const).map((t) => (
+      <div className="flex flex-wrap gap-1 mb-3">
+        {(["names", "health", "analytics", "quality", "compare", "variations"] as const).map((t) => (
           <button key={t} onClick={() => setTab(t)}
-            className={`rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-wider transition ${
+            className={`rounded-full px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wider transition ${
               tab === t ? "bg-[var(--accent)] text-white" : "border border-default text-secondary hover:text-[var(--accent)]"
-            }`}>{t}</button>
+            }`}>{t === "names" ? "Info" : t === "health" ? "Scores" : t}</button>
         ))}
       </div>
 
+      {tab === "names" && <NamesTab naming={naming} tags={tags} summary={summary} />}
       {tab === "health" && <HealthTab report={report} />}
       {tab === "analytics" && <AnalyticsTab analytics={analytics} />}
+      {tab === "quality" && <QualityTab report={qualityReport} />}
       {tab === "compare" && <PaletteCompare />}
+      {tab === "variations" && <VariationsTab variations={variations} ws={ws} />}
+    </div>
+  );
+}
+
+function NamesTab({ naming, tags, summary }: {
+  naming: ReturnType<typeof generatePaletteNames>;
+  tags: string[];
+  summary: ReturnType<typeof summarizePalette>;
+}) {
+  return (
+    <div className="space-y-3">
+      {/* Alternative names */}
+      <div className="space-y-1">
+        <p className="text-xs font-bold uppercase tracking-wider text-muted">Alternative Names</p>
+        <div className="flex flex-wrap gap-1">
+          {[naming.primary, ...naming.alternatives].map((n, i) => (
+            <span key={i} className="rounded-full border border-default px-2.5 py-1 text-[10px] font-semibold text-secondary">{n}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* Summary */}
+      <div className="space-y-1.5">
+        <p className="text-xs font-bold uppercase tracking-wider text-muted">Design Summary</p>
+        <div className="rounded-xl border border-default p-3 space-y-2 text-xs">
+          <Row label="Mood" value={summary.mood} />
+          <Row label="Industries" value={summary.industries.join(" · ")} />
+          <Row label="Best for" value={summary.useCases.join(" · ")} />
+          <Row label="UI Style" value={summary.uiStyle} />
+          <Row label="Accessibility" value={summary.accessibility} />
+        </div>
+      </div>
+
+      {/* Tags */}
+      <div className="space-y-1">
+        <p className="text-xs font-bold uppercase tracking-wider text-muted">Classification</p>
+        <div className="flex flex-wrap gap-1">
+          {tags.map((t) => (
+            <span key={t} className="rounded-full border border-default px-2.5 py-1 text-[10px] font-semibold text-secondary">{t}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function QualityTab({ report }: { report: ReturnType<typeof analyzeQuality> }) {
+  const items = [
+    { label: "Dominant Hue", value: report.dominantHue },
+    { label: "Hue Distribution", value: report.hueDistribution },
+    { label: "Saturation", value: report.saturationBalance },
+    { label: "Lightness", value: report.lightnessBalance },
+    { label: "Warm/Cool", value: report.warmCoolRatio },
+    { label: "Accent", value: report.accentStrength },
+    { label: "Contrast", value: report.contrastConsistency },
+    { label: "Quality", value: report.overallQuality },
+  ];
+
+  return (
+    <div className="space-y-3">
+      <div className="space-y-1.5">
+        {items.map((item) => (
+          <div key={item.label} className="flex items-start gap-2 text-xs">
+            <span className="w-24 shrink-0 text-secondary font-medium">{item.label}</span>
+            <span className="text-page">{item.value}</span>
+          </div>
+        ))}
+      </div>
+
+      {report.similarColors.length > 0 && (
+        <div className="space-y-1">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted">Similar Colors Detected</p>
+          {report.similarColors.map((s, i) => (
+            <div key={i} className="flex items-center gap-2 text-xs">
+              <span className="size-3 rounded" style={{ backgroundColor: s.hex }} />
+              <span className="font-mono text-secondary">{s.hex}</span>
+              <span className="text-muted">similar to</span>
+              <span className="size-3 rounded" style={{ backgroundColor: s.duplicate }} />
+              <span className="font-mono text-secondary">{s.duplicate}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function VariationsTab({ variations, ws }: { variations: ReturnType<typeof generateVariations>; ws: ReturnType<typeof useWorkspace> }) {
+  const loadVar = useCallback((v: typeof variations[0]) => {
+    ws.loadPalette(v.colors, v.mode, v.name);
+    showToast(`Loaded: ${v.name}`);
+  }, [ws]);
+
+  return (
+    <div className="space-y-2">
+      <p className="text-xs font-bold uppercase tracking-wider text-muted">Palette Variations</p>
+      {variations.map((v) => (
+        <button key={v.name} onClick={() => loadVar(v)}
+          className="w-full rounded-xl border border-default p-2.5 text-left hover:bg-[var(--surface)] transition space-y-1.5">
+          <p className="text-xs font-semibold text-page">{v.name}</p>
+          <div className="flex rounded-lg overflow-hidden h-5">
+            {v.colors.map((c, i) => <span key={i} className="flex-1" style={{ backgroundColor: c }} />)}
+          </div>
+        </button>
+      ))}
     </div>
   );
 }
@@ -188,6 +303,15 @@ function AnalyticsTab({ analytics }: { analytics: ReturnType<typeof getVisualAna
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-start gap-2">
+      <span className="w-20 shrink-0 text-muted">{label}</span>
+      <span className="text-page">{value}</span>
     </div>
   );
 }

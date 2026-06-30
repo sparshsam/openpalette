@@ -217,20 +217,24 @@ export default function AboutPage() {
       {/* ─── Creator ─── */}
       <section className="space-y-3">
         <p className="text-sm text-[var(--text-secondary)]">Developed and maintained by</p>
-        <div className="flex items-center gap-4">
-          <span className="size-12 rounded-full bg-[var(--accent)]/10 flex items-center justify-center text-lg font-bold text-[var(--accent)]">S</span>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <div>
-            <p className="text-lg font-bold text-[var(--text-primary)]">Sparsh Sam</p>
-            <p className="text-xs text-[var(--text-muted)]">Design engineer building open-source creative tools.</p>
+            <a href="https://www.kovina.org" target="_blank" rel="noopener noreferrer"
+              className="text-lg font-bold text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors">Sparsh Sam</a>
+            <p className="text-xs text-[var(--text-muted)]">Founder of Kovina and builder of local-first creative tools.</p>
           </div>
-          <a href="https://github.com/sparshsam" target="_blank" rel="noopener noreferrer"
-            className="ml-auto rounded-full border border-[var(--border-default)] px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">GitHub</a>
+          <div className="flex gap-2 sm:ml-auto">
+            <a href="https://www.kovina.org" target="_blank" rel="noopener noreferrer"
+              className="rounded-full border border-[var(--border-default)] px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">Kovina</a>
+            <a href="https://github.com/sparshsam" target="_blank" rel="noopener noreferrer"
+              className="rounded-full border border-[var(--border-default)] px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">GitHub</a>
+          </div>
         </div>
       </section>
 
       {/* ─── Footer ─── */}
       <section className="border-t border-[var(--border-default)] pt-8 flex flex-wrap items-center justify-between gap-4 text-xs text-[var(--text-muted)]">
-        <span>v0.8.10 · MIT License</span>
+        <span>v0.9.4 · MIT License</span>
         <span>Built with ❤️ in Canada</span>
       </section>
     </div>

@@ -153,33 +153,41 @@ export function TokensSection() {
       <div className="space-y-4" style={{ color: t.text }}>
         {/* Hero */}
         <PreviewCard style={{ background: t.surface, borderColor: t.border }}>
-          <div className="rounded-xl p-5" style={{ background: `linear-gradient(135deg, ${scale[5]?.hex ?? "#333"}, ${scale[7]?.hex ?? "#111"})`, color: "#fff" }}>
-            <div className="flex items-center justify-between mb-8">
-              <span className="font-bold">Brand</span>
-              <span className="text-sm opacity-70">About · Products · Contact</span>
+          <div className="rounded-xl p-6 sm:p-8" style={{ background: `linear-gradient(135deg, ${scale[5]?.hex ?? "#333"}, ${scale[7]?.hex ?? "#111"})`, color: "#fff" }}>
+            <div className="flex items-center justify-between mb-10">
+              <span className="text-lg font-bold tracking-tight">Brand</span>
+              <div className="flex gap-4 text-xs opacity-70">
+                <span>About</span><span>Products</span><span>Contact</span>
+              </div>
             </div>
-            <h2 className="text-3xl font-bold max-w-md">Design tokens that scale with your team.</h2>
-            <p className="mt-2 text-sm opacity-80 max-w-sm">Generate complete color systems from a single hue.</p>
-            <button className="mt-4 rounded-full px-5 py-2 text-sm font-semibold" style={{ background: scale[3]?.hex ?? "#888", color: "#fff" }}>Get started →</button>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight max-w-xl leading-tight">Design tokens that scale with your team.</h2>
+            <p className="mt-3 text-sm sm:text-base opacity-80 max-w-md leading-relaxed">Generate complete color systems from a single hue. Consistent, accessible, and production-ready.</p>
+            <button className="mt-6 rounded-full px-6 py-2.5 text-sm font-semibold hover:brightness-110 transition bounce-press" style={{ background: scale[3]?.hex ?? "#888", color: "#fff" }}>Get started →</button>
           </div>
         </PreviewCard>
 
         <div className="grid gap-4 sm:grid-cols-2">
           {/* Dashboard card */}
           <PreviewCard style={{ background: t.surface, borderColor: t.border }}>
-            <div className="p-4 space-y-3">
-              <div className="flex items-center gap-2 text-xs font-semibold" style={{ color: t.muted }}>
-                <span className="size-2 rounded-full" style={{ background: scale[4]?.hex }} /> Revenue
+            <div className="p-5 sm:p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs font-semibold" style={{ color: t.muted }}>
+                  <span className="size-2.5 rounded-full" style={{ background: scale[4]?.hex }} /> Revenue
+                </div>
+                <span className="text-[10px] font-semibold rounded-full px-2 py-0.5" style={{ background: `${scale[4]?.hex}20`, color: scale[6]?.hex }}>Monthly</span>
               </div>
-              <p className="text-2xl font-bold">$48,250</p>
-              <div className="flex gap-1.5">
-                <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{ background: scale[1]?.hex, color: scale[8]?.hex }}>+12.5%</span>
-                <span className="text-xs" style={{ color: t.muted }}>vs last month</span>
+              <div className="flex items-end gap-3">
+                <p className="text-3xl sm:text-4xl font-bold tracking-tight" style={{ color: t.text }}>$48,250</p>
+                <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold mb-1" style={{ background: "#22c55e20", color: "#22c55e" }}>↑ +12.5%</span>
               </div>
-              <div className="h-10 rounded-lg flex items-end gap-1 pt-2">
+              <div className="h-14 sm:h-16 rounded-xl flex items-end gap-1 pt-3" style={{ background: scale[0]?.hex ?? t.bg }}>
                 {[40, 65, 45, 80, 55, 90, 70].map((h, i) => (
-                  <span key={i} className="flex-1 rounded-sm" style={{ height: `${h}%`, background: scale[i < 3 ? 2 : i < 5 ? 4 : 6]?.hex }} />
+                  <span key={i} className="flex-1 rounded-t-md transition-all hover:opacity-80"
+                    style={{ height: `${h}%`, background: scale[i < 3 ? 2 : i < 5 ? 4 : 6]?.hex, minHeight: "8px" }} />
                 ))}
+              </div>
+              <div className="flex justify-between text-[10px]" style={{ color: t.muted }}>
+                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
               </div>
             </div>
           </PreviewCard>
