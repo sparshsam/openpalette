@@ -120,11 +120,11 @@ export function OpenPaletteApp() {
           break;
         case "Slash":
           e.preventDefault();
-          setShowCommand(true);
-          break;
-        case "Question":
-          e.preventDefault();
-          setShowShortcuts(true);
+          if (e.key === "?") {
+            setShowShortcuts(true);
+          } else {
+            setShowCommand(true);
+          }
           break;
       }
     };

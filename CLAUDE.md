@@ -4,7 +4,7 @@
 
 A local-first, open-source color studio — a palette machine for designers and developers. Built with Next.js 16 + TypeScript + Tailwind CSS v4. No backend, no accounts, no tracking. Deployed at https://palette.kovina.org.
 
-**Current version:** v0.9.6 — Palette Intelligence
+**Current version:** v0.9.7 — Testing & Reliability
 
 ## Brand Identity
 
@@ -33,6 +33,7 @@ npm run build        # Production build
 npm run lint         # ESLint check
 npm run typecheck    # TypeScript type checking (no emit)
 npm run test         # Vitest run
+npm run test:e2e     # Playwright E2E (43 tests)
 ```
 
 ## Architecture Constraints
@@ -159,6 +160,7 @@ Shortcuts only fire when no input/textarea is focused.
 
 ## Release History
 
+- v0.9.7 — Testing & Reliability (Playwright E2E tests, keyboard bugfix, responsive testing)
 - v0.9.6 — Palette Intelligence (naming, tags, summary, quality, variations)
 - v0.9.5 — Legal Pages + Tokens Polish (terms-of-service, author fixes, dashboard polish)
 - v0.9.4 — Release Candidate Hardening (focus rings, error boundary, SEO, docs)
@@ -176,6 +178,6 @@ npm run lint && npm run typecheck && npm run build && npm run test
 ## Release Hygiene
 
 - Update `CHANGELOG.md`, `AGENTS.md`, `CLAUDE.md`, `package.json` version
-- Bump semver appropriately (current: v0.9.6)
+- Bump semver appropriately (current: v0.9.7)
 - Run full check suite before commit
 - No direct pushes to `main` (branch protection via GitHub)

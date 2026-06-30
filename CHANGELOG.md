@@ -2,6 +2,36 @@
 
 All notable changes to OpenPalette will be documented in this file.
 
+## v0.9.7 — Testing & Reliability
+
+### E2E Test Suite
+- Configured Playwright v1.61 with `playwright.config.ts` — Chromium-only, 1280x720 viewport, trace on retry
+- Created 8 test files with 43 comprehensive E2E tests:
+  - **smoke.spec.ts** (5 tests) — Page load, tab navigation, header, About page, theme toggle
+  - **studio.spec.ts** (5 tests) — Spacebar generate, toolbar generate, default color count, copy, lock/unlock
+  - **keyboard.spec.ts** (8 tests) — Space, Ctrl+Z, Ctrl+Shift+Z, C, / , Escape, ?, input guard
+  - **workspace.spec.ts** (2 tests) — Undo/redo toolbar, snapshot save/restore
+  - **export.spec.ts** (3 tests) — Export modal open, format list, close modal
+  - **settings.spec.ts** (6 tests) — Navigation, theme toggle, color count, export format, reset, import/export
+  - **explore.spec.ts** (5 tests) — Navigation, palette grid, search, color filters, Open in Studio
+  - **contrast.spec.ts** (6 tests) — Navigation, color pickers, ratio display, AA/AAA badges, swap, enhance
+  - **responsive.spec.ts** (3 tests) — Mobile tabs, 44px touch targets, toolbar at mobile size
+
+### Test Infrastructure
+- Extended `test` fixture with clipboard API auto-mock (non-HTTPS contexts)
+- Helper functions: `getPaletteFromStorage`, `clickGenerate`, `navigateToTab`, `waitForApp`
+- Auto-mocked `navigator.clipboard.writeText` to prevent errors in headless mode
+- Global setup verifies dev server is reachable
+- All tests share a single worker for state consistency
+
+### Bugs Fixed
+- **Keyboard shortcut "?" not working** — The app checked `e.code === "Question"` which doesn't exist on US keyboards. Changed to check `e.key === "?"` inside the `case "Slash"` handler since "?" is Shift+"/" on standard layouts.
+- **Dev server cache poisoning** — Cleared `.next/` cache between test runs to prevent stale chunk compilation errors (500 on JS chunks)
+
+### Scripts
+- Added `npm run test:e2e` for Playwright test runner
+- Updated package.json version to 0.9.7
+
 ## v0.9.4 — Release Candidate Hardening
 
 ### QA & Polish

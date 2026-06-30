@@ -5,7 +5,7 @@ import { useTheme } from "./theme-provider";
 import { showToast } from "./toast";
 import { KeyboardShortcuts } from "./keyboard-shortcuts";
 
-const APP_VERSION = "0.9.4";
+const APP_VERSION = "0.9.7";
 
 export function SettingsSection() {
   const { theme, toggle } = useTheme();
