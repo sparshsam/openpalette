@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { memo, useState } from "react";
+import { memo, useRef, useState } from "react";
 import { useWorkspace } from "./workspace-context";
 
 const PaletteInspector = dynamic(() => import("./palette-inspector").then((m) => ({ default: m.PaletteInspector })));
@@ -14,22 +14,40 @@ export const WorkspaceToolbar = memo(function WorkspaceToolbar() {
   const [showSnapshots, setShowSnapshots] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [snapName, setSnapName] = useState("");
+  const colorInputRef = useRef<HTMLInputElement>(null);
+  const pickerTargetRef = useRef<string | null>(null);
 
   return (
     <div className="sticky bottom-0 z-30 bg-[var(--bg-base)]/95 backdrop-blur-md border-t border-[var(--border-default)]">
       <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 overflow-x-auto max-w-full">
-        {/* Palette preview strip */}
+        {/* Palette preview strip — tap swatch to edit color */}
         <div className="flex rounded-lg overflow-hidden h-8 border border-default shrink-0 min-w-[80px] max-w-[160px] flex-1">
           {ws.paletteHex.map((hex, i) => (
             <button key={ws.colors[i]?.id ?? i}
               className="flex-1 min-w-[16px] hover:opacity-80 transition-opacity cursor-pointer"
               style={{ backgroundColor: hex }}
               onClick={() => {
-                navigator.clipboard.writeText(hex).catch(() => {});
-                ws.communicate(`Copied ${hex}`);
+                const id = ws.colors[i]?.id;
+                if (!id) return;
+                const input = colorInputRef.current;
+                if (input) {
+                  input.value = hex;
+                  pickerTargetRef.current = id;
+                  input.click();
+                }
               }}
-              title={hex} />
+              title={`Change ${hex}`} />
           ))}
+          {/* Hidden <input type="color"> triggered by swatch clicks */}
+          <input ref={colorInputRef} type="color"
+            onChange={(e) => {
+              const id = pickerTargetRef.current;
+              if (id) {
+                ws.updateHex(id, e.target.value);
+                pickerTargetRef.current = null;
+              }
+            }}
+            className="absolute opacity-0 pointer-events-none size-0" />
         </div>
 
         {/* Separator */}
