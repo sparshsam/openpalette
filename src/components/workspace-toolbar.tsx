@@ -1,9 +1,11 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { memo, useState } from "react";
 import { useWorkspace } from "./workspace-context";
-import { PaletteInspector } from "./palette-inspector";
-import { ExportModal } from "./export-modal";
+
+const PaletteInspector = dynamic(() => import("./palette-inspector").then((m) => ({ default: m.PaletteInspector })));
+const ExportModal = dynamic(() => import("./export-modal").then((m) => ({ default: m.ExportModal })));
 
 export const WorkspaceToolbar = memo(function WorkspaceToolbar() {
   const ws = useWorkspace();

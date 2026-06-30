@@ -1,18 +1,34 @@
 import { clamp, getContrastRatio, getRelativeLuminance, hexToHsl, hexToRgb, hslToHex, normalizeHex, rgbToHex } from "./color";
 import type { ContrastHint, VisionMode } from "./types";
 
+// ── Memoization caches ──
+const contrastHintCache = new Map<string, ContrastHint>();
+const simulationCache = new Map<string, string>();
+
+interface ContrastPair {
+  foreground: string;
+  background: string;
+  ratio: number;
+  aa: boolean;
+  aaa: boolean;
+}
+const pairContrastsCache = new Map<string, ContrastPair[]>();
+
 export function getReadableTextColor(hex: string) {
   return getContrastHint(hex).bestTextColor === "#000000" ? "#111827" : "#F9FAFB";
 }
 
 export function getContrastHint(hex: string): ContrastHint {
+  const cached = contrastHintCache.get(hex);
+  if (cached) return cached;
+
   const normalized = normalizeHex(hex) ?? "#000000";
   const blackRatio = getContrastRatio(normalized, "#000000");
   const whiteRatio = getContrastRatio(normalized, "#FFFFFF");
   const ratio = Math.max(blackRatio, whiteRatio);
   const bestTextColor = blackRatio >= whiteRatio ? "#000000" : "#FFFFFF";
 
-  return {
+  const result: ContrastHint = {
     hex: normalized,
     bestTextColor,
     ratio,
@@ -20,6 +36,8 @@ export function getContrastHint(hex: string): ContrastHint {
     aaa: ratio >= 7,
     rating: ratio >= 7 ? "AAA" : ratio >= 4.5 ? "AA" : "Fail",
   };
+  contrastHintCache.set(hex, result);
+  return result;
 }
 
 export function getPaletteAccessibilityScore(colors: string[]) {
@@ -38,8 +56,12 @@ export function getPaletteAccessibilityScore(colors: string[]) {
   return Math.round((average * 0.6 + pairAverage * 0.4) * 100);
 }
 
-export function getPairContrasts(colors: string[]) {
-  const pairs: { foreground: string; background: string; ratio: number; aa: boolean; aaa: boolean }[] = [];
+export function getPairContrasts(colors: string[]): ContrastPair[] {
+  const key = colors.join(",");
+  const cached = pairContrastsCache.get(key);
+  if (cached) return cached;
+
+  const pairs: ContrastPair[] = [];
 
   for (let index = 0; index < colors.length; index += 1) {
     for (let nextIndex = index + 1; nextIndex < colors.length; nextIndex += 1) {
@@ -54,7 +76,9 @@ export function getPairContrasts(colors: string[]) {
     }
   }
 
-  return pairs.sort((first, second) => first.ratio - second.ratio);
+  const result = pairs.sort((first, second) => first.ratio - second.ratio);
+  pairContrastsCache.set(key, result);
+  return result;
 }
 
 export function suggestAccessibleReplacement(foreground: string, background: string) {
@@ -75,8 +99,14 @@ export function suggestAccessibleReplacement(foreground: string, background: str
 }
 
 export function simulateVision(hex: string, mode: VisionMode) {
+  const cacheKey = `${hex}:${mode}`;
+  const cached = simulationCache.get(cacheKey);
+  if (cached) return cached;
+
   if (mode === "none") {
-    return normalizeHex(hex) ?? "#000000";
+    const result = normalizeHex(hex) ?? "#000000";
+    simulationCache.set(cacheKey, result);
+    return result;
   }
 
   const { r, g, b } = hexToRgb(hex);
@@ -87,11 +117,17 @@ export function simulateVision(hex: string, mode: VisionMode) {
     achromatopsia: [0.299, 0.587, 0.114, 0.299, 0.587, 0.114, 0.299, 0.587, 0.114],
   };
   const matrix = matrices[mode];
-  if (!matrix) return normalizeHex(hex) ?? "#000000";
+  if (!matrix) {
+    const result = normalizeHex(hex) ?? "#000000";
+    simulationCache.set(cacheKey, result);
+    return result;
+  }
 
-  return rgbToHex({
+  const result = rgbToHex({
     r: clamp(Math.round(r * matrix[0] + g * matrix[1] + b * matrix[2]), 0, 255),
     g: clamp(Math.round(r * matrix[3] + g * matrix[4] + b * matrix[5]), 0, 255),
     b: clamp(Math.round(r * matrix[6] + g * matrix[7] + b * matrix[8]), 0, 255),
   });
+  simulationCache.set(cacheKey, result);
+  return result;
 }

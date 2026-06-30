@@ -1,21 +1,47 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import { CommandPalette } from "@/components/command-palette";
-import { WorkspaceToolbar } from "@/components/workspace-toolbar";
 import { useWorkspace } from "@/components/workspace-context";
-import { StudioSection } from "@/components/studio/studio-section";
-import { ExploreSection } from "@/components/explore/explore-section";
-import { ImagePickerSection } from "@/components/image-picker/image-picker-section";
-import { ContrastSection } from "@/components/contrast/contrast-section";
-import { VisualizerSection } from "@/components/visualizer/visualizer-section";
-import { ColorsSection } from "@/components/colors/colors-section";
-import { TokensSection } from "@/components/tokens/tokens-section";
-import { GradientSection } from "@/components/gradient/gradient-section";
-import { AccessibilitySection } from "@/components/a11y/a11y-section";
-import { SettingsSection } from "@/components/settings-section";
-import { KeyboardShortcuts } from "@/components/keyboard-shortcuts";
+import { WorkspaceToolbar } from "@/components/workspace-toolbar";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { SectionSkeleton } from "@/components/section-skeleton";
+
+// ── Lazy-loaded tab sections (each loads only when its tab is active) ──
+const StudioSection = dynamic(() => import("@/components/studio/studio-section").then((m) => ({ default: m.StudioSection })), {
+  loading: () => <SectionSkeleton />,
+});
+const ExploreSection = dynamic(() => import("@/components/explore/explore-section").then((m) => ({ default: m.ExploreSection })), {
+  loading: () => <SectionSkeleton />,
+});
+const ImagePickerSection = dynamic(() => import("@/components/image-picker/image-picker-section").then((m) => ({ default: m.ImagePickerSection })), {
+  loading: () => <SectionSkeleton />,
+});
+const ContrastSection = dynamic(() => import("@/components/contrast/contrast-section").then((m) => ({ default: m.ContrastSection })), {
+  loading: () => <SectionSkeleton />,
+});
+const VisualizerSection = dynamic(() => import("@/components/visualizer/visualizer-section").then((m) => ({ default: m.VisualizerSection })), {
+  loading: () => <SectionSkeleton />,
+});
+const ColorsSection = dynamic(() => import("@/components/colors/colors-section").then((m) => ({ default: m.ColorsSection })), {
+  loading: () => <SectionSkeleton />,
+});
+const TokensSection = dynamic(() => import("@/components/tokens/tokens-section").then((m) => ({ default: m.TokensSection })), {
+  loading: () => <SectionSkeleton />,
+});
+const GradientSection = dynamic(() => import("@/components/gradient/gradient-section").then((m) => ({ default: m.GradientSection })), {
+  loading: () => <SectionSkeleton />,
+});
+const AccessibilitySection = dynamic(() => import("@/components/a11y/a11y-section").then((m) => ({ default: m.AccessibilitySection })), {
+  loading: () => <SectionSkeleton />,
+});
+const SettingsSection = dynamic(() => import("@/components/settings-section").then((m) => ({ default: m.SettingsSection })), {
+  loading: () => <SectionSkeleton />,
+});
+
+// ── Lazy-loaded heavyweight dialogs ──
+const CommandPalette = dynamic(() => import("@/components/command-palette").then((m) => ({ default: m.CommandPalette })));
+const KeyboardShortcutsComponent = dynamic(() => import("@/components/keyboard-shortcuts").then((m) => ({ default: m.KeyboardShortcuts })));
 
 
 type Tab = "studio" | "explore" | "image-picker" | "contrast" | "visualizer" | "colors" | "tokens" | "gradient" | "accessibility" | "settings";
@@ -165,7 +191,6 @@ export function OpenPaletteApp() {
     {!mounted && <div suppressHydrationWarning />}
     {mounted && <WorkspaceToolbar />}
     {showCommand && <CommandPalette onClose={() => setShowCommand(false)} />}
-    {showShortcuts && <KeyboardShortcuts onClose={() => setShowShortcuts(false)} />}
+    {showShortcuts && <KeyboardShortcutsComponent onClose={() => setShowShortcuts(false)} />}
   </div>;
 }
-

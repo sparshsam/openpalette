@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import {
   getReadableTextColor,
@@ -7,7 +8,8 @@ import {
   createPalette,
 } from "@/lib/palette";
 import { explorePalettes, type ExplorePalette } from "@/lib/palette/explore-data";
-import { PaletteDetailModal } from "./palette-detail-modal";
+
+const PaletteDetailModal = dynamic(() => import("./palette-detail-modal").then((m) => ({ default: m.PaletteDetailModal })));
 
 const colorFilters = ["blue","green","pink","orange","red","purple","yellow","teal","neutral"];
 const styleFilters = ["minimal","pastel","dark","vintage","neon","earthy","muted","bright"];

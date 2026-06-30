@@ -248,7 +248,7 @@ input:focus:not(:focus-visible) {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-muted) 50%, var(--surface) 75%);
+  background: linear-gradient(90deg, var(--bg-surface) 25%, var(--bg-surface-muted) 50%, var(--bg-surface) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 8px;

@@ -444,11 +444,16 @@ function colorDistance(
 // Public API
 // ---------------------------------------------------------------------------
 
+// ── Memoization cache ──
+const colorInfoCache = new Map<string, ColorInfo>();
+
 /**
  * Find the nearest named color from the database and return its full info.
  * Falls back to black if the hex is invalid.
  */
 export function getColorInfo(hex: string): ColorInfo {
+  const cached = colorInfoCache.get(hex);
+  if (cached) return cached;
   const normalized = normalizeHex(hex);
   if (!normalized) {
     return COLOR_DB.find((c) => c.hex === "#000000")!;
@@ -456,7 +461,7 @@ export function getColorInfo(hex: string): ColorInfo {
 
   // Exact match shortcut
   const exact = COLOR_DB.find((c) => c.hex === normalized);
-  if (exact) return exact;
+  if (exact) { colorInfoCache.set(hex, exact); return exact; }
 
   const targetHsl = hexToHsl(normalized);
   let best = COLOR_DB[0];
@@ -471,6 +476,7 @@ export function getColorInfo(hex: string): ColorInfo {
     }
   }
 
+  colorInfoCache.set(hex, best);
   return best;
 }
 

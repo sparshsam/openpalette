@@ -39,7 +39,19 @@ export interface VisualAnalytics {
   contrastMatrix: { bg: string; fg: string; ratio: number; aa: boolean; aaa: boolean }[];
 }
 
+// ── Memoization cache keyed by palette hash ──
+function paletteHash(colors: string[]): string {
+  return colors.join(",");
+}
+
+const analyzeCache = new Map<string, HealthReport>();
+const visualCache = new Map<string, VisualAnalytics>();
+
 export function analyzePalette(colors: string[], mode: PaletteMode): HealthReport {
+  const hash = paletteHash(colors) + "|" + mode;
+  const cached = analyzeCache.get(hash);
+  if (cached) return cached;
+
   const hexes = colors.filter(Boolean);
   const n = hexes.length;
   if (n < 2) return emptyReport();
@@ -125,10 +137,16 @@ export function analyzePalette(colors: string[], mode: PaletteMode): HealthRepor
     { label: "Gradient", score: gradScore, max: 100, detail: `${n} colors` },
   ];
 
-  return { overall, harmony: harmonyScore, accessibility: accessScoreNorm, contrast: contrastScore, vibrancy: vibrancyScore, balance: balanceScore, diversity: diversityScore, uiReadiness: uiScore, gradientQuality: gradScore, breakdown, recommendations: recs };
+  const result: HealthReport = { overall, harmony: harmonyScore, accessibility: accessScoreNorm, contrast: contrastScore, vibrancy: vibrancyScore, balance: balanceScore, diversity: diversityScore, uiReadiness: uiScore, gradientQuality: gradScore, breakdown, recommendations: recs };
+  analyzeCache.set(hash, result);
+  return result;
 }
 
 export function getVisualAnalytics(colors: string[]): VisualAnalytics {
+  const hash = paletteHash(colors);
+  const cached = visualCache.get(hash);
+  if (cached) return cached;
+
   const hexes = colors.filter(Boolean);
   const hsls = hexes.map((h) => hexToHsl(h)).filter(Boolean);
 
@@ -186,7 +204,9 @@ export function getVisualAnalytics(colors: string[]): VisualAnalytics {
     bg: p.background, fg: p.foreground, ratio: p.ratio, aa: p.aa, aaa: p.aaa,
   }));
 
-  return { hues, saturations, lightnesses, warmCount: warm, coolCount: cool, neutralCount: neutral, contrastMatrix };
+  const result: VisualAnalytics = { hues, saturations, lightnesses, warmCount: warm, coolCount: cool, neutralCount: neutral, contrastMatrix };
+  visualCache.set(hash, result);
+  return result;
 }
 
 function emptyReport(): HealthReport {
