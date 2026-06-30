@@ -170,6 +170,19 @@ Shortcuts only fire when no input/textarea is focused.
 - v0.9.1 — Workspace Intelligence (health score, recommendations, snapshots, compare)
 - v0.9.0 — Workspace Foundation (shared state, unified toolbar, global shortcuts)
 
+## Mile Marker — v0.9.8
+
+**Date:** 2026-06-30
+**Version:** v0.9.8 — Performance & Optimization
+**Working tree:** clean on `main`
+**All checks:** lint ✓ typecheck ✓ build ✓ test ✓
+**Notable since v0.9.6:**
+- 43 Playwright E2E tests covering all 10 tabs
+- Dynamic imports for all sections + lazy-loaded dialogs (~80% bundle reduction)
+- Memoization caches for health, accessibility, palette, and color-info engines
+- Toolbar swatches now open color picker (no longer copy on tap)
+- Keyboard shortcut `?` bug fixed (e.key, not e.code)
+
 ## Required Checks
 
 ```bash

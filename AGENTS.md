@@ -89,6 +89,18 @@ npm run test:e2e     # Playwright E2E (43 tests)
 - `src/lib/palette/health-score.ts` — 8-dimension health engine, visual analytics
 - All computations memoized via `useMemo` in the inspector
 
+## Mile Marker — v0.9.8
+
+| Field | Value |
+|-------|-------|
+| Version | `v0.9.8` — Performance & Optimization |
+| Date | 2026-06-30 |
+| Commit | `fca27ff` — clean on `main` |
+| E2E tests | 43 (Playwright, 8 spec files) |
+| Unit tests | 13/13 pass |
+| Lint | 0 errors, 0 warnings |
+| Known state | Dynamic imports, memoized engines, toolbar swatch color picker |
+
 ## Do Not Add
 
 Accounts, payments, ads, tracking, backend services, external APIs, Coolors branding/assets.
