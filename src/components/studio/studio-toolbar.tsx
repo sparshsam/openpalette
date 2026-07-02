@@ -75,9 +75,6 @@ export function StudioToolbar({ palette, onOpenVision, onOpenView, onOpenExport 
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v8M4 5l4 4 4-4M2 13h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
         </ToolbarButton>
 
-        <Divider />
-
-        <span className="text-xs text-[var(--text-muted)] whitespace-nowrap  ml-auto">{palette.notice}</span>
       </div>
 
       {showQuickTune && <QuickTunePanel palette={palette} onClose={() => setShowQuickTune(false)} />}

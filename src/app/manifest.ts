@@ -6,12 +6,34 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "OpenPalette",
     description:
       "A local-first color studio for palettes, gradients, accessibility, visualizers, and exports.",
-    start_url: "/",
+    start_url: "/studio",
     display: "standalone",
     background_color: "#f9f9f9",
     theme_color: "#ff66c4",
     categories: ["design", "developer", "productivity", "utilities"],
     icons: [
+      {
+        src: "/icons/pwa-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        src: "/icons/pwa-512x512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
+      {
+        src: "/icons/maskable-icon-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
+        src: "/icons/maskable-icon-512x512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
+      },
       {
         src: "/icons/openpalette-icon.png",
         sizes: "1024x1024",

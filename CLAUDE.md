@@ -4,7 +4,7 @@
 
 A local-first, open-source color studio — a palette machine for designers and developers. Built with Next.js 16 + TypeScript + Tailwind CSS v4. No backend, no accounts, no tracking. Deployed at https://palette.kovina.org.
 
-**Current version:** v0.9.8 — Performance & Optimization
+**Current version:** v0.9.9 — About Page Overhaul
 
 ## Brand Identity
 

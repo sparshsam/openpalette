@@ -6,7 +6,6 @@ import {
   getPairContrasts,
   getPaletteAccessibilityScore,
   getReadableTextColor,
-  hexToHsl,
   simulateVision,
   suggestAccessibleReplacement,
   type VisionMode,
@@ -202,6 +201,16 @@ function ScoreCard({ label, value, color }: { label: string; value: string; colo
     </div>
   );
 }
+/** Classify a color as light or dark using relative luminance */
+function isLightColor(hex: string): boolean {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  // Perceived luminance formula (sRGB)
+  const luminance = 0.2126 * (r / 255) + 0.7152 * (g / 255) + 0.0722 * (b / 255);
+  return luminance > 0.5;
+}
+
 function ThemePairTester({ palette: colors }: { palette: string[] }) {
   const [lightBg, setLightBg] = useState("#F9FAFB");
   const [lightText, setLightText] = useState(colors[0] ?? "#111827");
@@ -209,17 +218,20 @@ function ThemePairTester({ palette: colors }: { palette: string[] }) {
   const [darkText, setDarkText] = useState(colors[3] ?? "#F5F5F5");
   const lightRatio = getContrastRatio(lightText, lightBg);
   const darkRatio = getContrastRatio(darkText, darkBg);
-  // Sync with palette changes
+  // Sync with palette changes — properly classify light/dark
   useEffect(() => {
     if (colors.length >= 2) {
-      const sorted = [...colors].sort((a, b) => {
-        const ha = hexToHsl(a).l, hb = hexToHsl(b).l;
-        return ha - hb;
-      });
-      const lightest = sorted[sorted.length - 1];
-      const darkest = sorted[0];
+      const lightColors = colors.filter(isLightColor);
+      const darkColors = colors.filter((c) => !isLightColor(c));
+      // Light tester gets the brightest light color as bg, darkest light color as text
+      const lightBgCandidates = lightColors.length > 0 ? lightColors : ["#F9FAFB"];
+      // Dark tester gets the darkest dark color as bg, brightest dark as text
+      const darkBgCandidates = darkColors.length > 0 ? darkColors : ["#111111"];
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLightBg(lightest); setLightText(getReadableTextColor(lightest)); setDarkBg(darkest); setDarkText(getReadableTextColor(darkest));
+      setLightBg(lightBgCandidates[lightBgCandidates.length - 1]);
+      setLightText(getReadableTextColor(lightBgCandidates[lightBgCandidates.length - 1]));
+      setDarkBg(darkBgCandidates[0]);
+      setDarkText(getReadableTextColor(darkBgCandidates[0]));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [colors.join(",")]);

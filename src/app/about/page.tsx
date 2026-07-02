@@ -1,242 +1,186 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import pkg from "../../../package.json";
 
 export const metadata: Metadata = {
   title: "About — OpenPalette",
   description:
-    "A local-first, open-source color studio for designers and developers. Generate palettes, design tokens, gradients, accessibility checks, and exports — all in your browser.",
+    "OpenPalette is an open-source, local-first color workspace for designers and developers. Everything runs in your browser — no accounts, no tracking, no cloud.",
   openGraph: {
     title: "About — OpenPalette",
     description:
-      "A local-first, open-source color studio for designers and developers. No accounts, no tracking, no cloud.",
+      "An open-source, local-first color workspace. No accounts, no tracking, no cloud.",
   },
 };
 
-const TOOLS = [
-  { name: "Studio", icon: "🎨", desc: "Full palette editor with harmony modes, drag-to-reorder, and real-time color channels." },
-  { name: "Explore", icon: "✨", desc: "Discover curated palettes by style, topic, and color family." },
-  { name: "Extract", icon: "📷", desc: "Extract beautiful palettes from any image using six extraction modes." },
-  { name: "Contrast", icon: "◐", desc: "WCAG contrast checker with AA/AAA ratings and live previews." },
-  { name: "Visualizer", icon: "🖥", desc: "Preview your palette on realistic website, mobile, and brand mockups." },
-  { name: "Colors", icon: "🔵", desc: "Browse 150 named colors with conversions, harmonies, and accessibility data." },
-  { name: "Tokens", icon: "⚙", desc: "Generate 11-step design token scales with Tailwind, CSS, and JSON exports." },
-  { name: "Gradient", icon: "🌈", desc: "Build linear, radial, and conic gradients with a professional stop editor." },
-  { name: "Accessibility", icon: "♿", desc: "Full accessibility studio with theme tester, blind simulation, and audit." },
-  { name: "Themes", icon: "🏷", desc: "Load and customize curated light and dark theme sets." },
-  { name: "Library", icon: "📚", desc: "Save, tag, search, and export unlimited palettes to your local library." },
-];
-
-const WORKFLOW_STEPS = [
-  { step: "Generate", icon: "🎲", desc: "Pick a harmony mode and generate a balanced palette. Lock what works." },
-  { step: "Refine", icon: "✏", desc: "Tune individual colors with HEX, HSL, RGB, or HSV. Adjust saturation, brightness, and temperature." },
-  { step: "Visualize", icon: "🖥", desc: "Preview your palette across website, mobile, dashboard, and brand mockups." },
-  { step: "Validate", icon: "✓", desc: "Check contrast ratios, simulate color blindness, and verify WCAG compliance." },
-  { step: "Export", icon: "📤", desc: "Export as CSS, Tailwind, JSON, SCSS, SVG, PNG, Tokens, Android XML, or iOS Swift." },
-];
-
-const USE_CASES = [
-  "Brand identity design", "Website color palettes", "Dashboard UI", "Mobile apps",
-  "Design systems", "Tailwind CSS projects", "Figma handoff", "Marketing graphics",
-  "Presentations", "Social media branding", "Accessibility reviews", "Product design",
-];
-
-const EXPORTS = [
-  "CSS Variables", "Tailwind CSS", "SCSS", "JSON", "SVG", "PNG", "Android XML", "iOS Swift",
-];
-
-const AUDIENCES = [
-  { title: "UI Designers", desc: "Generate and refine color palettes for interfaces, then export tokens directly." },
-  { title: "UX Designers", desc: "Validate accessibility and preview color choices on realistic mockups." },
-  { title: "Graphic Designers", desc: "Build harmonious palettes, gradients, and brand color systems in minutes." },
-  { title: "Brand Designers", desc: "Create complete design token scales and ensure brand consistency across surfaces." },
-  { title: "Product Designers", desc: "Ship production-ready color systems with Tailwind, CSS, and JSON exports." },
-  { title: "Frontend Developers", desc: "Generate Tailwind configs, CSS variables, and SCSS from a single base color." },
-  { title: "Web Developers", desc: "Extract palettes from images, check contrast, and preview on real layouts." },
-  { title: "Students", desc: "Learn color theory through hands-on exploration with harmonies, contrast, and vision simulation." },
-  { title: "Creative Professionals", desc: "A complete color toolkit — free, local-first, and always available." },
-];
+const VERSION = pkg.version;
 
 export default function AboutPage() {
   return (
-    <div className="mx-auto max-w-4xl px-6 py-24 sm:py-32 space-y-28">
+    <div className="mx-auto max-w-3xl px-6 py-20 sm:py-24 space-y-16 sm:space-y-20">
+
       {/* ─── Hero ─── */}
-      <section className="space-y-6 text-center sm:text-left">
-        <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black leading-[0.92] tracking-tight">
-          <span className="text-[var(--accent)]">OpenPalette</span>
+      <section className="space-y-4">
+        <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-[var(--text-primary)] leading-[1.08]">
+          About OpenPalette
         </h1>
-        <p className="text-xl sm:text-2xl text-[var(--text-primary)] font-semibold max-w-2xl leading-snug">
-          Local-first color studio for designers and developers.
+        <p className="text-base sm:text-lg text-[var(--text-secondary)] leading-relaxed max-w-xl">
+          An open-source, local-first color workspace for designers and developers.
+          Everything runs in your browser — no accounts, no tracking, no cloud.
         </p>
-        <p className="text-base sm:text-lg text-[var(--text-secondary)] max-w-xl leading-relaxed">
-          OpenPalette is a free, open-source color palette generator, design token creator, gradient builder, accessibility checker, and visualizer — all running entirely in your browser. No accounts, no tracking, no cloud.
-        </p>
-        <div className="flex flex-wrap gap-2 pt-2">
-          {["v0.8.10", "Open Source", "Local First", "11 Tools", "No Account Required"].map((tag) => (
-            <span key={tag} className="rounded-full border border-[var(--border-default)] px-3.5 py-1.5 text-xs font-semibold text-[var(--text-secondary)]">{tag}</span>
-          ))}
+      </section>
+
+      {/* ─── 1. What is OpenPalette? ─── */}
+      <section className="space-y-4">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+          What is OpenPalette?
+        </h2>
+        <div className="space-y-3">
+          <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed">
+            OpenPalette is a color workspace. Generate palettes, build token scales,
+            check accessibility, extract colors from images, create gradients, and
+            preview color systems on real UI templates — all inside a single,
+            shared workspace that runs entirely in your browser.
+          </p>
+          <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed">
+            Every computation happens locally on your device. Palette generation,
+            color math, contrast ratios, vision simulations, export rendering —
+            none of it touches a server. Your data stays in localStorage, on your machine.
+          </p>
         </div>
       </section>
 
-      {/* ─── What is OpenPalette? ─── */}
-      <section className="space-y-6">
-        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--text-primary)]">What is OpenPalette?</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
+      {/* ─── 2. Why it exists ─── */}
+      <section className="space-y-4">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+          Why it exists
+        </h2>
+        <div className="space-y-3">
           <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed">
-            OpenPalette is a color palette creator and color studio that runs entirely in your browser. Generate professional color palettes, build complete color systems, create Tailwind-ready design tokens, extract colors from images, and preview how your palette looks on real interfaces.
+            Most color tools require accounts, subscriptions, or cloud connections.
+            OpenPalette was built to address four motivations:
           </p>
-          <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed">
-            Every feature — from palette generation to gradient creation, contrast checking to token export — works locally on your device. There are no accounts, no servers, and no data leaves your machine. OpenPalette is free, open source, and designed for the way designers and developers actually work.
-          </p>
+          <ul className="space-y-2.5">
+            {[
+              { label: "Privacy", desc: "Your color data should never leave your machine. No accounts, no telemetry, no cloud dependency." },
+              { label: "Permanence", desc: "A tool that doesn't require a subscription or a live server will work as long as you have a browser. Local-first means permanent access." },
+              { label: "Openness", desc: "The source code is MIT-licensed and available on GitHub. Anyone can inspect, fork, or contribute. There is no paid tier — the entire application is free." },
+              { label: "Professional workflows", desc: "Designers and developers need production-ready exports — CSS variables, Tailwind configs, JSON tokens, accessibility reports. OpenPalette ships them all." },
+            ].map((item) => (
+              <li key={item.label} className="flex gap-3 text-sm text-[var(--text-secondary)]">
+                <span className="shrink-0 size-1.5 rounded-full bg-[var(--accent)] mt-2" />
+                <span><strong className="text-[var(--text-primary)]">{item.label}.</strong> {item.desc}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
-      {/* ─── Who is OpenPalette for? ─── */}
-      <section className="space-y-6">
-        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--text-primary)]">Who is OpenPalette for?</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {AUDIENCES.map((a) => (
-            <div key={a.title} className="rounded-2xl border border-[var(--border-default)] p-4 space-y-1.5 hover:bg-[var(--bg-surface)] transition-colors">
-              <p className="text-sm font-bold text-[var(--text-primary)]">{a.title}</p>
-              <p className="text-xs text-[var(--text-secondary)] leading-relaxed">{a.desc}</p>
+      {/* ─── 3. Design Philosophy ─── */}
+      <section className="space-y-4">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+          Design Philosophy
+        </h2>
+        <div className="space-y-3">
+          {[
+            { title: "Local-First", desc: "Zero server dependencies. Palette generation, color math, and rendering all happen client-side. No data leaves your machine." },
+            { title: "Open Source", desc: "MIT-licensed. The full source is on GitHub. No paywalls, no pro features, no usage limits." },
+            { title: "Privacy by Design", desc: "No accounts, no tracking, no telemetry. The application is designed so that user data never needs to be collected." },
+            { title: "Fast", desc: "No network requests for core functionality. Palette generation and rendering are instantaneous — limited only by your device." },
+            { title: "Simple", desc: "One shared workspace. Nine integrated tools. No complex menus or configuration. Open the page and start creating." },
+            { title: "Production-Ready", desc: "Exports target real shipping formats: CSS Variables, Tailwind, JSON Design Tokens, SCSS, Android XML, iOS Swift, and more." },
+            { title: "Maintainable", desc: "TypeScript throughout. A clean palette engine separated from presentation. Tests for core color math. Designed to last." },
+          ].map((p) => (
+            <div key={p.title}>
+              <h3 className="text-sm font-bold text-[var(--text-primary)]">{p.title}</h3>
+              <p className="text-sm text-[var(--text-secondary)] mt-0.5 leading-relaxed">{p.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ─── Everything in one place ─── */}
-      <section className="space-y-6">
-        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--text-primary)]">Everything in one place</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {TOOLS.map((t) => (
-            <div key={t.name} className="rounded-2xl border border-[var(--border-default)] p-4 space-y-1.5 hover:bg-[var(--bg-surface)] transition-colors">
-              <p className="text-lg">{t.icon}</p>
-              <p className="text-sm font-bold text-[var(--text-primary)]">{t.name}</p>
+      {/* ─── 4. Technical Foundation ─── */}
+      <section className="space-y-4">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+          Technical Foundation
+        </h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {[
+            { title: "Next.js", desc: "Static-site generation and React server components for fast initial loads. The app shell is pre-rendered; the workspace loads client-side." },
+            { title: "TypeScript", desc: "The entire codebase is TypeScript — strict mode. Color engines, palette math, and export formatters are typed and tested." },
+            { title: "Browser-First", desc: "All color computation uses browser APIs: Canvas for image extraction, Crypto for IDs, localStorage for persistence. No backend required." },
+            { title: "Shared Workspace", desc: "A single palette context (`WorkspaceProvider`) connects all tools. Changes in Studio propagate to Visualizer, Contrast, Accessibility, and Export immediately." },
+            { title: "Local Storage", desc: "Palettes, snapshots, recently generated and opened palettes persist in localStorage between sessions. No sync, no server, no accounts." },
+            { title: "Responsive", desc: "The interface adapts from mobile to ultrawide. The toolbar, tab navigation, and section layouts reflow across breakpoints without hiding functionality." },
+          ].map((t) => (
+            <div key={t.title} className="rounded-xl border border-[var(--border-default)] p-4 space-y-1">
+              <h3 className="text-sm font-bold text-[var(--text-primary)]">{t.title}</h3>
               <p className="text-xs text-[var(--text-secondary)] leading-relaxed">{t.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ─── Typical workflows ─── */}
-      <section className="space-y-8">
-        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--text-primary)]">Typical workflows</h2>
-        <div className="space-y-0">
-          {WORKFLOW_STEPS.map((w, i) => (
-            <div key={w.step} className="flex items-start gap-4 pb-6 last:pb-0">
-              <div className="flex flex-col items-center">
-                <span className="size-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center text-base shrink-0">{w.icon}</span>
-                {i < WORKFLOW_STEPS.length - 1 && <div className="w-px flex-1 bg-[var(--border-default)] mt-1" />}
-              </div>
-              <div className="pt-1.5">
-                <p className="text-sm font-bold text-[var(--text-primary)]">{w.step}</p>
-                <p className="text-xs text-[var(--text-secondary)] mt-0.5">{w.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── Common use cases ─── */}
-      <section className="space-y-6">
-        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--text-primary)]">Common use cases</h2>
-        <div className="flex flex-wrap gap-2">
-          {USE_CASES.map((uc) => (
-            <span key={uc} className="rounded-full border border-[var(--border-default)] px-3.5 py-1.5 text-xs font-semibold text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] transition-colors">{uc}</span>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── Privacy by Design ─── */}
-      <section className="rounded-2xl border border-[var(--border-default)] p-6 sm:p-8 space-y-5">
-        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--text-primary)]">Privacy by Design</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {["Everything runs locally", "No accounts needed", "No telemetry", "No analytics", "No cloud processing", "Browser-first workflow"].map((item) => (
-            <div key={item} className="flex items-center gap-2.5">
-              <span className="text-green-500 text-sm">✓</span>
-              <span className="text-sm text-[var(--text-secondary)]">{item}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── Export support ─── */}
-      <section className="space-y-5">
-        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--text-primary)]">Export support</h2>
-        <div className="flex flex-wrap gap-2">
-          {EXPORTS.map((e) => (
-            <span key={e} className="rounded-full border border-[var(--border-default)] px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] transition-colors">{e}</span>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── Why OpenPalette? ─── */}
-      <section className="space-y-6">
-        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--text-primary)]">Why OpenPalette?</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {[
-            { title: "Local First", desc: "Everything runs in your browser. No data ever leaves your machine. No servers, no sync, no cloud dependency." },
-            { title: "Developer Friendly", desc: "Export directly to Tailwind, CSS, SCSS, JSON, SVG, and more. Generate production-ready design tokens from any color." },
-            { title: "Accessibility Built In", desc: "Every palette includes WCAG contrast ratios, color blindness simulation, and AA/AAA compliance checks — no separate tool needed." },
-            { title: "Production Ready", desc: "Generate complete design token scales, export framework-specific formats, and ship consistent color systems across your projects." },
-            { title: "Open Source", desc: "MIT licensed. Full source available on GitHub. No paywalls, no Pro features, no usage limits." },
-            { title: "Fast & Private", desc: "Zero latency. Every calculation happens on your device. No tracking scripts, no analytics, no telemetry." },
-          ].map((item) => (
-            <div key={item.title} className="rounded-2xl border border-[var(--border-default)] p-5 space-y-2 hover:bg-[var(--bg-surface)] transition-colors">
-              <p className="text-sm font-bold text-[var(--text-primary)]">{item.title}</p>
-              <p className="text-xs text-[var(--text-secondary)] leading-relaxed">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── Technology ─── */}
-      <section className="space-y-4">
-        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--text-primary)]">Technology</h2>
-        <div className="flex flex-wrap gap-2">
-          {["Next.js", "TypeScript", "Tailwind CSS", "Canvas APIs", "Local Storage"].map((tech) => (
-            <span key={tech} className="rounded-full border border-[var(--border-default)] px-3.5 py-1.5 text-xs font-semibold text-[var(--text-secondary)]">{tech}</span>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── Open Source ─── */}
+      {/* ─── 5. About Kovina ─── */}
       <section className="rounded-2xl border border-[var(--border-default)] p-6 sm:p-8 space-y-4">
-        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--text-primary)]">Open Source</h2>
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+          About Kovina
+        </h2>
         <p className="text-sm text-[var(--text-secondary)] leading-relaxed max-w-lg">
-          OpenPalette is MIT licensed and fully open source. Contributions, feature requests, and bug reports are welcome.
+          OpenPalette is part of the Kovina ecosystem — a collection of free and
+          open-source applications built around a shared philosophy: local-first,
+          privacy-respecting, and professionally capable software that runs
+          entirely in the browser.
+        </p>
+        <a
+          href="https://www.kovina.org"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block rounded-full border border-[var(--border-default)] px-5 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition"
+        >
+          kovina.org →
+        </a>
+      </section>
+
+      {/* ─── 6. Open Source ─── */}
+      <section className="space-y-4">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+          Open Source
+        </h2>
+        <p className="text-sm text-[var(--text-secondary)] leading-relaxed max-w-lg">
+          OpenPalette is MIT-licensed and fully open source. The complete source
+          code is available on GitHub. Contributions, bug reports, and feature
+          requests are welcome.
         </p>
         <div className="flex flex-wrap gap-2">
-          {["GitHub", "MIT License", "Report Issues", "Feature Requests", "Contributions Welcome"].map((btn) => (
-            <a key={btn} href={btn === "GitHub" ? "https://github.com/sparshsam/openpalette" : "https://github.com/sparshsam/openpalette/issues"} target="_blank" rel="noopener noreferrer"
-              className={`rounded-full border border-[var(--border-default)] px-4 py-2 text-sm font-semibold transition-colors ${
-                btn === "GitHub" ? "bg-[var(--accent)] text-white border-[var(--accent)]" : "text-[var(--text-secondary)] hover:text-[var(--accent)] hover:border-[var(--accent)]"
-              }`}>{btn}</a>
-          ))}
+          <a
+            href="https://github.com/sparshsam/openpalette"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-full bg-[var(--accent)] text-white px-5 py-2 text-sm font-semibold hover:brightness-110 transition"
+          >
+            View on GitHub
+          </a>
+          <a
+            href="https://github.com/sparshsam/openpalette/issues"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-full border border-[var(--border-default)] px-5 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition"
+          >
+            Report an Issue
+          </a>
         </div>
       </section>
 
-      {/* ─── Creator ─── */}
-      <section className="space-y-3">
-        <p className="text-sm text-[var(--text-secondary)]">Developed and maintained by</p>
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-          <div>
-            <a href="https://www.kovina.org" target="_blank" rel="noopener noreferrer"
-              className="text-lg font-bold text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors">Sparsh Sam</a>
-            <p className="text-xs text-[var(--text-muted)]">Founder of Kovina and builder of local-first creative tools.</p>
-          </div>
-          <div className="flex gap-2 sm:ml-auto">
-            <a href="https://www.kovina.org" target="_blank" rel="noopener noreferrer"
-              className="rounded-full border border-[var(--border-default)] px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">Kovina</a>
-            <a href="https://github.com/sparshsam" target="_blank" rel="noopener noreferrer"
-              className="rounded-full border border-[var(--border-default)] px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">GitHub</a>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Footer ─── */}
+      {/* ─── 7. Version & Colophon ─── */}
       <section className="border-t border-[var(--border-default)] pt-8 flex flex-wrap items-center justify-between gap-4 text-xs text-[var(--text-muted)]">
-        <span>v0.9.4 · MIT License</span>
-        <span>Built with ❤️ in Canada</span>
+        <span>v{VERSION} · MIT License</span>
+        <div className="flex items-center gap-4">
+          <Link href="/" className="hover:text-[var(--accent)] transition">Home</Link>
+          <a href="https://github.com/sparshsam/openpalette" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--accent)] transition">GitHub</a>
+        </div>
       </section>
+
     </div>
   );
 }

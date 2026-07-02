@@ -38,7 +38,7 @@ export function ExploreSection() {
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [order, setOrder] = useState<Order>("trending");
-  const [visible, setVisible] = useState(20);
+  const [visible, setVisible] = useState(25);
   const [showFilters, setShowFilters] = useState(false);
   const [detailPalette, setDetailPalette] = useState<ExplorePalette | null>(null);
 
@@ -104,7 +104,7 @@ export function ExploreSection() {
             className="w-full rounded-full border border-default bg-transparent pl-11 pr-4 py-3 text-sm text-page outline-none placeholder:text-muted focus:border-[var(--accent)] transition-colors"
             placeholder='Search by colors, topics, styles, hex — "modern fintech"'
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setVisible(20); }}
+            onChange={(e) => { setSearch(e.target.value); setVisible(25); }}
           />
         </div>
         <button onClick={() => setShowFilters(!showFilters)}
@@ -116,9 +116,9 @@ export function ExploreSection() {
       {/* Filters drawer */}
       {showFilters && (
         <div className="rounded-2xl border border-default p-4 sm:p-5 space-y-4 bg-[var(--bg-base)]">
-          <FilterRow label="Color" items={colorFilters} selected={selectedColors} onToggle={(v) => { setSelectedColors(toggle(selectedColors, v)); setVisible(20); }} />
-          <FilterRow label="Style" items={styleFilters} selected={selectedStyles} onToggle={(v) => { setSelectedStyles(toggle(selectedStyles, v)); setVisible(20); }} />
-          <FilterRow label="Topic" items={topicFilters} selected={selectedTopics} onToggle={(v) => { setSelectedTopics(toggle(selectedTopics, v)); setVisible(20); }} />
+          <FilterRow label="Color" items={colorFilters} selected={selectedColors} onToggle={(v) => { setSelectedColors(toggle(selectedColors, v)); setVisible(25); }} />
+          <FilterRow label="Style" items={styleFilters} selected={selectedStyles} onToggle={(v) => { setSelectedStyles(toggle(selectedStyles, v)); setVisible(25); }} />
+          <FilterRow label="Topic" items={topicFilters} selected={selectedTopics} onToggle={(v) => { setSelectedTopics(toggle(selectedTopics, v)); setVisible(25); }} />
           <div className="flex items-center gap-2 text-sm text-secondary pt-1">
             <span className="font-semibold">Order</span>
             {ORDER_OPTIONS.map((o) => (
@@ -179,7 +179,7 @@ export function ExploreSection() {
       {/* Load More */}
       {hasMore && (
         <div className="flex justify-center pt-4">
-          <button className="rounded-full border border-default px-8 py-2.5 text-sm font-semibold text-secondary hover:text-[var(--accent)] hover-accent bounce-press transition" onClick={() => setVisible((v) => v + 20)}>
+          <button className="rounded-full border border-default px-8 py-2.5 text-sm font-semibold text-secondary hover:text-[var(--accent)] hover-accent bounce-press transition" onClick={() => setVisible((v) => v + 25)}>
             Load More ({filtered.length - visible} remaining)
           </button>
         </div>

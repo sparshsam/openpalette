@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { WorkspaceProvider } from "@/components/workspace-context";
 import { Header } from "@/components/header";
 import { Toast } from "@/components/toast";
 import { StripFdid } from "@/components/strip-fdid";
@@ -19,10 +18,13 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   applicationName: "OpenPalette",
-  title: "OpenPalette — Color Studio",
+  title: {
+    default: "OpenPalette — Color Studio",
+    template: "%s — OpenPalette",
+  },
   description:
-    "A local-first, open-source color studio for creating palettes, gradients, accessibility checks, exports, and design tokens — all in your browser.",
-  keywords: ["color palette", "palette generator", "color studio", "design tokens", "WCAG accessibility", "gradient maker", "open source", "design system"],
+    "A local-first, open-source color studio for creating palettes, gradients, accessibility checks, exports, and design tokens — all in your browser. No account needed.",
+  keywords: ["color palette", "palette generator", "color studio", "design tokens", "WCAG accessibility", "gradient maker", "open source", "design system", "local-first"],
   metadataBase: new URL("https://palette.kovina.org"),
   manifest: "/manifest.webmanifest",
   appleWebApp: {
@@ -46,13 +48,14 @@ export const metadata: Metadata = {
     url: "https://palette.kovina.org",
     siteName: "OpenPalette",
     type: "website",
-    images: [{ url: "/icons/openpalette-icon.png", width: 1024, height: 1024 }],
+    images: [{ url: "/icons/openpalette-og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "OpenPalette — Color Studio",
-    description: "A local-first, open-source color studio.",
-    images: ["/icons/openpalette-icon.png"],
+    description:
+      "Create palettes, gradients, tokens, accessible previews, and exports directly in your browser.",
+    images: ["/icons/openpalette-og-image.png"],
   },
 };
 
@@ -73,16 +76,15 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <head />
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
-          <WorkspaceProvider>
-            <Header />
-            <main className="flex-1 w-full" suppressHydrationWarning>{children}</main>
-            <Toast />
-          </WorkspaceProvider>
+          <Header />
+          <main className="flex-1 w-full" suppressHydrationWarning>{children}</main>
+          <Toast />
         </ThemeProvider>
         <StripFdid />
       </body>

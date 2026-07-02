@@ -62,10 +62,18 @@ export const WorkspaceToolbar = memo(function WorkspaceToolbar() {
         {/* Undo / Redo */}
         <button onClick={ws.undo} disabled={ws.undoStack.length === 0}
           className="shrink-0 rounded-full border border-default px-2.5 py-1.5 text-xs font-semibold text-secondary hover:text-[var(--accent)] transition disabled:opacity-30 disabled:cursor-not-allowed bounce-press"
-          title="Undo (Ctrl+Z)">↩</button>
+          title="Undo (Ctrl+Z)">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 6H1V3M10 12a5 5 0 100-10"/>
+          </svg>
+        </button>
         <button onClick={ws.redo} disabled={ws.redoStack.length === 0}
           className="shrink-0 rounded-full border border-default px-2.5 py-1.5 text-xs font-semibold text-secondary hover:text-[var(--accent)] transition disabled:opacity-30 disabled:cursor-not-allowed bounce-press"
-          title="Redo (Ctrl+Shift+Z)">↪</button>
+          title="Redo (Ctrl+Shift+Z)">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 6h3V3M6 12a5 5 0 000-10"/>
+          </svg>
+        </button>
 
         <div className="w-px h-6 bg-[var(--border-default)] shrink-0" />
 
@@ -100,21 +108,33 @@ export const WorkspaceToolbar = memo(function WorkspaceToolbar() {
 
         {/* Inspector toggle */}
         <button onClick={() => { setShowInspector(!showInspector); setShowHistory(false); }}
-          className="shrink-0 size-7 flex items-center justify-center rounded-full text-xs font-bold text-secondary hover:text-[var(--accent)] transition bounce-press"
-          title="Palette Inspector">📊</button>
+          className="shrink-0 size-7 flex items-center justify-center rounded-full text-secondary hover:text-[var(--accent)] hover:bg-[var(--surface)] transition bounce-press"
+          title="Palette Inspector">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="8" cy="8" r="6"/>
+            <path d="M8 5v3M8 11h0"/>
+          </svg>
+        </button>
 
         {/* History toggle */}
         <button onClick={() => { setShowHistory(!showHistory); setShowInspector(false); setShowSnapshots(false); }}
-          className="shrink-0 size-7 flex items-center justify-center rounded-full text-xs font-bold text-secondary hover:text-[var(--accent)] transition bounce-press"
-          title="History">🕐</button>
+          className="shrink-0 size-7 flex items-center justify-center rounded-full text-secondary hover:text-[var(--accent)] hover:bg-[var(--surface)] transition bounce-press"
+          title="History">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="8" cy="8" r="6"/>
+            <path d="M8 5v3l2 2"/>
+          </svg>
+        </button>
 
         {/* Snapshots toggle */}
         <button onClick={() => { setShowSnapshots(!showSnapshots); setShowInspector(false); setShowHistory(false); }}
-          className="shrink-0 size-7 flex items-center justify-center rounded-full text-xs font-bold text-secondary hover:text-[var(--accent)] transition bounce-press"
-          title="Workspace Snapshots">💾</button>
-
-        {/* Status notice */}
-        <span className="text-xs text-muted whitespace-nowrap ml-auto hidden sm:inline">{ws.notice}</span>
+          className="shrink-0 size-7 flex items-center justify-center rounded-full text-secondary hover:text-[var(--accent)] hover:bg-[var(--surface)] transition bounce-press"
+          title="Workspace Snapshots">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="3" width="12" height="11" rx="2"/>
+            <path d="M5 1v4M11 1v4M2 7h12"/>
+          </svg>
+        </button>
       </div>
 
       {/* Inspector popup */}
@@ -183,10 +203,18 @@ export const WorkspaceToolbar = memo(function WorkspaceToolbar() {
               <span className="text-xs text-page flex-1 truncate">{s.name}</span>
               <button onClick={() => ws.restoreSnapshot(s.id)}
                 className="rounded-full px-2 py-0.5 text-[10px] font-semibold bg-[var(--accent)] text-white opacity-0 group-hover:opacity-100 transition"
-                title="Restore">↩</button>
+                title="Restore">
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 6H1V3M10 12a5 5 0 100-10"/>
+                </svg>
+              </button>
               <button onClick={() => { const n = prompt("Rename:", s.name); if (n?.trim()) ws.renameSnapshot(s.id, n.trim()); }}
                 className="text-[10px] text-muted opacity-0 group-hover:opacity-100 transition"
-                title="Rename">✏️</button>
+                title="Rename">
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M11 2l3 3L5 14H2v-3l9-9z"/>
+                </svg>
+              </button>
               <button onClick={() => { if (confirm(`Delete "${s.name}"?`)) ws.deleteSnapshot(s.id); }}
                 className="text-[10px] text-muted opacity-0 group-hover:opacity-100 transition"
                 title="Delete">✕</button>

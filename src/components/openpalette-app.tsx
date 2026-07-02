@@ -81,7 +81,8 @@ export function OpenPaletteApp() {
     const cur = window.location.hash.replace("#", "");
     if (/^\/(colors|tokens)\/[0-9A-Fa-f]{6}/.test(cur) || /^\/contrast\//.test(cur)) return;
     const hash = activeTab === "studio" ? "" : activeTab;
-    window.history.replaceState(null, "", hash ? `/#${hash}` : "/");
+    const base = window.location.pathname;
+    window.history.replaceState(null, "", hash ? `${base}#${hash}` : base);
   }, [activeTab]);
 
   // Listen for tool + palette navigation events
@@ -113,7 +114,9 @@ export function OpenPaletteApp() {
     if (!el) return;
     const handler = (e: WheelEvent) => {
       e.preventDefault();
-      el.scrollLeft += e.deltaY;
+      // Combine deltaX (trackpad horizontal swipe) and deltaY (mouse wheel / trackpad vertical)
+      const scrollAmount = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      el.scrollLeft += scrollAmount;
     };
     el.addEventListener("wheel", handler, { passive: false });
     return () => el.removeEventListener("wheel", handler);

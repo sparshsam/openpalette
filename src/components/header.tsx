@@ -2,11 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTheme } from "./theme-provider";
 
 export function Header() {
   const { theme, toggle } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
+  const isLanding = pathname === "/";
   useEffect(() => { setMounted(true); }, []); // eslint-disable-line react-hooks/set-state-in-effect
 
   return (
@@ -15,7 +18,7 @@ export function Header() {
         <div className="mx-auto flex items-center justify-between max-w-7xl px-6 pr-14 h-14">
           {/* Logo */}
           <Link
-            href="/"
+            href={isLanding ? "/" : "/studio"}
             className="text-lg font-bold text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors"
           >
             OpenPalette
@@ -23,6 +26,22 @@ export function Header() {
 
           {/* Nav */}
           <nav className="flex items-center gap-1" aria-label="Primary">
+            {isLanding && (
+              <Link
+                href="/studio"
+                className="rounded-full bg-[var(--accent)] text-white px-5 py-2 text-sm font-semibold hover:brightness-110 transition"
+              >
+                Enter Studio
+              </Link>
+            )}
+            {!isLanding && (
+              <Link
+                href="/"
+                className="rounded-full px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+              >
+                Home
+              </Link>
+            )}
             <Link
               href="/about"
               className="rounded-full px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"

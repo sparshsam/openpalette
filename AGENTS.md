@@ -18,7 +18,7 @@ This version has breaking changes. APIs, conventions, and file structure may dif
 - **Light mode:** `#f9f9f9` bg, `#111111` text
 - **Dark mode:** `#0f0f0f` bg, `#f5f5f5` text
 - **License:** MIT
-- **Current release:** `v0.9.8`
+- **Current release:** `v0.9.9`
 - **Dev server port:** `1997`
 
 ## Architecture (IMPORTANT — Changed in v0.9.0)
@@ -33,7 +33,7 @@ Scrollable pill nav with ◀▶ arrows. URL hash routing preserves tab on refres
 | Tab | Route | Description |
 |-----|-------|-------------|
 | Studio | `/` | Palette editor — drag-to-reorder swatches, hover action rail, quick-tune, harmonies |
-| Explore | `#explore` | 75 curated palettes, search/filters, detail modal |
+| Explore | `#explore` | 320 curated palettes, search/filters, detail modal |
 | Extract | `#extract` | Image extraction — upload, 6 modes |
 | Contrast | `#/contrast/hex-hex` | WCAG checker — ratio, AA/AAA, live preview |
 | Visualizer | `#visualizer` | 7 template gallery, category filters |
@@ -89,17 +89,17 @@ npm run test:e2e     # Playwright E2E (43 tests)
 - `src/lib/palette/health-score.ts` — 8-dimension health engine, visual analytics
 - All computations memoized via `useMemo` in the inspector
 
-## Mile Marker — v0.9.8
+## Mile Marker — v0.9.9
 
 | Field | Value |
 |-------|-------|
-| Version | `v0.9.8` — Performance & Optimization |
-| Date | 2026-06-30 |
-| Commit | `fca27ff` — clean on `main` |
+| Version | `v0.9.9` — About Page Overhaul |
+| Date | 2026-07-02 |
+| Commit | `<current>` — clean on `main` |
 | E2E tests | 43 (Playwright, 8 spec files) |
 | Unit tests | 13/13 pass |
 | Lint | 0 errors, 0 warnings |
-| Known state | Dynamic imports, memoized engines, toolbar swatch color picker |
+| Known state | Landing page at `/`, workspace at `/studio`, editorial About page with Kovina mention |
 
 ## Do Not Add
 

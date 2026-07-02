@@ -76,7 +76,7 @@ export function ImagePickerSection() {
   }
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 pb-24 space-y-8 min-h-[calc(100vh-9rem)]">
       {/* Header */}
       <div className="space-y-2">
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-page">Image Palette Extraction</h1>
