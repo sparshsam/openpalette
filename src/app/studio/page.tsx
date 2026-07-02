@@ -11,11 +11,13 @@ export const metadata = {
     url: "https://palette.kovina.org/studio",
     siteName: "OpenPalette",
     type: "website",
+    images: [{ url: "/icons/openpalette-og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "OpenPalette — Color Studio",
     description: "A local-first, open-source color studio.",
+    images: ["/icons/openpalette-og-image.png"],
   },
 };
 
